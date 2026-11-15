@@ -7,16 +7,36 @@ Locked CV: `StratifiedKFold(5, shuffle=True, random_state=42)`.
 
 ---
 
-## 0. Current ATH lock (2026-11-12 late)
+## 0. Current ATH lock (2026-11-15) — V22.3 R2
 
 | Item | Detail |
 |------|--------|
-| **Public ATH** | **0.95371** (L2) |
+| **Public ATH** | **0.95426** |
+| Formula | Ray-1 ridge continuation on sriram manifold @ `1−ρ(sriram)=1.25e-4` from P2 `0.95425` |
+| Path | Slot9 `0.95399` → C1 `0.95407` → C2pure `0.95416` → P2 `0.95425` → **R2 `0.95426`** |
+| File | `submissions/sub_v22_3_LIVE_ridge_continuation.csv` |
+| Also tied ATH | V22.5 K2 · V22.6 SLOT1 |
+| Gate for next inject | Prefer Ray-1 crest `[1.45e-4, 1.85e-4]`; twilight orth default **sign −1**; never GS-project after `G_twi` |
+| Summary | `docs/V22_LADDER_SUMMARY.md` · `logs/overnight/GM_V22_3_RIDGE_CONTINUATION_REPORT.md` |
+
+### V22 building blocks that transferred
+
+| Block | Why keep |
+|------|----------|
+| sriram `rank_frac(L(gp)+0.15·(L(new)−L(old)))` manifold | All ATH lifts after 0.95407 lived here |
+| Tiny `1−ρ` micro-steps | P2 `0.55e-4` (+3e-5 LB), R2 `1.25e-4` (+1e-5) |
+| Sign-lock + `disp=1` var-match before Test inject | V22.5 vectors `5/5`, `max\|B_dir\|=0` |
+| Exact-fname Kaggle poll | Required for multi-slot ladders |
+
+---
+
+## 0b. Prior ATH lock (2026-11-12 late) — superseded
+
+| Item | Detail |
+|------|--------|
+| **Public ATH** | **0.95371** (L2) — superseded by V22 |
 | Formula | `L(Q17 test_anchor_prob) + 0.03 · unitize(d1_v4)` |
-| Prior plateau | cand2 = `L(S7) + 0.03613·(G26−MS)` → **0.95355** (superseded) |
 | File | `submissions/sub_v12p3_slot2_anchor095370_plus_d1v4_5of5_LIVE.csv` |
-| Gate for next inject | Strict LOFO **5/5** vs L2 **and** ingredient family with prior public transfer (d1-like); ban P_super/stageB/sov+G26 retunes on this base |
-| Submits | Day quota **0** after L4; hold until new private signal |
 
 Artifacts: `logs/overnight/GM_V12_3_LADDER_LIVE_REPORT.md`, `GM_V12_DAY_SUMMARY_2026-11-12.md`.
 

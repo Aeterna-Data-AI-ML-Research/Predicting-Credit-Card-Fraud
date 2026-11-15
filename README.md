@@ -69,27 +69,34 @@ docs/                    # research notes / audits
 external/                # pulled public kernels & OOF banks
 ```
 
-## Current local ATH (2026-11-12)
+## Current local ATH (2026-11-15)
 
 | | |
 |---|---|
-| **Public ATH** | **0.95371** |
-| **Recipe** | `L(Q17 test_anchor_prob) + 0.03 · unitize(d1_v4)` |
-| **CSV** | `submissions/sub_v12p3_slot2_anchor095370_plus_d1v4_5of5_LIVE.csv` |
-| **Day log** | `logs/overnight/GM_V12_DAY_SUMMARY_2026-11-12.md` |
-| **Living docs** | `docs/THINGS_THAT_WORKED.md` · `docs/DEAD_ENDS.md` |
+| **Public ATH** | **0.95426** |
+| **Recipe** | V22.3 Ray-1 ridge continuation on sriram manifold: `R2` @ `1−ρ(sriram)=1.25e-4` from P2 `0.95425` |
+| **CSV** | `submissions/sub_v22_3_LIVE_ridge_continuation.csv` |
+| **Also at ATH** | V22.5 K2 crest+orth4 · V22.6 SLOT1 (tie) |
+| **Day reports** | `logs/overnight/GM_V22_{1..6}_*.md` |
+| **Living docs** | `docs/THINGS_THAT_WORKED.md` · `docs/DEAD_ENDS.md` · `docs/V22_LADDER_SUMMARY.md` |
 
-Ladder L1–L4 that day: Q17 pure **0.95370** → L2 **0.95371** → L3/L4 failed to transfer (OOF 5/5 ≠ public). Next lift needs new private signal (full 5F Compact-LM seed2026), not more blends of the current bank.
+### V22 live ladder (sriram `0.95422` → ATH `0.95426`)
+
+| Step | Idea | Public LB |
+|---|---|---:|
+| V22.1 C1 | ATH lineage + ΔRealMLP | 0.95407 |
+| V22.1 C2pure | sriram + proprietary Slot9 engines | 0.95416 |
+| V22.2h P2 | micro-geodesic sriram × C1 + 5F LM | 0.95425 |
+| **V22.3 R2** | P2 continuation + de-diluted dMLP @ `1.25e-4` | **0.95426** |
+| V22.5 K2 | Ray-1 crest + signed orth4 @ `2.05e-4` | 0.95426 (tie) |
+| V22.6 SLOT1–5 | unattended 5-slot ladder (twilight orth hurt) | 0.95426…0.95412 |
+
+Key scripts: `scripts/gm_v22_{1,2_hardened,3,4,5,6}_*.py`.  
+Next reset: prefer **Ray-1 crest** in `[1.45e-4, 1.85e-4]` and **`−U_orth` in twilight** (`V22_6_TWI_SIGN=-1`); do not GS-project after quantile gating.
 
 ## Local next steps (beyond 0.95330)
 
-After `0.95330` was passed on the LB (`0.95332`), SoftPseudo-family retake CSVs were staged for the next quota reset:
-
-- Plan: `logs/overnight/RETAKE_SUBMIT_PLAN.md`
-- Builders: `scripts/gm_day2_strike10_orth_leap.py`, `scripts/gm_day2_strike10b_softfamily_boost.py`, `scripts/gm_day2_retake_maxleap.py`
-- Ready files: `submissions/sub_retake_R*.csv`, `submissions/sub_day2_slot*.csv`
-
-Those use a nested SoftPseudo family pack with much larger honest OOF lift than the pure continuation ladder; they are **not** in the public 0.95330 notebook.
+Historical SoftPseudo retake artifacts (pre-V22) remain under `submissions/sub_retake_R*.csv` / `scripts/gm_day2_*`. The active climb is the **sriram-manifold V22 ladder** documented above.
 
 ## License / competition rules
 

@@ -8,6 +8,20 @@ Stack baseline referenced below: `S_fold0_base = 0.950841`, `P_super_champ` nest
 
 ---
 
+## 0. V22.6 twilight / orth dead ends (2026-11-15)
+
+| ID | Approach | Result | Why dead | Artifact |
+|----|----------|--------|----------|----------|
+| V22.6-A | `project_out(G_twi(q)⊙U, B_gs)` then inject | `tw_share≈0.14`; SLOT1 tied `0.95426` (noop) | `B_gs` collinear with rank → kills quantile localization | `GM_V22_6_FINAL_5SLOT_NUMBER1_REPORT.md` |
+| V22.6-B | True twilight inject of **`+U_orth_super`** (`tw≈0.78`) | SLOT4 **0.95416** · SLOT5 **0.95412** | Contested-band `+orth` anti-aligned with Public LB | same; use `V22_6_TWI_SIGN=-1` |
+| V22.6-C | Tri-centroid + gated MoE without true twilight | SLOT2 **0.95421** · SLOT3 **0.95425** | Left the R2/K2 ATH pocket | `sub_v22_6_SLOT{2,3}.csv` |
+| V22.4-D | Force `V1(U_C_tab)` / `V12(C1)` to lift `z9`/`z9d` | HOLD | z9 already contains full U_C / C1 — self-overlap paradox | `GM_V22_4_COMPLETE_INCREMENTAL_REPORT.md` |
+| V22.5-E | K2 Ray-1 overshoot to `2.05e-4` + orth4 | Tie `0.95426` | Past Ray-1 sweet spot; no lift | `GM_V22_5_CREST_AND_ORTH4_REPORT.md` |
+
+Do **not** re-submit `+U_orth` twilight copies of SLOT4/5. Next reset: Ray-1 crest interior and/or **flipped** twilight orth.
+
+---
+
 ## 1. Paradigm ladder (A5000 overnight)
 
 Gate rules (Fold-0 stack ΔS / standalone AUC): R1 ≥0.94935 or ΔS≥4e−5 · R2 ≥0.94980 or ΔS≥8e−5 · promote ΔS≥3e−5.
