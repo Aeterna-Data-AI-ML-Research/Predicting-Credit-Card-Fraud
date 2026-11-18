@@ -1,0 +1,24 @@
+{
+  "id": "moranzavdi/s6e11-public-board-leap-lb-0-95490",
+  "title": "S6E11 | Public Board Leap | LB 0.95490",
+  "code_file": "s6e11-public-board-leap-lb-0-95490.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": false,
+  "enable_gpu": false,
+  "enable_tpu": false,
+  "enable_internet": false,
+  "keywords": [
+    "beginner",
+    "finance",
+    "tabular data"
+  ],
+  "dataset_sources": [
+    "moranzavdi/s6e11-board-leap-lb-095490"
+  ],
+  "kernel_sources": [],
+  "competition_sources": [
+    "playground-series-s6e11"
+  ],
+  "model_sources": []
+}

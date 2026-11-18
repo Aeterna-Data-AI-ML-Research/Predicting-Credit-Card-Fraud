@@ -2,9 +2,32 @@
 
 Local research repo for [playground-series-s6e11](https://www.kaggle.com/competitions/playground-series-s6e11).
 
-Public highlight: a frozen submission that scored **Public LB `0.95330`** (Kaggle ref `58151250`), published as an open notebook so others can reproduce that exact row.
+Public highlight: frozen submission **Public LB `0.95490`** (Kaggle ref `58521009`) — BOLD extrapolate on **goodpjw2008** Board Model steps E/F — published under `notebooks/lb_095490/` with full upstream credits. Earlier open release: **Public LB `0.95330`** (ref `58151250`) under `notebooks/lb_095330/`.
+
+## Public notebook (LB 0.95490)
+
+| | |
+|---|---|
+| **Notebook** | [S6E11 \| Public Board Leap \| LB 0.95490](https://www.kaggle.com/code/moranzavdi/s6e11-public-board-leap-lb-0-95490) *(local package; publish when ready)* |
+| **Dataset** | [s6e11-board-leap-lb-095490](https://www.kaggle.com/datasets/moranzavdi/s6e11-board-leap-lb-095490) *(local package)* |
+| **Local path** | `notebooks/lb_095490/` |
+| **Frozen CSV** | `notebooks/lb_095490/dataset/submission_095490.csv` |
+| **SHA-256** | `6ea4f9bad68a61753a5c9484b13ec1536c4d5218f56c352e950670a3b078e8b4` |
+| **Kaggle ref** | `58521009` |
+
+Rebuild: load goodpjw **step E** (0.95487) + **step F** (0.95489), apply `rankfrac(L(F)+0.5·(L(F)−L(E)))`, SHA-check against the frozen CSV. No in-kernel retrain.
+
+### Credits (please upvote upstream work)
+
+Full linked tables live in the notebook; summary:
+
+- **goodpjw2008** — [Board Model + RealMLP \| LB 0.95489](https://www.kaggle.com/code/goodpjw2008/s6e11-board-model-realmlp-lb-0-95489) (step E/F parents)
+- **Asterios Panoras** — [0.95487 analysis](https://www.kaggle.com/code/asteriospanoras/s6e11-lb-0-95487-top-public-and-score-analysis) · [public-board-files](https://www.kaggle.com/datasets/asteriospanoras/s6e11-public-board-files)
+- **Sriram S** — [TabM Ensemble \| 0.95482](https://www.kaggle.com/code/sriram00777/s6e11-tabm-ensemble-eda-lb-0-95482) · [pinned-inputs](https://www.kaggle.com/datasets/sriram00777/s6e11-pinned-inputs-095422)
+- **yekenot**, **busyaprime**, **BhuvanNR**, **alexchilton**, **areebbb**, **Malyshev Danil**, **sameershaikh27**, **mathsonchain**, **amanatar**
 
 ## Public notebook (LB 0.95330)
+
 
 | | |
 |---|---|
@@ -60,6 +83,7 @@ This score sits on public notebooks/datasets as well as our local training. Full
 ## Repo layout (high level)
 
 ```
+notebooks/lb_095490/     # public 0.95490 notebook + frozen dataset CSV (board leap)
 notebooks/lb_095330/     # public 0.95330 notebook + frozen dataset CSV
 scripts/                 # local research / ladder / retake builders
 preds/                   # local OOF & test prediction banks (gitignored bulk)
@@ -69,16 +93,16 @@ docs/                    # research notes / audits
 external/                # pulled public kernels & OOF banks
 ```
 
-## Current local ATH (2026-11-15)
+## Current local ATH (2026-11-18)
 
 | | |
 |---|---|
-| **Public ATH** | **0.95426** |
-| **Recipe** | V22.3 Ray-1 ridge continuation on sriram manifold: `R2` @ `1−ρ(sriram)=1.25e-4` from P2 `0.95425` |
-| **CSV** | `submissions/sub_v22_3_LIVE_ridge_continuation.csv` |
-| **Also at ATH** | V22.5 K2 crest+orth4 · V22.6 SLOT1 (tie) |
-| **Day reports** | `logs/overnight/GM_V22_{1..6}_*.md` |
-| **Living docs** | `docs/THINGS_THAT_WORKED.md` · `docs/DEAD_ENDS.md` · `docs/V22_LADDER_SUMMARY.md` |
+| **Public ATH** | **0.95490** |
+| **Recipe** | V26b BOLD F←E @0.5 on goodpjw Board Model steps (E≈0.95487, F≈0.95489) |
+| **CSV** | `submissions/sub_v26b_ATH_PUB490.csv` (= `notebooks/lb_095490/dataset/submission_095490.csv`) |
+| **Kaggle ref** | `58521009` |
+| **Public notebook** | `notebooks/lb_095490/` |
+| **Day reports** | `docs/V26_SCORE_LEAP.md` · `docs/V25_NEW_SCORE_CHANNELS.md` · `docs/NOV17_LATEST_RESEARCH_SCORE_LEVER_REPORT.md` |
 
 ### V22 live ladder (sriram `0.95422` → ATH `0.95426`)
 

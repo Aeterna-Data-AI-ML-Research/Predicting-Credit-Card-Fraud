@@ -1,0 +1,16 @@
+{
+  "title": "S6E11 Board Leap LB 0.95490 Frozen Submission",
+  "id": "moranzavdi/s6e11-board-leap-lb-095490",
+  "licenses": [
+    {
+      "name": "CC0-1.0"
+    }
+  ],
+  "keywords": [
+    "tabular",
+    "fraud",
+    "playground"
+  ],
+  "subtitle": "Frozen submission that scored Public LB 0.95490 (BOLD F<-E on goodpjw board steps)",
+  "description": "Frozen submission CSV for playground-series-s6e11 that scored Public LB 0.95490 (Kaggle ref 58521009; SHA-256 6ea4f9bad68a61753a5c9484b13ec1536c4d5218f56c352e950670a3b078e8b4). Includes goodpjw2008 Board Model + RealMLP step E (0.95487) and step F (0.95489) copies used to reconstruct the file. Primary credit: goodpjw2008, Asterios Panoras, Sriram S, yekenot, busyaprime, BhuvanNR, alexchilton, and others \u2014 see companion notebook. Companion notebook: moranzavdi/s6e11-public-board-leap-lb-0-95490."
+}
