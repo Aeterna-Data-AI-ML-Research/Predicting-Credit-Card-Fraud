@@ -93,16 +93,15 @@ docs/                    # research notes / audits
 external/                # pulled public kernels & OOF banks
 ```
 
-## Current local ATH (2026-11-19)
+## Current local ATH (2026-11-20)
 
 | | |
 |---|---|
-| **Public ATH** | **0.95511** |
-| **Recipe** | V27b BOLD sub←I @1.0 on goodpjw Board Model `submission.csv` / step I |
-| **CSV** | `submissions/sub_v27_ATH_PUB511.csv` (gitignored; regenerable) |
-| **Kaggle ref** | `58565133` |
-| **Next own lever** | V28 zone soft-floor / hard×Weni — staged, quota-blocked; see `docs/V27_SCORE_LEAP.md` · `logs/overnight/GM_V28*.md` |
-| **Day reports** | `docs/V27_SCORE_LEAP.md` · `docs/V26_SCORE_LEAP.md` · `logs/overnight/GM_V28_SCORE_SIMULATION.md` |
+| **Public ATH** | **0.95531** |
+| **Recipe** | V29 consume goodpjw Board Model + RealMLP `submission.csv` (author LB 0.95531) |
+| **CSV** | `submissions/sub_v29_ATH_PUB531.csv` (gitignored; regenerable) |
+| **Kaggle ref** | `58609056` |
+| **Day reports** | `docs/V29_SCORE_LEAP.md` · `docs/V27_SCORE_LEAP.md` · `logs/overnight/GM_V28_SCORE_SIMULATION.md` |
 
 ### V22 live ladder (sriram `0.95422` → ATH `0.95426`)
 
