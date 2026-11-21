@@ -1,0 +1,138 @@
+===== cli_kernels_date =====
+CLI_FAIL Command '['/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/.venv_forensics/bin/kaggle', 'kernels', 'list', '-c', 'playground-series-s6e11', '--sort-by', 'dateRun', '--page-size', '50']' returned non-zero exit status 2.
+
+===== cli_kernels_vote =====
+CLI_FAIL Command '['/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/.venv_forensics/bin/kaggle', 'kernels', 'list', '-c', 'playground-series-s6e11', '--sort-by', 'voteCount', '--page-size', '50']' returned non-zero exit status 2.
+
+===== cli_kernels_09536 =====
+ref                                                              title                                             author               lastRunTime                 totalVotes  
+---------------------------------------------------------------  ------------------------------------------------  -------------------  --------------------------  ----------  
+sudhanshuraheja/petals-tpu-tta-external-data-0-95360-lb          Petals - TPU + TTA + External Data 0.95360 LB     Sudhanshu Raheja     2020-08-30 11:12:50.210000           4  
+mirasaif/machine-learning-project                                Machine Learning Project                          Amira Essam          2024-12-17 07:26:31.917000           7  
+xjoannax88/baseline-starter-prediction-catboost-0-95367          ❤️🫀Baseline|Starter|Prediction|Catboost|0.95367   J.                   2026-02-09 20:01:52.370000          19  
+aqqqqa/brain-tumor-mri-analysis-with-cnn-gnn-pipeline            Brain Tumor MRI Analysis with CNN-GNN Pipeline    aqqqqa               2026-04-11 10:11:08.710000          14  
+aarishasifkhan/arc-2024-complex-nn                               ARC 2024 - Complex NN                             Aarish Asif Khan     2024-06-27 14:28:15.090000          19  
+subhojeetroy01/flood-prediction-models-performance-comparison    Flood-prediction_models-performance-comparison    Subhojeet Roy        2025-10-16 08:07:37.483000          31  
+yousefsaadtk/resparitory-diseases-detection                      Resparitory diseases detection                    Yousef saad          2025-02-13 04:46:51.650000          19  
+theomerkaratas/alzheimer-prediction                              alzheimer prediction                              Ömer Karataş         2025-07-16 18:55:19.187000           3  
+stpeteishii/fashion-mnist-cnn-repeated-learning                  Fashion MNIST CNN Repeated Learning               stpete_ishii         2023-04-26 05:15:21.007000           5  
+varunraskar/baseline-lgbm-model-91-40                            Baseline LGBM Model 91.40%                        Varun Raskar         2024-02-27 10:26:31.567000           4  
+rariffirmansah/transfer-learning-indonesian-traditional-housing  TRANSFER LEARNING INDONESIAN TRADITIONAL HOUSING  R Arif Firmansah     2022-12-17 07:41:42.153000          15  
+ruslankudaibegenov/heart-disease-eda-logic-lgbm-nn-0-95366       Heart Disease | EDA + Logic, LGBM, NN | 0.95366   Ruslan Kudaibegenov  2026-02-18 07:34:24.880000           7  
+samikshabansal/predicting-heart-disease-0-95360                  Predicting Heart Disease (0.95360)                Samiksha             2026-02-03 10:43:29.723000           5  
+quangnm711/android-malware-detection-gcnn-3                      Android_Malware_Detection_GCNN_3                  Quangnm711           2024-02-18 06:36:33.933000           6  
+tianhao123/notebookdaddf3b339                                    notebookdaddf3b339                                Tianhao123           2024-02-26 10:53:20.557000          11  
+prathamjyotsingh/data-visualize                                  Data Visualize                                    Prathamjyot Singh    2025-11-13 15:15:56.540000           9  
+belbino/heart-disease-stack-pipeline-0-95365                     Heart Disease | Stack | Pipeline | 0.95365        BELBIN BENO R M      2026-02-28 19:46:09.267000          11  
+quangnguyen11037/android-malware-detection-gcnn-3                Android_Malware_Detection_GCNN_3                  Quangnguyen11037     2024-02-19 01:58:45.977000           4  
+najeebz/multiclass-prediction-lgbm-simple-and-easy               MultiClass Prediction LGBM Simple and Easy        Najeeb Z             2024-02-20 00:31:07.343000          17  
+suzeai/gpu-cpu-tag-3-layer                                       GPU_CPU_TAG_3_layer                               SuZeAI               2024-02-17 09:08:31.697000           4  
+suzeai/gpu-cpu-gat-3-layer                                       GPU_CPU_GAT_3_layer                               SuZeAI               2024-02-09 04:50:44.570000           1  
+quangnguyen11037/android-malware-detection-sagen-2               Android_Malware_Detection_SAGEN_2                 Quangnguyen11037     2024-02-08 03:07:56.127000           2  
+jane162534/nlp-hw10                                              NLP_HW10                                          Jane162534           2024-09-24 14:09:11.597000           1  
+ubermayinch/visibility-graph-dpcn                                visibility graph dpcn                             uberMayinch          2025-11-18 14:24:29.027000           3  
+quangnguyen11037/new-adm-gin-ml                                  New_ADM_GIN_ML                                    Quangnguyen11037     2024-04-04 02:49:25.823000           1  
+georgian86/new-malware-identification-ensemble                   New Malware Identification (Ensemble)             Golu Kumar           2025-07-29 05:15:28.977000           3  
+arpitmishra447/sms-classifier-ham-or-spam-accuracy-0-9923        Sms_Classifier | HAM or SPAM | Accuracy-0.9923    arpitmishra447       2025-07-04 21:08:41.987000           1  
+angelodram/notebook010e5a91d7                                    notebook010e5a91d7                                Angelo Dram          2025-12-21 09:25:12.947000           1  
+sinhvthin/obesity-prediction                                     obesity_prediction                                Sinh Vũ Thiên        2026-07-11 14:59:28.937000           2  
+marcocascella/progetto-sistemi-multimediali                      Progetto sistemi multimediali                     Marco Cascella       2026-06-15 10:57:07.870000           0  
+
+
+===== cli_kernels_09535 =====
+ref                                                            title                                             author              lastRunTime                 totalVotes  
+-------------------------------------------------------------  ------------------------------------------------  ------------------  --------------------------  ----------  
+areebbb/s6e11-three-ladders-two-seeds-lb-0-95354               S6E11 | Three Ladders, Two Seeds | LB 0.95354     Areeb Ali           2026-11-12 10:11:25.853000          44  
+myso1987/cmi3-pyroch-baseline-model-add-aug-folds              CMI3 Pyroch Baseline+model_add, Aug, folds        MYSO                2025-07-01 12:49:32.243000         418  
+yunsuxiaozi/pss6e5-realmlp-cv-0-95352                          PSS6E5 RealMLP CV:0.95352                         yunsuxiaozi         2026-05-15 04:31:26.137000          17  
+pepushi/gated-gru-hybrid-ensemble-v02                          Gated GRU + Hybrid Ensemble_v02                   uhey                2025-07-16 10:05:24.107000         118  
+ipythonx/keras-bengali-ai-grapheme-classification              [Keras]: Bengali.AI Grapheme Classification       Innat               2022-01-18 05:54:47.997000         178  
+nina2025/cmi-detect-behavior-with-sensor-data                  CMI - Detect Behavior with Sensor Data            F.A.Nina            2025-08-23 06:24:29.283000         502  
+yusuketogashi/lb0-853-fork-of-cmi-ensemble-of-3-solutions-v3   LB0.853 Fork of CMI | Ensemble of 3 solutions V3  Yusuke Togashi      2025-08-15 08:55:06.273000         399  
+kerta27/cmi-adaptive-ensemble-tfx40-bert-gated-gru             CMI | Adaptive Ensemble [TFx40, BERT, Gated GRU]  MT.L                2025-08-22 01:14:05.327000         343  
+nina2025/cmi-ensemble-of-3-solutions                           CMI | Ensemble of 3 solutions                     F.A.Nina            2025-08-07 15:21:31.650000         357  
+nina2025/h-blend                                               h-blend                                           F.A.Nina            2025-08-17 04:57:31.167000         239  
+goodpjw2008/s6e11-lm-ladder-two-gpt-2-seeds-lb-0-95354         S6E11 LM Ladder | Two GPT-2 Seeds | LB 0.95354    goodpjw2008         2026-11-12 09:17:28.553000          17  
+garyzhao13/cmi-baseline-model-add-aug-folds-lb-0-8             CMI Baseline+model_add, Aug, folds--LB-0.8+       Jasper_Zhao         2025-07-03 12:49:34.940000          68  
+utaazu/s6e2-catboost-starter-cv-submit-lb-0-95359              S6E2 | CatBoost Starter (CV+Submit) [LB:0.95359]  UtaAzu              2026-02-01 16:08:42.043000          16  
+nina2025/cmi-h-blend-enumerate-voting                          CMI | h-blend +enumerate +voting                  F.A.Nina            2025-08-27 05:48:52.017000         258  
+hzning/top12-solution-0-855-h-blend-optimal-search             🔥 Top12%Solution|🏆0.855,H-Blend Optimal Search    H-Z-Ning            2025-09-02 16:39:14.627000         288  
+hzning/0-81-easy-imu-ensemble-baseline                         🏆0.81 |  Easy IMU Ensemble Baseline               H-Z-Ning            2025-07-29 12:47:55.167000         111  
+kerta27/cmi-post-processing-with-random-choice                 CMI | Post-Processing with Random Choice          MT.L                2025-07-08 06:50:32.847000          87  
+nina2025/cmi-ensemble-of-3-solutions-horizontal-blend          CMI | Ensemble of 3 solutions, horizontal-blend   F.A.Nina            2025-08-12 05:11:52.723000         253  
+shivanshcoding/0-9535-my-1st-try-heart-disease-prediction      0.9535  | My 1st Try Heart Disease Prediction     Shivansh Rana       2026-02-04 19:40:18.753000          11  
+nina2025/just-changed-the-ensemble-weights-copy                Just Changed the Ensemble Weights (copy)          F.A.Nina            2025-08-09 21:23:27.983000         193  
+watashiniuta/heart-disease-gridsearchcv-xgboost-score-0-95358  Heart Disease|GridSearchCV+XGboost|score:0.95358  Jung ji hoon        2026-02-18 06:28:47.040000          18  
+anandhuh/tps-dec-21-simple-catboost-score-0-95352              TPS Dec '21 Simple CatBoost (Score:0.95352)       Anandhu H           2021-12-08 05:14:39.427000          47  
+wkdrbwnd1/notebookc94de9fdd9                                   notebookc94de9fdd9                                wkdrbwnd1           2025-08-25 12:51:40.317000         254  
+nina2025/cmi-enumeration-voting-1                              CMI | enumeration + voting.1️⃣                    F.A.Nina            2025-08-26 16:59:27.447000         200  
+taylorsamarel/cmi-ensemble-of-3-solutions-remix                CMI | Ensemble of 3 solutions REMIX               Taylor S. Amarel    2025-08-07 01:57:57.460000         136  
+kerta27/cmi-ensemble-tf-bert-gated-gru                         CMI | Ensemble [TF, BERT, Gated GRU]              MT.L                2025-08-12 08:01:32.340000         108  
+peimandaii/autistic-patients-eda-ml                            Autistic Patients EDA + ML                        Peyman Daei Rezaei  2024-04-19 23:18:14.357000         120  
+hzning/top-0-81                                                🏆top 0.81 | 🔥完整流程：数据处理+模型训练🔥                      H-Z-Ning            2025-08-05 12:26:18.617000          51  
+yusuketogashi/lb0-851-cmi-ensemble-of-3-solutions-v2           LB0.851 CMI | Ensemble of 3 solutions V2          Yusuke Togashi      2025-08-10 04:39:16.677000          93  
+dnik007/jigsaw-challenge-data-pre-processing-and-keras         Jigsaw Challenge: Data Pre processing and Keras   Dnik                2019-04-11 13:53:34.870000          39  
+
+
+===== cli_kernels_s6e11 =====
+ref                                                         title                                               author                            lastRunTime                 totalVotes  
+----------------------------------------------------------  --------------------------------------------------  --------------------------------  --------------------------  ----------  
+moranzavdi/s6e11-grandmaster-ladder-lb-0-95330              S6E11 | Grandmaster Ladder | LB 0.95330             Moran Zavdi                       2026-11-09 09:08:10.043000           5  
+evgendvorkin/s6e11-deep-eda-original-data-artifacts         S6E11 | Deep EDA: Original Data & Artifacts         Дворкин Евгений Владимирович      2026-11-11 15:21:15.387000          60  
+areebbb/s6e11-three-ladders-two-seeds-lb-0-95354            S6E11 | Three Ladders, Two Seeds | LB 0.95354       Areeb Ali                         2026-11-12 10:11:25.853000          44  
+goodpjw2008/s6e11-part-12-wide-stack-2nd-lm-lb-0-95298      S6E11 Part 12 | Wide Stack + 2nd LM | LB 0.95298    goodpjw2008                       2026-11-08 00:06:34.660000          53  
+georgymamarin/s6e11-fraud-glm-offset-trees-review-budgets   S6E11 Fraud | GLM-Offset Trees & Review Budgets     Georgy Mamarin                    2026-11-09 06:03:21.003000          46  
+saamhm/eda-blend-lb-0-95239-credit-card-fraud               EDA | blend | LB-0.95239 | Credit Card Fraud        samsul hoque mondal               2026-11-12 09:40:10.737000          53  
+malyshevdanil/predicting-credit-card-fraud-getting-started  Predicting Credit Card Fraud | Getting Started      Malyshev Danil                    2026-11-05 16:30:57.917000          56  
+areebbb/s6e11-pooled-stack-fusion-lb-0-95196                S6E11 | Pooled Stack + Fusion | LB 0.95196          Areeb Ali                         2026-11-03 03:35:29.597000          14  
+mehreenrahman/s6e11-beginner-eda-to-a-blended-baseline      s6e11 || Beginner EDA to a Blended Baseline         Mehreen Rahman                    2026-11-07 08:05:11.293000          22  
+nina2025/ps-s6e11-eos-1                                     PS-s6e11 | EoS (1)                                  F.A.Nina                          2026-11-01 00:03:49.260000          27  
+alexchilton/credit-card-fraud-lb-0-9530-shallow-tree-stack  Credit Card Fraud | LB 0.9530 | Shallow-Tree Stack  alex chilton                      2026-11-12 07:03:20.347000          52  
+nina2025/ps-s6e11-eos-7                                     PS-s6e11 | EoS (7)                                  F.A.Nina                          2026-11-06 18:12:55.297000          19  
+malyshevdanil/fraud-signal-lab-gpt-2-and-glm-fusion         Fraud Signal Lab | GPT-2 and GLM Fusion             Malyshev Danil                    2026-11-10 16:13:04.133000          31  
+philippsinger/tabpfn-3-5-starter-playground-series-s6e11    TabPFN-3.5 Starter: Playground Series S6E11         Psi                               2026-11-03 13:35:52.237000          20  
+gauravduttaiiitb/s6e11-flaml-roc-auc                        S6E11 : FLAML : roc_auc                             Gaurav Dutta                      2026-11-01 02:30:51.100000           3  
+amanatar/s6e11-sovereign-fusion-solution                    S6E11 Sovereign Fusion Solution                     Aman Atar                         2026-11-06 20:14:33.773000          12  
+wguesdon/s6e11-eda-and-reproducible-tree-ensemble           S6E11 EDA and Reproducible Tree Ensemble            Will                              2026-11-01 14:19:46.613000          20  
+masayakawamata/s6e11-oof-stack-cv-0-95152-lb-0-95137        S6E11 | OOF Stack | CV 0.95152 | LB 0.95137         Masaya Kawamata                   2026-11-06 10:26:40.960000          14  
+lucifer19/the-golden-signal-consensus-blend-v22             🐈‍⬛ The Golden Signal | Consensus Blend V22         Adaptive Agent Systems            2026-11-11 19:41:59.390000          23  
+arizalfirdaus123/s6e11-digit-keys-target-encoding-open-oof  S6E11 | Digit Keys, Target Encoding, Open OOF       Arizal Muluk                      2026-11-07 05:44:15.310000          11  
+goodpjw2008/s6e11-lm-ladder-two-gpt-2-seeds-lb-0-95354      S6E11 LM Ladder | Two GPT-2 Seeds | LB 0.95354      goodpjw2008                       2026-11-12 09:17:28.553000          17  
+gauravduttaiiitb/s6e11-lazypredict                          S6E11 : Lazypredict                                 Gaurav Dutta                      2026-11-01 01:15:54.807000           3  
+yekenot/ps-s6-e11-realmlp-pytorch                           PS|S6|E11: RealMLP · PyTorch                        Vladimir Demidov                  2026-11-10 01:43:34.827000          33  
+yashteotia/s6e11-beginner-expert-lb-0-95306                 S6E11 | Beginner → Expert | LB 0.95306              Yash Teotia                       2026-11-10 13:34:47.380000          15  
+aphoristicartist/s6e11-fraud-digit-keys-stack-lb-0-95096    S6E11 Fraud | Digit Keys + Stack | LB 0.95096       aphoristicartist                  2026-11-02 00:20:48.850000          16  
+sadamtorres/s6e11-digit-keys-tabpfn-publicstack-lb-0-95212  S6E11 | Digit keys+TabPFN+PublicStack-LB 0.95212    Sadam Torres                      2026-11-04 20:33:57.117000           8  
+adilshamim8/predicting-credit-card-fraud-101                Predicting Credit Card Fraud 101                    Adil Shamim                       2026-11-07 04:55:46.283000          33  
+mzishran/s6e11-intro-to-playground-0-95300                  S6E11 | INTRO TO PLAYGROUND | 0.95300               Mirza Ishran                      2026-11-09 08:33:56.543000           7  
+megayak/s6e11-per-value-digit-te-shallow-tree-stack         S6E11 | Per-Value + Digit TE | Shallow-Tree Stack   인공저능연구소( Artificial Idiocy Lab )  2026-11-08 00:30:36.917000          15  
+nina2025/ps-s6e11-eos-4                                     PS-s6e11 | EoS (4)                                  F.A.Nina                          2026-11-05 10:16:52.060000          10  
+
+
+===== cli_datasets_s6e11 =====
+ref                                                   title                                                    size  lastUpdated                 downloadCount  voteCount  usabilityRating  
+----------------------------------------------------  -------------------------------------------------  ----------  --------------------------  -------------  ---------  ---------------  
+moranzavdi/s6e11-strike9-lb-095330                    S6E11 Strike9 LB 0.95330 Frozen Submission            3619611  2026-11-09 09:08:05.577000            131          0  0.64705884       
+goodpjw2008/s6e11-fraud-series-artifacts              S6E11 Fraud Series Artifacts                        135687080  2026-11-07 23:52:13.130000           1324          6  0.4375           
+wguesdon/s6e11-tree-ensemble-predictions              S6E11 Tree Ensemble Predictions                     115874960  2026-11-01 13:52:49.857000            318          1  0.47058824       
+malyshevdanil/s6e11-pooled-stack-v9                   S6E11 Pooled Stack V9 Artifacts                     122363140  2026-11-03 02:38:22.743000            339          2  0.29411766       
+sometimessubodh/ps6e11-dataset                        PS6E11 38 Features and Leak-Safe OOF/Test Preds     131372929  2026-11-09 11:51:13.290000            333          4  1                
+nina2025/ps-s6e11-03                                  PS-s6e11-03                                          52826565  2026-11-06 17:27:39.573000            111          3  0.1764706        
+georgymamarin/s6e11-audited-glm-offset-blend          S6E11 Fraud: AUC vs Review Budgets                       2333  2026-11-05 19:38:35.113000             69          9  0.47058824       
+megayak/s6e11-target-first-lm                         S6E11 target-first LM predictions                     3550536  2026-11-08 00:26:15.647000            567          1  0.3125           
+sadamtorres/ps-s6e11-tabpfn-gbdt-oof-test-pairs       PS S6E11 · TabPFN-3.5 + GBDT OOF/test pairs         149150734  2026-11-04 19:51:32.317000            690          1  0.64705884       
+masayakawamata/s6e11-gpt2-target-first-oof            S6E11 GPT-2 Target-First OOF and Test Predictions     7731555  2026-11-03 13:21:09.043000            383          1  0.5              
+malyshevdanil/s6e11-digit-token-full-refit-artifacts  S6E11 Digit Token Full Refit Artifacts                8588007  2026-11-02 08:22:01.453000            176          3  0.3125           
+malyshevdanil/s6e11-rank-displacement-v10             S6E11 Rank Displacement V10                           6409464  2026-11-03 10:01:54.633000             91          1  0.29411766       
+goodpjw2008/s6e11-oof-bank                            S6E11 OOF Bank: 70 Members, Same 5 Folds            259968203  2026-11-03 16:00:24.543000           2256          0  0.64705884       
+alexchilton/s6e11-oof-predictions                     S6E11 OOF + test predictions (15 models)            229776751  2026-11-12 08:22:15.010000           1154          0  0.5              
+masayakawamata/s6e11-tabpack-cpu-starter-predictions  S6E11 TabPack CPU Starter Predictions                17591278  2026-11-06 00:26:32.077000            198          0  0.5294118        
+malyshevdanil/s6e11-cross-fitted-artifacts            S6E11 Cross-Fitted Tree Artifacts                    57864525  2026-11-01 10:55:06.177000            374          1  0.47058824       
+mathsonchain/s6e11-fraud-oof-test-17-single-models    S6E11 Fraud: OOF + Test, 17 Single Models           120568923  2026-11-07 21:47:57.393000            177          0  0.75             
+sk20220623/s6e11-oof-predictions                      S6E11 OOF Predictions Library                       173095936  2026-11-09 11:43:36.793000             98          1  0.1875           
+dariushafshar/s6e11-golem-oof-library                 S6E11 OOF library - 9 models, frozen folds           76962207  2026-11-10 15:38:57.440000            119          0  0.9411765        
+rajibbahar/ps-s6e11-experiment-results                PS S6E11 Fraud Experiment Results                        1814  2026-11-09 21:37:53.863000             27          0  0.8235294        
+
+
+===== cli_datasets_09536 =====
+No datasets found

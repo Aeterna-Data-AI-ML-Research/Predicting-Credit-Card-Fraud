@@ -1,0 +1,357 @@
+{
+  "slot1": {
+    "file": "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/submissions/sub_v16_1_LIVE_slot1_FamilyE_0p20e4.csv",
+    "1mrho": 2.0000000689135433e-05,
+    "submitted": true,
+    "publicScore": 0.95389,
+    "delta_bps_vs_LIVE": 1.0
+  },
+  "daoviet": {
+    "submission_exact_095388.csv": {
+      "1mrho_LIVE": 0.00017482788373723857,
+      "R2_ols": 0.9999469482260573,
+      "R2_ridge": 0.9999469274886196,
+      "top8_weights": [
+        [
+          "bold_095386",
+          1.0170386842451964
+        ],
+        [
+          "LIVE_095388",
+          0.031427168171113955
+        ],
+        [
+          "Q17_sub_unbundled_newton",
+          0.02543148246171397
+        ],
+        [
+          "Psuper_v3",
+          -0.019972888220963013
+        ],
+        [
+          "cand2",
+          -0.01772385296290664
+        ],
+        [
+          "alex_da228571",
+          -0.015638531950199586
+        ],
+        [
+          "anchor_095370",
+          -0.015467732935970794
+        ],
+        [
+          "alex_e20ba93c",
+          -0.014943258754567758
+        ]
+      ],
+      "resid_std": 0.013210969422921125,
+      "resid_corr_LIVE": -2.427409377157018e-13,
+      "resid_top_corrs": [
+        [
+          "bold_095386",
+          -2.427855163402541e-13
+        ],
+        [
+          "LIVE_095388",
+          -2.427409377157018e-13
+        ],
+        [
+          "anchor_095370",
+          -2.401255796801718e-13
+        ],
+        [
+          "cand2",
+          -2.3917237924202415e-13
+        ],
+        [
+          "Q17_sub_titan_triad_40_3",
+          -2.36803238748888e-13
+        ]
+      ],
+      "intercept": 6.273962170475571e-05
+    },
+    "submission_orthogonal_apex_095370plus.csv": {
+      "1mrho_LIVE": 0.000872467002305588,
+      "R2_ols": 0.9986458880013184,
+      "R2_ridge": 0.9986458727777608,
+      "top8_weights": [
+        [
+          "cand2",
+          0.6485627201962274
+        ],
+        [
+          "bold_095386",
+          0.4413600853671787
+        ],
+        [
+          "LIVE_095388",
+          -0.2967357138838664
+        ],
+        [
+          "Psuper_v3",
+          0.2256907340786887
+        ],
+        [
+          "Q17_sub_unbundled_newton",
+          -0.15489314873107088
+        ],
+        [
+          "MS",
+          -0.15214002637502877
+        ],
+        [
+          "anchor_095370",
+          0.1061357771834805
+        ],
+        [
+          "alex_da228571",
+          0.08984321100822983
+        ]
+      ],
+      "resid_std": 0.06674396846124252,
+      "resid_corr_LIVE": 4.759096276885749e-16,
+      "resid_top_corrs": [
+        [
+          "d1_v4",
+          -7.708811795019912e-15
+        ],
+        [
+          "L7_s2026_5f",
+          1.4991987107226978e-15
+        ],
+        [
+          "L7F",
+          1.3846522466297301e-15
+        ],
+        [
+          "LM",
+          1.3846522466297301e-15
+        ],
+        [
+          "cand2",
+          1.3505253886378182e-15
+        ]
+      ],
+      "intercept": -0.00043225515389453453
+    },
+    "_recon_blend": {
+      "method": "OLS on matched OOF/TEST pairs; bold+LIVE OOF proxied by z_ath (no public bold OOF)",
+      "R2_test_matched_streams": 0.9999272141833859,
+      "coef": {
+        "LIVE": 0.829120526829215,
+        "bold": 0.19806528161903872,
+        "L7F": -0.005599391971421809,
+        "L7_s2026": 0.008483219685853874,
+        "d1": -0.021516923969020833,
+        "Pv3": -0.029544265456452643,
+        "MS": -0.0006556186350275847
+      },
+      "oof_auc_mean5": 0.9494363722055263,
+      "oof_fold_aucs": [
+        0.9475608924576826,
+        0.9497305998850615,
+        0.9551641783257343,
+        0.949087413262866,
+        0.9456387770962872
+      ],
+      "zath_fold_aucs": [
+        0.9477109920528842,
+        0.9498325061249077,
+        0.9552562907287053,
+        0.9492304026598073,
+        0.9457353389835238
+      ],
+      "lift_mean_bps": -1.1673390443933673,
+      "sf25_mean": 0.9494426128450462,
+      "sf25_pos_vs_zath": 0
+    },
+    "_basis_names": [
+      "LIVE_095388",
+      "bold_095386",
+      "anchor_095370",
+      "cand2",
+      "L7F",
+      "G26_f0",
+      "L7_s2026_5f",
+      "d1_v4",
+      "MS",
+      "Psuper_v3",
+      "GB",
+      "GPD",
+      "LM",
+      "alex_da228571",
+      "alex_1f5bd220",
+      "alex_e20ba93c",
+      "alex_843b4481",
+      "alex_372ea048",
+      "alex_6c55b429",
+      "alex_2c3631c2",
+      "alex_5886512b",
+      "alex_a4f93aee",
+      "alex_f5880f09",
+      "alex_ded4cdec",
+      "alex_c106cf45",
+      "Q17_sub_unbundled_newton",
+      "Q17_sub_titan_sovereign_",
+      "Q17_sub_titan_triad_40_3"
+    ],
+    "_n_streams": 28,
+    "_note_exact": "R2_ols=0.999947 on Bt_full; dominated by bold_095386 (\u03b2\u22481.02). 1-\u03c1=1.75e-4 is a small bold-shelf step off LIVE."
+  },
+  "digit": {
+    "z_ath_auc": 0.949557764732478,
+    "by_m": {
+      "m10": {
+        "te_oof_auc": 0.8084619534228868,
+        "z_ath_auc": 0.949557764732478,
+        "spearman_te_zath": 0.6058752399356897,
+        "fold_te": [
+          0.8123405448251302,
+          0.8041238932544862,
+          0.8157951841118909,
+          0.8124261290842865,
+          0.7976924030015227
+        ],
+        "fold_z": [
+          0.9477109920528842,
+          0.9498325061249077,
+          0.9552562907287053,
+          0.9492304026598073,
+          0.9457353389835238
+        ],
+        "fold_blend": [
+          0.9476969945281427,
+          0.9489603606011193,
+          0.9547262832017439,
+          0.9488573948122966,
+          0.9449383313288076
+        ],
+        "lift_all5": false,
+        "lift_mean_bps": -5.172332155437553,
+        "top10_solo_keys": [
+          [
+            "int_merchant_risk_score",
+            0.7552909834108246
+          ],
+          [
+            "lead2_merchant_risk_score",
+            0.7522034645340294
+          ],
+          [
+            "v_merchant_risk_score",
+            0.7493721334551745
+          ],
+          [
+            "int_velocity_score",
+            0.7129796773041428
+          ],
+          [
+            "v_velocity_score",
+            0.7062855740648146
+          ],
+          [
+            "lead2_velocity_score",
+            0.6842996896644226
+          ],
+          [
+            "v_customer_age",
+            0.645187925508105
+          ],
+          [
+            "int_customer_age",
+            0.645187925508105
+          ],
+          [
+            "lead2_customer_age",
+            0.645187925508105
+          ],
+          [
+            "v_hours_since_last_txn",
+            0.584375668996366
+          ]
+        ],
+        "resid_auc": 0.4678885193005362,
+        "n_keys": 48
+      },
+      "m30": {
+        "te_oof_auc": 0.8155376418443392,
+        "z_ath_auc": 0.949557764732478,
+        "spearman_te_zath": 0.6311338660486673,
+        "fold_te": [
+          0.8197053441775449,
+          0.8113239651099284,
+          0.8223616814118805,
+          0.8197911876298669,
+          0.8045667023864138
+        ],
+        "fold_z": [
+          0.9477109920528842,
+          0.9498325061249077,
+          0.9552562907287053,
+          0.9492304026598073,
+          0.9457353389835238
+        ],
+        "fold_blend": [
+          0.9476917318567266,
+          0.9489445854393759,
+          0.9546736475429035,
+          0.9488772683467679,
+          0.9449183832219742
+        ],
+        "lift_all5": false,
+        "lift_mean_bps": -5.319828284159334,
+        "top10_solo_keys": [
+          [
+            "int_merchant_risk_score",
+            0.7552963234895674
+          ],
+          [
+            "lead2_merchant_risk_score",
+            0.7522453307414281
+          ],
+          [
+            "v_merchant_risk_score",
+            0.7492303545012838
+          ],
+          [
+            "int_velocity_score",
+            0.7130104005936363
+          ],
+          [
+            "v_velocity_score",
+            0.7064517058013386
+          ],
+          [
+            "lead2_velocity_score",
+            0.6842938154783675
+          ],
+          [
+            "v_customer_age",
+            0.6451833661433557
+          ],
+          [
+            "int_customer_age",
+            0.6451833661433557
+          ],
+          [
+            "lead2_customer_age",
+            0.6451833661433557
+          ],
+          [
+            "v_hours_since_last_txn",
+            0.5854219491751066
+          ]
+        ],
+        "resid_auc": 0.4647166631762272,
+        "n_keys": 48
+      }
+    },
+    "kernels": {
+      "digits": "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/external/nov14_recon/kernels/digits/s6e11-fraud-part-2-digits-leak-the-label.ipynb",
+      "daoviet": "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/external/nov14_recon/kernels/daoviet/s6e11-on-the-journey-to-your-first-top-100.ipynb",
+      "asterios": "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/external/nov14_recon/kernels/asterios/s6e11-how-much-of-the-public-top-is-real.ipynb"
+    },
+    "n_cont": 7
+  }
+}

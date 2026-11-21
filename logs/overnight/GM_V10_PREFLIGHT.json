@@ -1,0 +1,82 @@
+{
+  "s354_oof": 0.9524823284253388,
+  "s354_folds": [
+    0.9514991394071245,
+    0.9525875540741288,
+    0.9573638983239152,
+    0.9525387806422031,
+    0.9484257793026225
+  ],
+  "slots": {
+    "slot1": {
+      "path": "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/submissions/sub_v10_slot1_s354pub_plus_clean5f_stageB_0p12e4_NOSUBMIT.csv",
+      "n": 299984,
+      "finite": true,
+      "nan": 0,
+      "inf": 0,
+      "mean": 0.5,
+      "mean_is_0167": false,
+      "oof_auc": 0.9187489876160276,
+      "fold_d_e5": [
+        -2913.232,
+        -4534.457,
+        -3342.896,
+        -2978.369,
+        -3228.251
+      ],
+      "pos5": 0,
+      "d0_e5": -2913.232,
+      "dist_s354": 1.2000006484824688e-05,
+      "dist_s7": 0.000402092614851024,
+      "spearman_s354": 0.9999879999935152,
+      "spearman_s7": 0.999597907385149
+    },
+    "slot2": {
+      "path": "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/submissions/sub_v10_slot2_s354pub_plus_clean5f_stageB_0p28e4_NOSUBMIT.csv",
+      "n": 299984,
+      "finite": true,
+      "nan": 0,
+      "inf": 0,
+      "mean": 0.5,
+      "mean_is_0167": false,
+      "oof_auc": 0.9133336676088549,
+      "fold_d_e5": [
+        -3432.372,
+        -5347.209,
+        -3804.388,
+        -3427.246,
+        -3716.949
+      ],
+      "pos5": 0,
+      "d0_e5": -3432.372,
+      "dist_s354": 2.800000928260271e-05,
+      "dist_s7": 0.0004275120470543792,
+      "spearman_s354": 0.9999719999907174,
+      "spearman_s7": 0.9995724879529456
+    },
+    "slot3": {
+      "path": "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/submissions/sub_v10_slot3_midpoint_s354pub_and_S7ours5fL7_NOSUBMIT.csv",
+      "n": 299984,
+      "finite": true,
+      "nan": 0,
+      "inf": 0,
+      "mean": 0.5,
+      "mean_is_0167": false,
+      "oof_auc": 0.9524895804516447,
+      "fold_d_e5": [
+        -6.476,
+        3.82,
+        -1.538,
+        4.463,
+        -13.125
+      ],
+      "pos5": 2,
+      "d0_e5": -6.476,
+      "dist_s354": 9.18753682376261e-05,
+      "dist_s7": 0.00031264641657269276,
+      "spearman_s354": 0.9999081246317624,
+      "spearman_s7": 0.9996873535834273
+    }
+  },
+  "best": "slot3"
+}

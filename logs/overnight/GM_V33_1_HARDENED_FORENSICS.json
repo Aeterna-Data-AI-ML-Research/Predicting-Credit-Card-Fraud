@@ -1,0 +1,642 @@
+{
+  "1": {
+    "compact_audit": {
+      "max_len": 88,
+      "max_obs": 80,
+      "truncated_rows": 0,
+      "V_tab": 90,
+      "prefix_len": 2,
+      "pos_rate": 0.09248295776690708,
+      "stream": 606728,
+      "global_bs": 256,
+      "steps_approx": 2370,
+      "markers": [
+        " A",
+        " B",
+        " C",
+        " D",
+        " E",
+        " F",
+        " G",
+        " H",
+        " I",
+        " J",
+        " K",
+        " L",
+        " M",
+        " N",
+        " O",
+        " P",
+        " Q",
+        " R",
+        " S"
+      ],
+      "y0": " Y0",
+      "y1": " Y1",
+      "grad_ckpt": true,
+      "attention_mask": null
+    },
+    "score_meta": {
+      "epoch": 1,
+      "solo_auc": 0.9469229093396674,
+      "lift_e4": 0.0,
+      "wide_base": 0.9517736034193499,
+      "max_len": 88
+    },
+    "prior_gate": {
+      "solo_auc": 0.9469229093396674,
+      "r2_bank": 0.9499644991911772,
+      "opt_w": 0.0,
+      "lift_e4": 0.0,
+      "pos_subfolds": "0/5",
+      "pass_": false,
+      "promising_ep2": false,
+      "far_off": false,
+      "wide_base": 0.9517736034193499,
+      "bank_cols": 70
+    },
+    "diagnosis": {
+      "float_format": "exact decimal strings via f'{v}' / format; NOT binned; digit+dot chars tokenized by Qwen BPE",
+      "serialization": "compact single-token markers ' A'..' S' + body (digits/categories); prefix ' Y0'/' Y1' (2 toks)",
+      "max_len_88": "LEN_SURVEY 20k rows max_obs=80 \u2192 ceil((80+4)/8)*8=88; assert 0 truncated",
+      "V_tab_89_90": "active vocab = unique tokens in compact serialization (~digits, markers, cat words, pad) sliced from full 151936",
+      "sub_head_init": "nn.Linear(H,V) copied from lm_head.weight[used_token_ids].float(); backbone=model.model, lm_head deleted",
+      "scoring": "FULL generative NLL LLR: sum logp over post-prefix tokens for y:1 seq minus y:0 seq; mean over K=4 antithetic block orders (NOT single target-token logit)",
+      "training_loss": "causal F.cross_entropy on true-y prefix sequences (pos+neg stream), NOT LLR loss"
+    },
+    "fold0_5sub_oos": {
+      "solo_qwen": 0.9469229093396673,
+      "solo_tab": 0.9425732632325606,
+      "wide": 0.95177360341935,
+      "oos_blend_auc": 0.9515591829753917,
+      "oos_delta_vs_wide_e4": -2.14420443958363,
+      "pos_subfolds": "2/5",
+      "sub_lifts_e4": [
+        -1.1517707932662269,
+        1.1409050310662305,
+        -1.881468715391188,
+        -3.3087093490169472,
+        0.9916794593323175
+      ],
+      "corr_qwen_wide": 0.9684431989818456,
+      "corr_tab_wide": 0.9448282793342035,
+      "verdict": "CLOSED \u2014 OOS blend does not beat wide; canary non-bank signal null under leakage-free 5-subfold"
+    },
+    "prop_inventory": {
+      "P4_L4.2": {
+        "exists": true,
+        "r2_vs_Lwide": 0.00024424754504447164
+      },
+      "P4_L4.3": {
+        "exists": true,
+        "r2_vs_Lwide": 0.003531963617407911
+      },
+      "P4_L4.5": {
+        "exists": true,
+        "r2_vs_Lwide": 0.0025253371263439395
+      },
+      "B_xgb_llr": {
+        "exists": true,
+        "r2_vs_Lwide": 0.9903329558709598
+      },
+      "gpt2_3ep": {
+        "exists": true,
+        "r2_vs_Lwide": 0.9374178275088271
+      },
+      "v10_ridge_orth": {
+        "exists": true,
+        "r2_vs_Lwide": 0.0009197086890787693
+      },
+      "delta_cat": {
+        "exists": true,
+        "r2_vs_Lwide": 0.9982031617477742
+      }
+    },
+    "z_prop_anchor": {
+      "cols": [
+        "wide",
+        "P4_L4.2",
+        "P4_L4.3",
+        "P4_L4.5",
+        "B_xgb_llr",
+        "gpt2_3ep",
+        "v10_ridge_orth",
+        "delta_cat"
+      ],
+      "auc": 0.9527295679059574,
+      "wide_auc": 0.9525651344492123,
+      "delta_e4": 1.6443345674510557
+    },
+    "generative_scan": [
+      {
+        "vs_wide": {
+          "name": "l7_mean_llr",
+          "outer_pos": "1/5",
+          "sub_pos": "3/25",
+          "mean_lift_e4": -0.6298598674767675,
+          "t_stat": -0.9747587958095523,
+          "wilcoxon_p": 0.75,
+          "disp": 0.9999999999931442,
+          "pass": false,
+          "lifts_e4": [
+            -3.2140530050484006,
+            0.0,
+            0.06475366766456325,
+            0.0,
+            0.0
+          ]
+        },
+        "vs_anchor": null
+      },
+      {
+        "vs_wide": {
+          "name": "l7_std_llr",
+          "outer_pos": "0/5",
+          "sub_pos": "4/25",
+          "mean_lift_e4": -0.22120502256073316,
+          "t_stat": -1.1625187026291235,
+          "wilcoxon_p": 1.0,
+          "disp": 0.999999999993179,
+          "pass": false,
+          "lifts_e4": [
+            -0.13043218702102344,
+            0.0,
+            0.0,
+            -0.9755929257826423,
+            0.0
+          ]
+        },
+        "vs_anchor": null
+      },
+      {
+        "vs_wide": {
+          "name": "l7_joint_mean",
+          "outer_pos": "0/5",
+          "sub_pos": "1/25",
+          "mean_lift_e4": -0.40897764494585154,
+          "t_stat": -0.9999999755487865,
+          "wilcoxon_p": 1.0,
+          "disp": 0.9999999998583414,
+          "pass": false,
+          "lifts_e4": [
+            -2.0448882247292577,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "vs_anchor": null
+      },
+      {
+        "vs_wide": {
+          "name": "l7_anchor_x_std",
+          "outer_pos": "0/5",
+          "sub_pos": "1/25",
+          "mean_lift_e4": -0.21566948524931462,
+          "t_stat": -0.9999999536327565,
+          "wilcoxon_p": 1.0,
+          "disp": 0.9999999999994487,
+          "pass": false,
+          "lifts_e4": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            -1.078347426246573
+          ]
+        },
+        "vs_anchor": null
+      },
+      {
+        "vs_wide": {
+          "name": "gpt2med_mean_llr",
+          "outer_pos": "0/5",
+          "sub_pos": "2/25",
+          "mean_lift_e4": -0.03153168039626841,
+          "t_stat": -0.9999996828587407,
+          "wilcoxon_p": 1.0,
+          "disp": 0.9999999999915706,
+          "pass": false,
+          "lifts_e4": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            -0.15765840198134207
+          ]
+        }
+      },
+      {
+        "vs_wide": {
+          "name": "gpt2med_std_llr",
+          "outer_pos": "0/5",
+          "sub_pos": "0/25",
+          "mean_lift_e4": 0.0,
+          "t_stat": 0.0,
+          "wilcoxon_p": 1.0,
+          "disp": 0.9999999999915452,
+          "pass": false,
+          "lifts_e4": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      }
+    ]
+  },
+  "2": {
+    "kaggle_ds_meta": {
+      "ok": false,
+      "error": "[Errno 2] No such file or directory: 'kaggle'"
+    },
+    "kaggle_kernels_udit": {
+      "ok": false,
+      "error": "[Errno 2] No such file or directory: 'kaggle'"
+    },
+    "kaggle_datasets_udit": {
+      "ok": false,
+      "error": "[Errno 2] No such file or directory: 'kaggle'"
+    },
+    "gh_code": {
+      "ok": false,
+      "error": "HTTP Error 401: Unauthorized"
+    },
+    "gh_repos": {
+      "ok": true,
+      "body": "{\"total_count\":20,\"incomplete_results\":false,\"items\":[{\"id\":1318526350,\"node_id\":\"R_kgDOTpcdjg\",\"name\":\"Credit_Card_Fraud_Detection_2026\",\"full_name\":\"VinayMR0/Credit_Card_Fraud_Detection_2026\",\"private\":false,\"owner\":{\"login\":\"VinayMR0\",\"id\":137773923,\"node_id\":\"U_kgDOCDZDYw\",\"avatar_url\":\"https://avatars.githubusercontent.com/u/137773923?v=4\",\"gravatar_id\":\"\",\"url\":\"https://api.github.com/users/VinayMR0\",\"html_url\":\"https://github.com/VinayMR0\",\"followers_url\":\"https://api.github.com/users/VinayMR0/followers\",\"following_url\":\"https://api.github.com/users/VinayMR0/following{/other_user}\",\"gists_url\":\"https://api.github.com/users/VinayMR0/gists{/gist_id}\",\"starred_url\":\"https://api.github.com/users/VinayMR0/starred{/owner}{/repo}\",\"subscriptions_url\":\"https://api.github.com/users/VinayMR0/subscriptions\",\"organizations_url\":\"https://api.github.com/users/VinayMR0/orgs\",\"repos_url\":\"https://api.github.com/users/VinayMR0/repos\",\"events_url\":\"https://api.github.com/users/VinayMR0/events{/privacy}\",\"received_events_url\":\"https://api.github.com/users/VinayMR0/received_events\",\"type\":\"User\",\"user_view_type\":\"public\",\"site_admin\":false},\"html_url\":\"https://github.com/VinayMR0/Credit_Card_Fraud_Detection_2026\",\"description\":\"\ud83d\udcb3 Credit Card Fraud Detection using Machine Learning\",\"fork\":false,\"url\":\"https://api.github.com/repos/VinayMR0/Credit_Card_Fraud_Detection_2026\",\"forks_url\":\"https://api.github.com/repos/VinayMR0/Credit_Card_Fraud_Detection_2026/forks\",\"keys_url\":\"https://api.github.com/repos/VinayMR0/Credit_Card_Fraud_Detection_2026/keys{/key_id}\",\"collaborators_url\":\"https://api.github.com/repos/VinayMR0/Credit_Card_Fraud_Detection_2026/collaborators{/collaborator}\",\"teams_url\":\"https://api.github.com/repos/VinayMR0/Credit_Card_Fraud_Detection_2026/teams\",\"hooks_url\":\"https://api.github.com/repos/VinayMR0/Credit_Card_Fraud_Detection_2026/hooks\",\"issue_events_url\":\"https://api.github.com/repos/VinayMR0/Credit_Card_Fraud_Detection_2026/issues/events{/number}\",\"events_url\":\"https://api.github.com/repos/VinayMR0/Credit_Card_Fraud_Detection_2026/events\",\"assignees_url\":\"https://api.github.com/repos/VinayMR0/Credit_Card_Fraud_Detection_2026/assignees{/user}\",\"branches_url\":\"https://api.github.com/repos/VinayMR0/Credit_Card_Fraud_Detection_2026/branches{/branch}\",\"tags_url\":\"https://api.github.com/repos/VinayMR0/Credit_Card_Fraud_Detection_2026/tags\",\"blobs_url\":\"https://api.github.com/repos/VinayMR0/Credit_Card_Fraud_Detection_2026/git/blobs{/sha}\",\"git_tags_url\":\"https://api.github.com/repos/VinayMR0/Credit_Card_Fraud_Detection_2026/git/tags{/sha}\",\"git_refs_url\":\"https://api.github.com/repos/VinayMR0/Credit_Card_Fraud_Detection_2026/git/refs{/sha}\",\"trees_url\":\"https://api.github.com/repos/VinayMR0/Credit_Card_Fraud_Detection_2026/git/trees{/sha}\",\"statuses_url\":\"https://api.github.com/repos/VinayMR0/Credit_Card_Fraud_Detection_2026/statuses/{sha}\",\"languages_url\":\"https://api.github.com/repos/VinayMR0/Credit_Card_Fraud_Detection_2026/languages\",\"stargazers_url\":\"https://api.github.com/repos/VinayMR0/Credit_Card_Fraud_Detection_2026/stargazers\",\"contributors_url\":\"https://api.github.com/repos/VinayMR0/Credit_Card_Fraud_Detection_2026/contributors\",\"subscribers_url\":\"https://api.github.com/repos/VinayMR0/Credit_Card_Fraud_Detection_2026/subscribers\",\"subscription_url\":\"https://api.github.com/repos/VinayMR0/Credit_Card_Fraud_Detection_2026/subscription\",\"commits_url\":\"https://api.github.com/repos/VinayMR0/Credit_Card_Fraud_Detection_2026/commits{/sha}\",\"git_commits_url\":\"https://api.github.com/repos/VinayMR0/Credit_Card_Fraud_Detection_2026/git/commits{/sha}\",\"comments_url\":\"https://api.github.com/repos/VinayMR0/Credit_Card_Fraud_Detection_2026/comments{/number}\",\"issue_comment_url\":\"https://api.github.com/repos/VinayMR0/Credit_Card_Fraud_Detection_2026/issues/comments{/number}\",\"contents_url\":\"https://api.github.com/repos/VinayMR0/Credit_Card_Fraud_Detection_2026/contents/{+path}\",\"compare_url\":\"https://api.github.com/repos/VinayMR0/Credit_Card_Fraud_Detection_2026/compare/{base}...{head}\",\"merges_url\":\"https://api.github.com/repos/VinayMR0/Credit_Card_Fraud_Detection_2026/merges\",\"archive_url\":\"https://api.github.com/repos/VinayMR0/Credit_Card_Fraud_Detection_2026/{archive_format}{/ref}\",\"downloads_url\":\"https://api.github.com/repos/VinayMR0/Credit_Card_Fraud_Detection_2026/downloads\",\"issues_url\":\"https://api.github.com/repos/VinayMR0/Credit_Card_Fraud_Detection_2026/issues{/number}\",\"pulls_url\":\"https://api.github.com/repos/VinayMR0/Credit_Card_Fraud_Detection_2026/pulls{/number}\",\"milestones_url\":\"https://api.github.com/repos/VinayMR0/Credit_Card_Fraud_Detection_2026/milestones{/number}\",\"notifications_url\":\"https://api.github.com/repos/VinayMR0/Credit_Card_Fraud_Detection_2026/notifications{?since,all,participating}\",\"labels_url\":\"https://api.github.com/repos/VinayMR0/Credit_Card_Fraud_Detection_2026/labels{/name}\",\"releases_url\":\"https://api.github.com/repos/VinayMR0/Credit_Card_Fraud_Detection_2026/releases{/id}\",\"deployments_url\":\"https://api.github.com/repos/VinayMR0/Credit_Card_Fraud_Detection_2026/deployments\",\"created_at\":\"2026-07-31T16:06:47Z\",\"updated_at\":\"2026-07-31T16:12:30Z\",\"pushed_at\":\"2026-07-31T16:10:38Z\",\"git_url\":\"git://github.com/VinayMR0/Credit_Card_Fraud_Detection_2026.git\",\"ssh_url\":\"git@github.com:VinayMR0/Credit_Card_Fraud_Detection_2026.git\",\"clone_url\":\"https://github.com/VinayMR0/Credit_Card_Fraud_Detection_2026.git\",\"svn_url\":\"https://github.com/VinayMR0/Credit_Card_Fraud_Detection_2026\",\"homepage\":null,\"size\":1128,\"stargazers_count\":0,\"watchers_count\":0,\"language\":\"Jupyter Notebook\",\"has_issues\":true,\"has_projects\":true,\"has_downloads\":false,\"has_wiki\":true,\"has_pages\":false,\"has_discussions\":false,\"forks_count\":0,\"mirror_url\":null,\"archived\":false,\"disabled\":false,\"open_issues_count\":0,\"license\":{\"key\":\"apache-2.0\",\"name\":\"Apache License 2.0\",\"spdx_id\":\"Apache-2.0\",\"url\":\"https://api.github.com/licenses/apache-2.0\",\"node_id\":\"MDc6TGljZW5zZTI=\"},\"allow_forking\":true,\"is_template\":false,\"web_commit_signoff_required\":false,\"has_pull_requests\":true,\"pull_request_creation_policy\":\"all\",\"topics\":[],\"visibility\":\"public\",\"forks\":0,\"open_issues\":0,\"watchers\":0,\"default_branch\":\"main\",\"score\":1.0},{\"id\":1421322331,\"node_id\":\"R_kgDOVLeoWw\",\"name\":\"Credit-Card-Fraud-Detection-2026\",\"full_name\":\"hayahramy/Credit-Card-Fraud-Detection-2026\",\"private\":false,\"owner\":{\"login\":\"hayahramy\",\"id\":323210773,\"node_id\":\"U_kgDOE0POFQ\",\"avatar_url\":\"https://avatars.githubusercontent.com/u/323210773?v=4\",\"gravatar_id\":\"\",\"url\":\"https://api.github.com/users/hayahramy\",\"html_url\":\"https://github.com/hayahramy\",\"followers_url\":\"https://api.github.com/users/hayahramy/followers\",\"following_url\":\"https://api.github.com/users/hayahramy/following{/other_user}\",\"gists_url\":\"https://api.github.com/users/hayahramy/gists{/gist_id}\",\"starred_url\":\"https://api.github.com/users/hayahramy/starred{/owner}{/repo}\",\"subscriptions_url\":\"https://api.github.com/users/hayahramy/subscriptions\",\"organizations_url\":\"https://api.github.com/users/hayahramy/orgs\",\"repos_url\":\"https://api.github.com/users/hayahramy/repos\",\"events_url\":\"https://api.github.com/users/hayahramy/events{/privacy}\",\"received_events_url\":\"https://api.github.com/users/hayahramy/received_events\",\"type\":\"User\",\"user_view_type\":\"public\",\"site_admin\":false},\"html_url\":\"https://github.com/hayahramy/Credit-Card-Fraud-Detection-2026\",\"description\":\"Credit Card Fraud Detection & Risk Analytics | Data Analysis, Statistical Insights, Data Modeling, Fraud KPIs, and Interactive Dashboards\",\"fork\":false,\"url\":\"https://api.github.com/repos/hayahramy/Credit-Card-Fraud-Detection-2026\",\"forks_url\":\"https://api.github.com/repos/hayahramy/Credit-Card-Fraud-Detection-2026/forks\",\"keys_url\":\"https://api.github.com/repos/hayahramy/Credit-Card-Fraud-Detection-2026/keys{/key_id}\",\"collaborators_url\":\"https://api.github.com/repos/hayahramy/Credit-Card-Fraud-Detection-2026/collaborators{/collaborator}\",\"teams_url\":\"https://api.g"
+    },
+    "gh_user": {
+      "ok": true,
+      "body": "[{\"id\":1210627209,\"node_id\":\"R_kgDOSCi0iQ\",\"name\":\"mewtwo\",\"full_name\":\"uditjain13/mewtwo\",\"private\":false,\"owner\":{\"login\":\"uditjain13\",\"id\":246234583,\"node_id\":\"U_kgDODq091w\",\"avatar_url\":\"https://avatars.githubusercontent.com/u/246234583?v=4\",\"gravatar_id\":\"\",\"url\":\"https://api.github.com/users/uditjain13\",\"html_url\":\"https://github.com/uditjain13\",\"followers_url\":\"https://api.github.com/users/uditjain13/followers\",\"following_url\":\"https://api.github.com/users/uditjain13/following{/other_user}\",\"gists_url\":\"https://api.github.com/users/uditjain13/gists{/gist_id}\",\"starred_url\":\"https://api.github.com/users/uditjain13/starred{/owner}{/repo}\",\"subscriptions_url\":\"https://api.github.com/users/uditjain13/subscriptions\",\"organizations_url\":\"https://api.github.com/users/uditjain13/orgs\",\"repos_url\":\"https://api.github.com/users/uditjain13/repos\",\"events_url\":\"https://api.github.com/users/uditjain13/events{/privacy}\",\"received_events_url\":\"https://api.github.com/users/uditjain13/received_events\",\"type\":\"User\",\"user_view_type\":\"public\",\"site_admin\":false},\"html_url\":\"https://github.com/uditjain13/mewtwo\",\"description\":null,\"fork\":true,\"url\":\"https://api.github.com/repos/uditjain13/mewtwo\",\"forks_url\":\"https://api.github.com/repos/uditjain13/mewtwo/forks\",\"keys_url\":\"https://api.github.com/repos/uditjain13/mewtwo/keys{/key_id}\",\"collaborators_url\":\"https://api.github.com/repos/uditjain13/mewtwo/collaborators{/collaborator}\",\"teams_url\":\"https://api.github.com/repos/uditjain13/mewtwo/teams\",\"hooks_url\":\"https://api.github.com/repos/uditjain13/mewtwo/hooks\",\"issue_events_url\":\"https://api.github.com/repos/uditjain13/mewtwo/issues/events{/number}\",\"events_url\":\"https://api.github.com/repos/uditjain13/mewtwo/events\",\"assignees_url\":\"https://api.github.com/repos/uditjain13/mewtwo/assignees{/user}\",\"branches_url\":\"https://api.github.com/repos/uditjain13/mewtwo/branches{/branch}\",\"tags_url\":\"https://api.github.com/repos/uditjain13/mewtwo/tags\",\"blobs_url\":\"https://api.github.com/repos/uditjain13/mewtwo/git/blobs{/sha}\",\"git_tags_url\":\"https://api.github.com/repos/uditjain13/mewtwo/git/tags{/sha}\",\"git_refs_url\":\"https://api.github.com/repos/uditjain13/mewtwo/git/refs{/sha}\",\"trees_url\":\"https://api.github.com/repos/uditjain13/mewtwo/git/trees{/sha}\",\"statuses_url\":\"https://api.github.com/repos/uditjain13/mewtwo/statuses/{sha}\",\"languages_url\":\"https://api.github.com/repos/uditjain13/mewtwo/languages\",\"stargazers_url\":\"https://api.github.com/repos/uditjain13/mewtwo/stargazers\",\"contributors_url\":\"https://api.github.com/repos/uditjain13/mewtwo/contributors\",\"subscribers_url\":\"https://api.github.com/repos/uditjain13/mewtwo/subscribers\",\"subscription_url\":\"https://api.github.com/repos/uditjain13/mewtwo/subscription\",\"commits_url\":\"https://api.github.com/repos/uditjain13/mewtwo/commits{/sha}\",\"git_commits_url\":\"https://api.github.com/repos/uditjain13/mewtwo/git/commits{/sha}\",\"comments_url\":\"https://api.github.com/repos/uditjain13/mewtwo/comments{/number}\",\"issue_comment_url\":\"https://api.github.com/repos/uditjain13/mewtwo/issues/comments{/number}\",\"contents_url\":\"https://api.github.com/repos/uditjain13/mewtwo/contents/{+path}\",\"compare_url\":\"https://api.github.com/repos/uditjain13/mewtwo/compare/{base}...{head}\",\"merges_url\":\"https://api.github.com/repos/uditjain13/mewtwo/merges\",\"archive_url\":\"https://api.github.com/repos/uditjain13/mewtwo/{archive_format}{/ref}\",\"downloads_url\":\"https://api.github.com/repos/uditjain13/mewtwo/downloads\",\"issues_url\":\"https://api.github.com/repos/uditjain13/mewtwo/issues{/number}\",\"pulls_url\":\"https://api.github.com/repos/uditjain13/mewtwo/pulls{/number}\",\"milestones_url\":\"https://api.github.com/repos/uditjain13/mewtwo/milestones{/number}\",\"notifications_url\":\"https://api.github.com/repos/uditjain13/mewtwo/notifications{?since,all,participating}\",\"labels_url\":\"https://api.github.com/repos/uditjain13/mewtwo/labels{/name}\",\"releases_url\":\"https://api.github.com/repos/uditjain13/mewtwo/releases{/id}\",\"deployments_url\":\"https://api.github.com/repos/uditjain13/mewtwo/deployments\",\"created_at\":\"2026-04-14T15:46:08Z\",\"updated_at\":\"2026-04-14T15:46:08Z\",\"pushed_at\":\"2026-04-12T17:41:45Z\",\"git_url\":\"git://github.com/uditjain13/mewtwo.git\",\"ssh_url\":\"git@github.com:uditjain13/mewtwo.git\",\"clone_url\":\"https://github.com/uditjain13/mewtwo.git\",\"svn_url\":\"https://github.com/uditjain13/mewtwo\",\"homepage\":null,\"size\":42509,\"stargazers_count\":0,\"watchers_count\":0,\"language\":null,\"has_issues\":false,\"has_projects\":true,\"has_downloads\":false,\"has_wiki\":true,\"has_pages\":false,\"has_discussions\":false,\"forks_count\":0,\"mirror_url\":null,\"archived\":false,\"disabled\":false,\"open_issues_count\":0,\"license\":null,\"allow_forking\":true,\"is_template\":false,\"web_commit_signoff_required\":false,\"has_pull_requests\":true,\"pull_request_creation_policy\":\"all\",\"topics\":[],\"visibility\":\"public\",\"forks\":0,\"open_issues\":0,\"watchers\":0,\"default_branch\":\"main\"}]"
+    },
+    "kernels_dharunmk": {
+      "ok": false,
+      "error": "[Errno 2] No such file or directory: 'kaggle'"
+    },
+    "datasets_dharunmk": {
+      "ok": false,
+      "error": "[Errno 2] No such file or directory: 'kaggle'"
+    },
+    "kernels_smartmanoj": {
+      "ok": false,
+      "error": "[Errno 2] No such file or directory: 'kaggle'"
+    },
+    "datasets_smartmanoj": {
+      "ok": false,
+      "error": "[Errno 2] No such file or directory: 'kaggle'"
+    },
+    "kernels_ahmetbugrahanaltunok": {
+      "ok": false,
+      "error": "[Errno 2] No such file or directory: 'kaggle'"
+    },
+    "datasets_ahmetbugrahanaltunok": {
+      "ok": false,
+      "error": "[Errno 2] No such file or directory: 'kaggle'"
+    },
+    "kernels_srikalyan": {
+      "ok": false,
+      "error": "[Errno 2] No such file or directory: 'kaggle'"
+    },
+    "datasets_srikalyan": {
+      "ok": false,
+      "error": "[Errno 2] No such file or directory: 'kaggle'"
+    },
+    "kernels_lebxgue": {
+      "ok": false,
+      "error": "[Errno 2] No such file or directory: 'kaggle'"
+    },
+    "datasets_lebxgue": {
+      "ok": false,
+      "error": "[Errno 2] No such file or directory: 'kaggle'"
+    },
+    "kernels_starkhushi": {
+      "ok": false,
+      "error": "[Errno 2] No such file or directory: 'kaggle'"
+    },
+    "datasets_starkhushi": {
+      "ok": false,
+      "error": "[Errno 2] No such file or directory: 'kaggle'"
+    },
+    "discussions_proxy": {
+      "ok": false,
+      "error": "[Errno 2] No such file or directory: 'kaggle'"
+    },
+    "summary": [
+      {
+        "key": "kaggle_ds_meta",
+        "ok": false,
+        "snippet": "[Errno 2] No such file or directory: 'kaggle'"
+      },
+      {
+        "key": "kaggle_kernels_udit",
+        "ok": false,
+        "snippet": "[Errno 2] No such file or directory: 'kaggle'"
+      },
+      {
+        "key": "kaggle_datasets_udit",
+        "ok": false,
+        "snippet": "[Errno 2] No such file or directory: 'kaggle'"
+      },
+      {
+        "key": "gh_code",
+        "ok": false,
+        "snippet": "HTTP Error 401: Unauthorized"
+      },
+      {
+        "key": "gh_repos",
+        "ok": true,
+        "snippet": "{\"total_count\":20,\"incomplete_results\":false,\"items\":[{\"id\":1318526350,\"node_id\":\"R_kgDOTpcdjg\",\"name\":\"Credit_Card_Fraud_Detection_2026\",\"full_name\":\"VinayMR0/Credit_Card_Fraud_Detection_2026\",\"priva"
+      },
+      {
+        "key": "gh_user",
+        "ok": true,
+        "snippet": "[{\"id\":1210627209,\"node_id\":\"R_kgDOSCi0iQ\",\"name\":\"mewtwo\",\"full_name\":\"uditjain13/mewtwo\",\"private\":false,\"owner\":{\"login\":\"uditjain13\",\"id\":246234583,\"node_id\":\"U_kgDODq091w\",\"avatar_url\":\"https://a"
+      },
+      {
+        "key": "kernels_dharunmk",
+        "ok": false,
+        "snippet": "[Errno 2] No such file or directory: 'kaggle'"
+      },
+      {
+        "key": "datasets_dharunmk",
+        "ok": false,
+        "snippet": "[Errno 2] No such file or directory: 'kaggle'"
+      },
+      {
+        "key": "kernels_smartmanoj",
+        "ok": false,
+        "snippet": "[Errno 2] No such file or directory: 'kaggle'"
+      },
+      {
+        "key": "datasets_smartmanoj",
+        "ok": false,
+        "snippet": "[Errno 2] No such file or directory: 'kaggle'"
+      },
+      {
+        "key": "kernels_ahmetbugrahanaltunok",
+        "ok": false,
+        "snippet": "[Errno 2] No such file or directory: 'kaggle'"
+      },
+      {
+        "key": "datasets_ahmetbugrahanaltunok",
+        "ok": false,
+        "snippet": "[Errno 2] No such file or directory: 'kaggle'"
+      },
+      {
+        "key": "kernels_srikalyan",
+        "ok": false,
+        "snippet": "[Errno 2] No such file or directory: 'kaggle'"
+      },
+      {
+        "key": "datasets_srikalyan",
+        "ok": false,
+        "snippet": "[Errno 2] No such file or directory: 'kaggle'"
+      },
+      {
+        "key": "kernels_lebxgue",
+        "ok": false,
+        "snippet": "[Errno 2] No such file or directory: 'kaggle'"
+      },
+      {
+        "key": "datasets_lebxgue",
+        "ok": false,
+        "snippet": "[Errno 2] No such file or directory: 'kaggle'"
+      },
+      {
+        "key": "kernels_starkhushi",
+        "ok": false,
+        "snippet": "[Errno 2] No such file or directory: 'kaggle'"
+      },
+      {
+        "key": "datasets_starkhushi",
+        "ok": false,
+        "snippet": "[Errno 2] No such file or directory: 'kaggle'"
+      },
+      {
+        "key": "discussions_proxy",
+        "ok": false,
+        "snippet": "[Errno 2] No such file or directory: 'kaggle'"
+      }
+    ]
+  },
+  "3": {
+    "n": 20000,
+    "n_pos": 339,
+    "prev": 0.01695,
+    "corr_orig_abs_mean": 0.017174587454349514,
+    "corr_orig_abs_max": 0.6223954477021658,
+    "corr_train_abs_mean": 0.01925939139334033,
+    "corr_train_abs_max": 0.621434742787215,
+    "velocity_R2_from_other_X": 0.45824633590003205,
+    "ladder": {
+      "linear_logit": 0.8803991670616357,
+      "step_additive": 0.8937580484792453,
+      "pairwise_L1": 0.4605933403039934,
+      "gbdt_d2": 0.9341580947502648,
+      "gbdt_d3": 0.9312758333397099,
+      "gbdt_d4": 0.9290099187121413
+    },
+    "top15_linear_terms": [
+      {
+        "term": "ip_country_mismatch",
+        "coef": 1.5170504698791978
+      },
+      {
+        "term": "cvv==0",
+        "coef": -1.36800734488574
+      },
+      {
+        "term": "is_new_merchant",
+        "coef": 1.3425558249180845
+      },
+      {
+        "term": "cvv_retry_count",
+        "coef": 1.2230873577880124
+      },
+      {
+        "term": "auth_method_No Authentication",
+        "coef": 1.1637747835831358
+      },
+      {
+        "term": "billing_shipping_mismatch",
+        "coef": 1.0769419037241754
+      },
+      {
+        "term": "is_foreign_transaction",
+        "coef": 1.0159335599135606
+      },
+      {
+        "term": "used_vpn",
+        "coef": 0.9227707720213864
+      },
+      {
+        "term": "auth_method_Biometric",
+        "coef": -0.6791361769562239
+      },
+      {
+        "term": "disp==0",
+        "coef": -0.648396479391487
+      },
+      {
+        "term": "is_ai_generated_scam_attempt",
+        "coef": 0.6254938616874598
+      },
+      {
+        "term": "auth_method_PIN",
+        "coef": -0.5884077562621552
+      },
+      {
+        "term": "cvv==2",
+        "coef": 0.4998165700801027
+      },
+      {
+        "term": "device_type_Windows PC",
+        "coef": -0.37360641593301724
+      },
+      {
+        "term": "card_type_Mastercard",
+        "coef": -0.366160676543385
+      }
+    ],
+    "gen_py_form": "interaction_or_tree",
+    "vel_resid_gate": {
+      "name": "vel_synth_resid",
+      "outer_pos": "0/5",
+      "sub_pos": "4/25",
+      "mean_lift_e4": -0.6910562950310783,
+      "t_stat": -1.5886440380538784,
+      "wilcoxon_p": 1.0,
+      "disp": 0.9999999999994487,
+      "pass": false,
+      "lifts_e4": [
+        -1.4092333647708344,
+        0.0,
+        0.0,
+        -2.0460481103845574,
+        0.0
+      ]
+    }
+  },
+  "4": {
+    "platt_check_mean_p_tr": 0.016732761919339926,
+    "platt_check_mean_y_tr": 0.016700954340248014,
+    "M1": {
+      "families": [
+        "P_tree",
+        "P_bpe_lm",
+        "P_compact_lm",
+        "P_glm_mlp"
+      ],
+      "vs_wide": {
+        "name": "M1_vs_wide",
+        "outer_pos": "2/5",
+        "sub_pos": "8/25",
+        "mean_lift_e4": -0.430026548676965,
+        "t_stat": -1.4163126954175846,
+        "wilcoxon_p": 0.8125,
+        "disp": 0.9999999999994487,
+        "pass": false,
+        "lifts_e4": [
+          -1.0943434566401677,
+          0.10906207941530077,
+          0.0,
+          0.08106637184979171,
+          -1.2459177380097497
+        ]
+      },
+      "vs_anchor": null
+    },
+    "M2": {
+      "n_cols": 16,
+      "vs_wide": {
+        "name": "M2_TE_vs_wide",
+        "outer_pos": "0/5",
+        "sub_pos": "0/25",
+        "mean_lift_e4": -0.9567617455450428,
+        "t_stat": -0.9999999895480772,
+        "wilcoxon_p": 1.0,
+        "disp": 0.9999999999756802,
+        "pass": false,
+        "lifts_e4": [
+          -4.783808727725214,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "vs_anchor": null,
+      "names_sample": [
+        "ch_dev_mer_auth_m20",
+        "ch_dev_mer_auth_m100",
+        "age_bal_auth_card_m20",
+        "age_bal_auth_card_m100",
+        "mer_auth_cvv_flag_m20",
+        "mer_auth_cvv_flag_m100",
+        "auth_cvv_m100",
+        "mer_ch_m100"
+      ]
+    }
+  },
+  "5": {
+    "table": [
+      {
+        "K": 40,
+        "A_pub": 0.94956,
+        "A_priv": 0.9513583153595478,
+        "B_pub": 0.95086,
+        "B_priv": 0.952474306617091,
+        "C_pub": 0.95078,
+        "C_priv": 0.952520541588166,
+        "start_pub": 0.95075,
+        "start_priv": 0.9525682240804776
+      },
+      {
+        "K": 104,
+        "A_pub": 0.94993,
+        "A_priv": 0.9510342705890492,
+        "B_pub": 0.95105,
+        "B_priv": 0.9524435563139805,
+        "C_pub": 0.95078,
+        "C_priv": 0.952521474858437,
+        "start_pub": 0.95075,
+        "start_priv": 0.9525682240804776
+      },
+      {
+        "K": 200,
+        "A_pub": 0.94995,
+        "A_priv": 0.9509641610407373,
+        "B_pub": 0.95151,
+        "B_priv": 0.9520323555279765,
+        "C_pub": 0.95078,
+        "C_priv": 0.9525304742503352,
+        "start_pub": 0.95075,
+        "start_priv": 0.9525682240804776
+      }
+    ],
+    "conclusion": {
+      "start_pub": 0.95075,
+      "max_pub_K40": 0.95086,
+      "max_pub_K104": 0.95105,
+      "max_pub_K200": 0.95151,
+      "delta_K40_e4": 1.100000000000545,
+      "delta_K104_e4": 2.9999999999996696,
+      "delta_K200_e4": 7.599999999999829,
+      "ahmet_095632_reachable_as_abs": false,
+      "dharun_096153_reachable_as_abs": false,
+      "note": "Absolute Pub_sim AUCs are not identical to live Public LB; interpret primarily via \u0394 from start and whether +60\u2013120e-4 jumps appear within K queries under 5-decimal oracle.",
+      "ahmet_jump_from_ATH": 0.0009499999999998954,
+      "dharun_jump_from_ATH": 0.006159999999999943,
+      "sim_can_match_ahmet_jump": false,
+      "sim_can_match_dharun_jump": false
+    },
+    "pub_n": 60000,
+    "priv_n": 79992,
+    "pub_pos": 1002,
+    "n_bank": 40
+  }
+}

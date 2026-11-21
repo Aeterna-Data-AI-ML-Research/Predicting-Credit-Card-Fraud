@@ -1,0 +1,94 @@
+{
+  "NO_SUBMIT": true,
+  "leak": {
+    "n_train": 699960,
+    "n_test": 299984,
+    "test_exact_match_train_pct": 0.0,
+    "train_dup_rows": 0,
+    "test_exact_match_orig": 0
+  },
+  "cands": [
+    {
+      "file": "sub_v16_0_FamilyA_0p10e4_NOSUBMIT.csv",
+      "w": 0.007568706100236966,
+      "1mrho": 1.0000000060905734e-05,
+      "err": 6.090573297166512e-14,
+      "NO_SUBMIT": true,
+      "family": "FamilyA",
+      "target": 1e-05
+    },
+    {
+      "file": "sub_v16_0_FamilyA_0p20e4_NOSUBMIT.csv",
+      "w": 0.010703695890789788,
+      "1mrho": 2.0000000575892685e-05,
+      "err": 5.758926830150193e-13,
+      "NO_SUBMIT": true,
+      "family": "FamilyA",
+      "target": 2e-05
+    },
+    {
+      "file": "sub_v16_0_FamilyA_0p35e4_NOSUBMIT.csv",
+      "w": 0.014158976345235885,
+      "1mrho": 3.4999998851814595e-05,
+      "err": 1.1481854014653084e-12,
+      "NO_SUBMIT": true,
+      "family": "FamilyA",
+      "target": 3.5e-05
+    },
+    {
+      "file": "sub_v16_0_FamilyE_0p10e4_NOSUBMIT.csv",
+      "w": 0.007390801536082847,
+      "1mrho": 1.00000002135614e-05,
+      "err": 2.1356139885762414e-13,
+      "NO_SUBMIT": true,
+      "family": "FamilyE",
+      "target": 1e-05
+    },
+    {
+      "file": "sub_v16_0_FamilyE_0p20e4_NOSUBMIT.csv",
+      "w": 0.010452605471989784,
+      "1mrho": 2.0000000689135433e-05,
+      "err": 6.891354315267852e-13,
+      "NO_SUBMIT": true,
+      "family": "FamilyE",
+      "target": 2e-05
+    },
+    {
+      "file": "sub_v16_0_FamilyE_0p35e4_NOSUBMIT.csv",
+      "w": 0.013828124668101793,
+      "1mrho": 3.500000033151984e-05,
+      "err": 3.3151984575510024e-13,
+      "NO_SUBMIT": true,
+      "family": "FamilyE",
+      "target": 3.5e-05
+    }
+  ],
+  "bug": "V15 build_rung used L2 unit() so direction std~0.0018; w<=0.08 => 1-\u03c1~1e-9; fixed to unitize()",
+  "rung_actual": {
+    "rung1": 3.7199960889466865e-09,
+    "rung2": 3.715927010539133e-09
+  },
+  "daoviet": {
+    "prior_oof_ours_auc": 0.946489033767143,
+    "added": [
+      "submission_exact_095388.csv",
+      "submission_orthogonal_apex_095370plus.csv"
+    ],
+    "removed": [
+      "oof_ours.npy",
+      "test_ours.npy",
+      "submission_095351.csv",
+      "submission_095354_exact.csv",
+      "submission_summit_095370.csv",
+      "submission_verified_095370.csv"
+    ],
+    "metrics_vs_LIVE": {
+      "submission_exact_095388.csv": {
+        "1mrho_LIVE": 0.0001748279
+      },
+      "submission_orthogonal_apex_095370plus.csv": {
+        "1mrho_LIVE": 0.000872467
+      }
+    }
+  }
+}

@@ -1,0 +1,93 @@
+{
+  "NO_SUBMIT": true,
+  "SEED": 2026,
+  "checks": {
+    "test_cover": {
+      "0": 2,
+      "1": 2,
+      "2": 2,
+      "3": 2,
+      "4": 3,
+      "5": 3,
+      "6": 3,
+      "7": 3,
+      "8": 2,
+      "9": 2
+    },
+    "disjoint_seed7_nc32": {
+      "n_intersect_orders": 0,
+      "disjoint": true,
+      "seed7_nuniq": 10,
+      "seed2026_nuniq": 10
+    },
+    "V": 1372,
+    "T": 72,
+    "NTOK": 1401,
+    "NC": 24,
+    "disjoint_seed7": {
+      "n_intersect_orders": 0,
+      "disjoint": true,
+      "seed7_nuniq": 10,
+      "seed2026_nuniq": 10
+    },
+    "fold0_oof_shape": [
+      139992,
+      10,
+      2
+    ],
+    "fold0_test_shape": [
+      299984,
+      10,
+      2
+    ],
+    "fold0_n_val": 139992,
+    "fold1_oof_shape": [
+      139992,
+      10,
+      2
+    ],
+    "fold1_test_shape": [
+      299984,
+      6,
+      2
+    ],
+    "fold1_n_val": 139992,
+    "fold2_oof_shape": [
+      139992,
+      10,
+      2
+    ],
+    "fold2_test_shape": [
+      299984,
+      6,
+      2
+    ],
+    "fold2_n_val": 139992,
+    "fold3_oof_shape": [
+      139992,
+      10,
+      2
+    ],
+    "fold3_test_shape": [
+      299984,
+      6,
+      2
+    ],
+    "fold3_n_val": 139992,
+    "fold4_oof_shape": [
+      139992,
+      10,
+      2
+    ],
+    "fold4_test_shape": [
+      299984,
+      6,
+      2
+    ],
+    "fold4_n_val": 139992,
+    "l7_s7_f0": "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/external/nov12_095369_recon/datasets/goodpjw2008__s6e11-compact-lm-seed7/lm7_oof_f0.npy"
+  },
+  "SCORE_BS": 512,
+  "elapsed_s": 30.06,
+  "pass": true
+}

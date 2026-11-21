@@ -1,0 +1,21 @@
+{
+  "NO_SUBMIT": false,
+  "probe1_choice": "slot1",
+  "reason": "Corrected unit-scale OOF: slot1 4/5 \u0394F0=+0.97e-5 AUC=0.952498 > slot3 2/5 \u0394F0=-6.5e-5",
+  "discard_slot4": true,
+  "smugcq_untouched": true,
+  "LB_v10_1": 0.95352,
+  "probe1_meta": {
+    "status": "SubmissionStatus.COMPLETE",
+    "publicScore": "0.95352",
+    "file": ""
+  },
+  "probe2_branch": "BRACKET_slot3_midpoint",
+  "probe2_file": "sub_v10_slot3_midpoint_s354pub_and_S7ours5fL7_LIVE.csv",
+  "LB_v10_2": 0.95352,
+  "probe2_meta": {
+    "status": "SubmissionStatus.COMPLETE",
+    "publicScore": "0.95352",
+    "file": ""
+  }
+}
