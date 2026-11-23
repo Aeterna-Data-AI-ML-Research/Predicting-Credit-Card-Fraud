@@ -1,0 +1,13 @@
+Traceback (most recent call last):
+  File "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/scripts/step4_non_distilled_audit_and_ctr_catboost.py", line 633, in <module>
+    main()
+    ~~~~^^
+  File "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/scripts/step4_non_distilled_audit_and_ctr_catboost.py", line 521, in main
+    X_tr = build_x_cat(tr)
+  File "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/scripts/step4_non_distilled_audit_and_ctr_catboost.py", line 318, in build_x_cat
+    if np.issubdtype(col.dtype, np.floating) or np.issubdtype(col.dtype, np.integer):
+       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/.venv_forensics/lib/python3.14/site-packages/numpy/_core/numerictypes.py", line 477, in issubdtype
+    arg1 = dtype(arg1).type
+           ~~~~~^^^^^^
+TypeError: Cannot interpret '<StringDtype(storage='python', na_value=nan)>' as a data type

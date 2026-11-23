@@ -1,0 +1,358 @@
+{
+  "NO_SUBMIT_default": false,
+  "ATH_LB": 0.95548,
+  "cloud": {
+    "pod_was_present": false,
+    "synced": false,
+    "removed": true,
+    "active_usd_hr": 0.0,
+    "note": "khx6qxz80yfenn already absent (watchdog/prior terminate); $0.00/hr active",
+    "foreign_pods_untouched": true
+  },
+  "fold0_gpu_diag": {
+    "strict_1fold_rule": "diagnostic-only; NEVER inject <5-fold into live Test",
+    "earn_future_5fold": [
+      "Fold-0 canary present \u2014 promote to 5-fold only after matched-bag re-gate (raw_disp\u22481, R\u00b2_B40)"
+    ],
+    "artifacts": [
+      "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/logs/overnight/v37_fold0/canary1_fold0_va_test.npy",
+      "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/logs/overnight/v37_fold0/fold0_canary_result.json"
+    ],
+    "canary_json": {
+      "canaries": {
+        "tabpfn_bags": {
+          "name": "tabpfn_bags",
+          "solo_f0": 0.712460467211762,
+          "d_auc_fb": -0.23931330717446797,
+          "d_auc_tw": -0.23929015825891153,
+          "r2_delta_B40": 0.29078785156014975,
+          "sub_pos_fb": 0,
+          "sub_pos_tw": 0,
+          "promote": false
+        }
+      },
+      "elapsed_s": 20.914790868759155,
+      "promote_any": false
+    },
+    "canary_npy_shape": [
+      439976
+    ],
+    "canary_finite": true
+  },
+  "stage2_scorecard": [
+    {
+      "name": "U_TriTabPFN",
+      "solo_oof": 0.949682110930825,
+      "raw_disp": 1.0096363380237137,
+      "fold_diff_corr": 0.9642213048028919,
+      "r2_B40": 0.32025989975041447,
+      "hygiene_pass": true
+    },
+    {
+      "name": "U_GAM_Probit_P3",
+      "solo_oof": 0.9486526314537101,
+      "raw_disp": 0.9897796265632298,
+      "fold_diff_corr": 0.975847983378418,
+      "r2_B40": 0.33904794277244255,
+      "hygiene_pass": true
+    },
+    {
+      "name": "U_DeepNeural_P4",
+      "solo_oof": 0.9515039425213304,
+      "raw_disp": 1.1199768468396634,
+      "fold_diff_corr": 0.9897149888162894,
+      "r2_B40": 0.4787511172482456,
+      "hygiene_pass": false
+    },
+    {
+      "name": "U_BPE_GBDT_P5",
+      "solo_oof": 0.9511213040403079,
+      "raw_disp": 1.1433868057757535,
+      "fold_diff_corr": 0.9962612941476078,
+      "r2_B40": 0.33333708457623623,
+      "hygiene_pass": false
+    },
+    {
+      "name": "U_ShallowMarkov_P6",
+      "solo_oof": 0.9512372728207719,
+      "raw_disp": 1.0169245359851578,
+      "fold_diff_corr": 0.9874991174844255,
+      "r2_B40": 0.5707663079694298,
+      "hygiene_pass": true
+    },
+    {
+      "name": "U_GPT2_P1",
+      "solo_oof": 0.9509861275328273,
+      "raw_disp": 1.103896115212048,
+      "fold_diff_corr": 0.983938431097655,
+      "r2_B40": 0.650232599854927,
+      "hygiene_pass": false
+    },
+    {
+      "name": "U_EBM_fam",
+      "solo_oof": 0.9504840470200886,
+      "raw_disp": 1.075593547712694,
+      "fold_diff_corr": 0.9935242645825757,
+      "r2_B40": 0.28184483114849657,
+      "hygiene_pass": false
+    },
+    {
+      "name": "U_TabM_fam",
+      "solo_oof": 0.9497032440295594,
+      "raw_disp": 0.9507502080976354,
+      "fold_diff_corr": 0.9920285815157318,
+      "r2_B40": 0.3630908502823549,
+      "hygiene_pass": true
+    },
+    {
+      "name": "U_BPE_GBDT_fam",
+      "solo_oof": 0.9510133558189671,
+      "raw_disp": 1.0391550922493646,
+      "fold_diff_corr": 0.9843271107854769,
+      "r2_B40": 0.40452407497514875,
+      "hygiene_pass": true
+    },
+    {
+      "name": "U_GAM_Probit_fam",
+      "solo_oof": 0.9504292507421345,
+      "raw_disp": 1.0788364914282782,
+      "fold_diff_corr": 0.9927954516845747,
+      "r2_B40": 0.4154788922386392,
+      "hygiene_pass": false
+    },
+    {
+      "name": "L7_EB",
+      "solo_oof": 0.9492670920230761,
+      "raw_disp": 1.0315098648290448,
+      "fold_diff_corr": 0.9826348155667813,
+      "r2_B40": 0.5661585901284105,
+      "hygiene_pass": true
+    },
+    {
+      "name": "L7_mean_diff",
+      "solo_oof": 0.9492651606850682,
+      "raw_disp": 1.0329275936713065,
+      "fold_diff_corr": 0.9827909398828559,
+      "r2_B40": 0.5694636640416864,
+      "hygiene_pass": true
+    },
+    {
+      "name": "gpt2_med_4ep_5f",
+      "solo_oof": 0.9474501780233555,
+      "raw_disp": 1.0132240638758108,
+      "fold_diff_corr": 0.9433122021788952,
+      "r2_B40": 0.47293759224752663,
+      "hygiene_pass": false
+    },
+    {
+      "name": "gpt2_med_EB_plain",
+      "solo_oof": 0.9481389054873753,
+      "raw_disp": 1.0055909716264355,
+      "fold_diff_corr": 0.953124638437065,
+      "r2_B40": 0.4953056489919585,
+      "hygiene_pass": false
+    },
+    {
+      "name": "P4_harvest_xgb",
+      "is_residual": true,
+      "hygiene_pass": true,
+      "note": "signed residual"
+    },
+    {
+      "name": "P4_L4.2_pure5f",
+      "is_residual": true,
+      "hygiene_pass": true,
+      "note": "signed residual"
+    },
+    {
+      "name": "P4_L4.3_pure5f",
+      "is_residual": true,
+      "hygiene_pass": true,
+      "note": "signed residual"
+    },
+    {
+      "name": "P4_L4.5_pure5f",
+      "is_residual": true,
+      "hygiene_pass": true,
+      "note": "signed residual"
+    },
+    {
+      "name": "v10_cb_d4",
+      "is_residual": true,
+      "hygiene_pass": true,
+      "note": "signed residual"
+    },
+    {
+      "name": "v10_ridge_resid",
+      "is_residual": true,
+      "hygiene_pass": true,
+      "note": "signed residual"
+    },
+    {
+      "name": "B_xgb_llr",
+      "is_residual": true,
+      "hygiene_pass": true,
+      "note": "signed residual"
+    },
+    {
+      "name": "JEWEL_u_P4_L4.2",
+      "is_residual": true,
+      "hygiene_pass": true,
+      "note": "signed residual"
+    },
+    {
+      "name": "JEWEL_u_P4_L4.3",
+      "is_residual": true,
+      "hygiene_pass": true,
+      "note": "signed residual"
+    },
+    {
+      "name": "JEWEL_u_P4_L4.5",
+      "is_residual": true,
+      "hygiene_pass": true,
+      "note": "signed residual"
+    },
+    {
+      "name": "JEWEL_u_v10_cb_d4",
+      "is_residual": true,
+      "hygiene_pass": true,
+      "note": "signed residual"
+    },
+    {
+      "name": "JEWEL_u_B_xgb_llr",
+      "is_residual": true,
+      "hygiene_pass": true,
+      "note": "signed residual"
+    },
+    {
+      "name": "z_deotte_lr_C0.01",
+      "solo_oof": 0.9522894396153397,
+      "hygiene_pass": true
+    },
+    {
+      "name": "z_deotte_lr_C0.03",
+      "solo_oof": 0.9523204301449362,
+      "hygiene_pass": true
+    },
+    {
+      "name": "z_deotte_lr_C0.08",
+      "solo_oof": 0.9523078433846895,
+      "hygiene_pass": true
+    },
+    {
+      "name": "z_deotte_lr_C0.03",
+      "solo_oof": 0.9523204301449362,
+      "raw_disp": 1.2005431887204907,
+      "fold_diff_corr": 0.9980361460045002,
+      "r2_B40": 0.5871171918326206,
+      "hygiene_pass": false
+    },
+    {
+      "name": "u_deotte_vs_fb",
+      "is_residual": true,
+      "hygiene_pass": true
+    },
+    {
+      "name": "u_g26_5f_clean",
+      "is_residual": true,
+      "hygiene_pass": true,
+      "note": "G26-MS 5f Ridge surrogate"
+    }
+  ],
+  "stage3": {
+    "synth": "A"
+  },
+  "synth_summary": {
+    "chosen": "A",
+    "names": [
+      "P4_harvest_xgb"
+    ],
+    "w_vec": [
+      -0.021599999999999998
+    ],
+    "w_opt_lofo": -0.021599999999999998,
+    "mean_d_fb": 1.4381085136316862e-05,
+    "mean_d_tw": 9.585292485003726e-06,
+    "folds_fb": [
+      2.724279521071349e-05,
+      6.431866222178506e-06,
+      1.6772567085099332e-05,
+      4.179159453276959e-06,
+      1.7279037710316025e-05
+    ],
+    "folds_tw": [
+      2.5240928470338098e-05,
+      2.59760394283326e-06,
+      1.3025305894753814e-05,
+      -2.550996216599266e-06,
+      9.61362033369273e-06
+    ],
+    "twilight_attr": {
+      "bulk": 5.147373644887043e-05,
+      "twilight": 7.6264999926412e-06,
+      "tail": 6.40831252622931e-05
+    }
+  },
+  "gates": {
+    "G1_fullbank": {
+      "pass": false,
+      "mean_d": 1.4795819744839456e-05,
+      "n_pos_folds": 5,
+      "min_fold": 4.32208981371307e-06,
+      "n_pos_sub": 19,
+      "t25": 2.8205192728259365,
+      "wilcoxon_p": 0.03125
+    },
+    "G2_ath_twin": {
+      "pass": false,
+      "mean_d": 6.6372748673826365e-06,
+      "n_pos_folds": 4,
+      "t25": 1.6123792640278076
+    },
+    "G3_dist_orth": {
+      "pass": true,
+      "F2": 0.012772209165395598,
+      "disp_orth": 1.0005032293815654,
+      "KS": 0.00022186485296477043
+    },
+    "G4_anti_loser": {
+      "pass": true
+    },
+    "G5_step": {
+      "pass": true,
+      "step_1_minus_rho": 5.9384748925195296e-05,
+      "min_hist_dist": 4.48545269050582e-05
+    },
+    "G6_quota": {
+      "pass": true,
+      "n_today": 0
+    }
+  },
+  "w_opt": -0.021599999999999998,
+  "c": 0.85,
+  "candidate": {
+    "path": "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/submissions/sub_v37_1_SINGLE_BEST_0p85x.csv",
+    "sha256": "cf78022a7a86135e0132f909235c5b0c69449b178165b6f64fd656f3906e9caf",
+    "step": 5.9384748925195296e-05,
+    "predicted_oof_d": 1.2576446783113537e-05
+  },
+  "hedge_path": "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/submissions/sub_v37_1_PURE_5F_DEOTTE_CV_HEDGE_NOSUBMIT.csv",
+  "submitted": false,
+  "submit_block_reason": {
+    "G1_fullbank": {
+      "pass": false,
+      "mean_d": 1.4795819744839456e-05,
+      "n_pos_folds": 5,
+      "min_fold": 4.32208981371307e-06,
+      "n_pos_sub": 19,
+      "t25": 2.8205192728259365,
+      "wilcoxon_p": 0.03125
+    },
+    "G2_ath_twin": {
+      "pass": false,
+      "mean_d": 6.6372748673826365e-06,
+      "n_pos_folds": 4,
+      "t25": 1.6123792640278076
+    }
+  }
+}
