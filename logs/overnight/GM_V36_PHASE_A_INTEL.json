@@ -1,0 +1,151 @@
+{
+  "kernels": [
+    "ref                                                            title                                               author                        lastRunTime                 totalVotes  \n-------------------------------------------------------------  --------------------------------------------------  ----------------------------  --------------------------  ----------  \nmoranzavdi/s6e11-grandmaster-ladder-lb-0-95330                 S6E11 | Grandmaster Ladder | LB 0.95330             Moran Zavdi                   2026-11-09 09:08:10.043000           5  \nareebbb/s6e11-split-then-push-lb-0-95431                       S6E11 | Split, Then Push | LB 0.95431               Areeb Ali                     2026-11-17 04:53:50.747000          65  \ngoodpjw2008/s6e11-board-model-realmlp-lb-0-95548               S6E11 | Board Model + RealMLP | LB 0.95548          goodpjw2008                   2026-11-21 16:59:39.357000          47  \nasteriospanoras/s6e11-lb-0-95551-will-the-top-survive-private  S6E11 | LB 0.95551 | Will the Top Survive Private?  Asterios Panoras              2026-11-21 17:29:50.190000          55  \ngoodpjw2008/s6e11-lm-ladder-ladder-meets-stack-lb-0-95432      S6E11 LM Ladder | Ladder Meets Stack | LB 0.95432   goodpjw2008                   2026-11-17 06:40:30.427000          61  \nevgendvorkin/s6e11-deep-eda-8-model-blend-oof-0-951612         S6E11 | Deep EDA | 8-Model Blend OOF 0.951612       \u0414\u0432\u043e\u0440\u043a\u0438\u043d \u0415\u0432\u0433\u0435\u043d\u0438\u0439 \u0412\u043b\u0430\u0434\u0438\u043c\u0438\u0440\u043e\u0432\u0438\u0447  2026-11-19 13:13:00.690000          77  \ngoodpjw2008/s6e11-part-12-wide-stack-2nd-lm-lb-0-95298         S6E11 Part 12 | Wide Stack + 2nd LM | LB 0.95298    goodpjw2008                   2026-11-08 00:06:34.660000          58  \ndenpugovkin/s6e11-logreg-baseline                              S6E11 | LogReg | BaseLine                           Den Pugovkin                  2026-11-05 20:14:47.247000          14  \ngeorgymamarin/s6e11-fraud-glm-offset-trees-review-budgets      S6E11 Fraud | GLM-Offset Trees & Review Budgets     Georgy Mamarin                2026-11-21 06:52:04.507000          55  \nsaamhm/eda-blend-lb-0-95239-credit-card-fraud                  EDA | blend | LB-0.95239 | Credit Card Fraud        samsul hoque mondal           2026-11-17 06:00:11.917000          63  \nalexchilton/credit-card-fraud-lb-0-9550-shallow-tree-stack     Credit Card Fraud | LB 0.9550 | Shallow-Tree Stack  alex chilton                  2026-11-19 07:08:40.490000          72  \nmehreenrahman/s6e11-beginner-eda-to-a-blended-baseline         s6e11 || Beginner EDA to a Blended Baseline         Mehreen Rahman                2026-11-17 08:05:38.033000          26  \nmalyshevdanil/predicting-credit-card-fraud-getting-started     Predicting Credit Card Fraud | Getting Started      Malyshev Danil                2026-11-05 16:30:57.917000          56  \nareebbb/s6e11-pooled-stack-fusion-lb-0-95196                   S6E11 | Pooled Stack + Fusion | LB 0.95196          Areeb Ali                     2026-11-03 03:35:29.597000          17  \nnina2025/ps-s6e11-eos-1 ",
+    "ref                                                            title                                               author                   lastRunTime                 totalVotes  \n-------------------------------------------------------------  --------------------------------------------------  -----------------------  --------------------------  ----------  \ngireeshs/volkswagen-price-regression-r-2-0-9555                Volkswagen Price Regression (R^2 = 0.9555)          Gireesh Sundaram         2020-09-06 04:46:21.883000         155  \nmahmoodhoseini/blending-submissions-0-955                      Blending submissions-0.955                          Mahmood Hoseini          2020-08-04 03:21:19.233000          39  \nnanomathias/feature-engineering-importance-testing             Feature Engineering & Importance Testing            NanoMathias              2018-04-16 11:07:45.163000         678  \nannguyntrng/cnn-for-chinese-mnist-hcmute-val-accuracy-0-955    CNN for chinese MNIST (HCMUTE) val_accuracy: 0.955  ntruongant1              2021-05-28 16:35:32.717000          34  \nrohandeysarkar/instant-gratification-qda                       Instant Gratification (QDA)                         RohanDeySarkar           2019-06-19 17:18:51.643000         394  \nomidbaghchehsaraei/tabm-predicting-heart-disease-cv-0-95553    TabM | Predicting Heart Disease | CV: 0.95553       OMID BAGHCHEH SARAEI     2026-02-07 08:45:45.453000          56  \nunderwearfitting/single-fold-training-of-resnet200d-lb0-965    Single Fold Training of Resnet200d [LB0.965]        sin                      2021-01-05 05:33:58.327000         473  \njazivxt/expressions-of-gluttony                                Expressions of Gluttony                             jazivxt                  2022-06-04 10:44:59.887000         352  \nalexchilton/credit-card-fraud-lb-0-9550-shallow-tree-stack     Credit Card Fraud | LB 0.9550 | Shallow-Tree Stack  alex chilton             2026-11-19 07:08:40.490000          72  \nasteriospanoras/s6e11-lb-0-95551-will-the-top-survive-private  S6E11 | LB 0.95551 | Will the Top Survive Private?  Asterios Panoras         2026-11-21 17:29:50.190000          55  \ngoodpjw2008/s6e11-board-model-realmlp-lb-0-95548               S6E11 | Board Model + RealMLP | LB 0.95548          goodpjw2008              2026-11-21 16:59:39.357000          47  \nbhavikardeshna/catboost-gradient-boosting-ensemble-learning    CatBoost- Gradient Boosting Ensemble Learning       Bhavik Ardeshna          2022-06-15 07:01:17.200000         196  \ninclude4eto/single-xgb-cudf-pseudo-labels-cv-0-95573           Single XGB, cuDF + Pseudo Labels, CV: 0.95573       Traiko Dinev             2026-02-16 11:04:56.330000          49  \nsandeepkumar121995/ensemble-oftop-3-public-kernel              Ensemble ofTop 3 Public Kernel                      Sandeep Kumar            2019-06-18 08:48:14.707000         198  \nleft13/mxnet-densenet121-0-955-acc-full-set                    mxnet // densenet121 0.955 acc [FULL-SET]",
+    "ref                                                                title                                               author              lastRunTime                 totalVotes  \n-----------------------------------------------------------------  --------------------------------------------------  ------------------  --------------------------  ----------  \nyongsukprasertsuk/0-956-llm-daigt-sub-mod-weights                  [0.956] LLM DAIGT Sub (mod weights)                 Yongsuk Prasertsuk  2023-12-04 02:20:50.260000          73  \njenillangaliya/rsna-knee-0-956-raptor-convnext-r7-ensemble         RSNA Knee 0.956: Raptor + ConvNeXt R7 Ensemble      Jenil Langaliya     2026-10-13 06:00:15                 71  \nvarshithakolupuri/rsna-knee-one-unused-checkpoint-lifts-the-0-956  RSNA Knee: One Unused Checkpoint Lifts the 0.956    varshitha kolupuri  2026-10-13 08:39:37.053000          73  \nrabari9999/rsna-knee-0-956-micro-boost-clinical-tri-reader         RSNA Knee 0.956+:Micro-Boost & Clinical Tri-Reader  KRISH RABARI        2026-10-14 20:31:58.397000          58  \nremekkinas/tps-12-nn-tpu-pseudolabeling-0-95690                    TPS-12 NN (TPU) + Pseudolabeling [0.95690]          Remek Kinas         2021-12-25 23:29:07.430000          86  \nyuyuyuyuy/rf-test-r2-score-0-956                                   [RF] test R2_score : 0.956                          snowball            2021-11-29 09:52:52.610000          12  \ncdeotte/forward-selection-oof-ensemble-0-942-private               Forward Selection OOF Ensemble - [0.942 Private]    Chris Deotte        2020-08-18 18:42:37.913000         395  \nvarshithakolupuri/rsna-0-956-one-free-flip-68-ranks-up             RSNA 0.956: One Free Flip, 68 Ranks Up              varshitha kolupuri  2026-10-14 10:52:39.270000          25  \ncdeotte/rapids-knn-starter-ensemble-lb-0-961-wow                   RAPIDS KNN Starter Ensemble - [LB 0.961] - Wow!     Chris Deotte        2025-03-17 16:34:01.357000         211  \ngoodpjw2008/rsna-knee-coatnet-r6-2-5d-mil-lb-0-958                 RSNA Knee | CoAtNet + R6 + 2.5D MIL | LB 0.958      goodpjw2008         2026-10-16 12:48:04.130000         474  \n",
+    "ref                                            title                                          author              lastRunTime                 totalVotes  \n---------------------------------------------  ---------------------------------------------  ------------------  --------------------------  ----------  \ncdeotte/rotation-augmentation-gpu-tpu-0-96     Rotation Augmentation GPU/TPU - [0.96+]        Chris Deotte        2020-06-19 01:13:19.503000         841  \ncdeotte/pseudo-labeling-qda-0-969              Pseudo Labeling - QDA - [0.969]                Chris Deotte        2021-08-31 02:50:26.837000        1230  \ncdeotte/xgb-fraud-with-magic-0-9600            XGB Fraud with Magic - [0.9600]                Chris Deotte        2020-02-01 23:12:38.710000        1315  \nhubert101/0-960-phrases-are-keys               0.960| Phrases are keys                        HuBERT              2023-12-17 11:33:06.757000         845  \npaulorzp/nusvc-qda-4-lines-0-96                NuSVC+QDA [4 lines] 0.96+                      Paulo Pinto         2019-06-05 00:58:27.220000         184  \nstartalks/pii-detection-with-score-0-967       PII detection with score 0.967                 startalks           2024-03-22 00:00:25.737000         668  \nmalabhbakshi/0-96-score                        0.96 score                                     Malabh Bakshi       2023-12-12 08:57:24.363000          66  \nyongsukprasertsuk/llm-daigtext-0-961           LLM - DAIGText - [0.961]                       Yongsuk Prasertsuk  2023-12-26 12:40:22.167000         551  \ncdeotte/rapids-feature-engineering-fraud-0-96  RAPIDS - Feature Engineering - Fraud - [0.96]  Chris Deotte        2020-02-01 23:41:03.963000         169  \njoaopmpeinado/talkingdata-xgboost-lb-0-966     TalkingData XGBoost - LB: 0.966                Jo\u00e3o Pedro Peinado  2018-03-31 14:59:10.837000         558  \n"
+  ],
+  "datasets": [
+    "ref                                                          title                                           size  lastUpdated                 downloadCount  voteCount  usabilityRating  \n-----------------------------------------------------------  ----------------------------------------  ----------  --------------------------  -------------  ---------  ---------------  \nmohankrishnathalla/credit-card-fraud-detection-dataset-2026  Credit Card Fraud Detection Dataset 2026     6976318  2026-11-21 17:58:15.887000           1312         29                1  \nrajandasthrice/credittransact-a-profile-driven-dataset       CreditTransAct: A Profile-Driven Dataset           0  2026-10-05 16:14:20.140000              7          0        0.4117647  \nvolodymyrborysenko/kaggle-dataset-row-order-audit            Kaggle Dataset Row Order Audit                  6141  2026-10-23 02:09:59.747000             71          0        0.9411765  \n",
+    "ref                                          title                                                     size  lastUpdated                 downloadCount  voteCount  usabilityRating  \n-------------------------------------------  --------------------------------------------------  ----------  --------------------------  -------------  ---------  ---------------  \ngoodpjw2008/s6e11-board-model-pinned-inputs  S6E11 Board Model Pinned Inputs                       96374468  2026-11-21 16:58:50.530000            275          1  0.3529412        \nalexchilton/s6e11-oof-predictions            S6E11 OOF + test predictions (15 models)             244890261  2026-11-19 08:57:13.613000           2035          0  0.5              \nsriram00777/s6e11-pinned-inputs-095422       S6E11 Pinned Inputs for 0.95422 CPU Blend             75334252  2026-11-20 17:42:52.357000            151          1  0.5294118        \namanatar/s6e11-rank3-artifacts               S6E11 | Credit Card Fraud Sovereign Ensemble Vault    19362145  2026-11-06 20:12:10.927000            175          0  0.29411766       \n",
+    "No datasets found\n"
+  ],
+  "promote_h5": true,
+  "novel": [
+    "underwearfitting/single-fold-training-of-resnet200d-lb0-965    Single Fold Training of Resnet200d [LB0.965]        sin                      2021-01-05 05:33:58.327000         473  ",
+    "include4eto/single-xgb-cudf-pseudo-labels-cv-0-95573           Single XGB, cuDF + Pseudo Labels, CV: 0.95573       Traiko Dinev             2026-02-16 11:04:56.330000          49  ",
+    "yongsukprasertsuk/0-956-llm-daigt-sub-mod-weights                  [0.956] LLM DAIGT Sub (mod weights)                 Yongsuk Prasertsuk  2023-12-04 02:20:50.260000          73  ",
+    "jenillangaliya/rsna-knee-0-956-raptor-convnext-r7-ensemble         RSNA Knee 0.956: Raptor + ConvNeXt R7 Ensemble      Jenil Langaliya     2026-10-13 06:00:15                 71  ",
+    "varshithakolupuri/rsna-knee-one-unused-checkpoint-lifts-the-0-956  RSNA Knee: One Unused Checkpoint Lifts the 0.956    varshitha kolupuri  2026-10-13 08:39:37.053000          73  ",
+    "rabari9999/rsna-knee-0-956-micro-boost-clinical-tri-reader         RSNA Knee 0.956+:Micro-Boost & Clinical Tri-Reader  KRISH RABARI        2026-10-14 20:31:58.397000          58  ",
+    "remekkinas/tps-12-nn-tpu-pseudolabeling-0-95690                    TPS-12 NN (TPU) + Pseudolabeling [0.95690]          Remek Kinas         2021-12-25 23:29:07.430000          86  ",
+    "yuyuyuyuy/rf-test-r2-score-0-956                                   [RF] test R2_score : 0.956                          snowball            2021-11-29 09:52:52.610000          12  ",
+    "varshithakolupuri/rsna-0-956-one-free-flip-68-ranks-up             RSNA 0.956: One Free Flip, 68 Ranks Up              varshitha kolupuri  2026-10-14 10:52:39.270000          25  ",
+    "cdeotte/rapids-knn-starter-ensemble-lb-0-961-wow                   RAPIDS KNN Starter Ensemble - [LB 0.961] - Wow!     Chris Deotte        2025-03-17 16:34:01.357000         211  ",
+    "cdeotte/rotation-augmentation-gpu-tpu-0-96     Rotation Augmentation GPU/TPU - [0.96+]        Chris Deotte        2020-06-19 01:13:19.503000         841  ",
+    "cdeotte/pseudo-labeling-qda-0-969              Pseudo Labeling - QDA - [0.969]                Chris Deotte        2021-08-31 02:50:26.837000        1230  ",
+    "cdeotte/xgb-fraud-with-magic-0-9600            XGB Fraud with Magic - [0.9600]                Chris Deotte        2020-02-01 23:12:38.710000        1315  ",
+    "hubert101/0-960-phrases-are-keys               0.960| Phrases are keys                        HuBERT              2023-12-17 11:33:06.757000         845  ",
+    "paulorzp/nusvc-qda-4-lines-0-96                NuSVC+QDA [4 lines] 0.96+                      Paulo Pinto         2019-06-05 00:58:27.220000         184  ",
+    "startalks/pii-detection-with-score-0-967       PII detection with score 0.967                 startalks           2024-03-22 00:00:25.737000         668  ",
+    "malabhbakshi/0-96-score                        0.96 score                                     Malabh Bakshi       2023-12-12 08:57:24.363000          66  ",
+    "yongsukprasertsuk/llm-daigtext-0-961           LLM - DAIGText - [0.961]                       Yongsuk Prasertsuk  2023-12-26 12:40:22.167000         551  ",
+    "cdeotte/rapids-feature-engineering-fraud-0-96  RAPIDS - Feature Engineering - Fraud - [0.96]  Chris Deotte        2020-02-01 23:41:03.963000         169  ",
+    "joaopmpeinado/talkingdata-xgboost-lb-0-966     TalkingData XGBoost - LB: 0.966                Jo\u00e3o Pedro Peinado  2018-03-31 14:59:10.837000         558  ",
+    "17268683  Dharun MK               2026-11-21 00:06:37.450000  0.96153  ",
+    "17244109  Smart Manoj             2026-11-21 01:24:19.653000  0.96070  ",
+    "17243337  Ahmet Bugrahan ALTUNOK  2026-11-20 18:01:31.913000  0.95632  ",
+    "17337252  srikalyan               2026-11-21 00:33:45.993000  0.95627  ",
+    "17392080  Weni Mohamed            2026-11-21 10:28:53.900000  0.95621  ",
+    "17356299  Lebxgue.                2026-11-21 10:21:42.570000  0.95613  ",
+    "17244702  EunSeob Sim             2026-11-21 14:07:45.833000  0.95568  ",
+    "17407149  Arpit Jain              2026-11-21 10:31:16.396000  0.95565  ",
+    "17269262  Japan OpenData Lab      2026-11-21 13:27:08.600000  0.95565  ",
+    "17251560  starkhushi              2026-11-21 07:07:01.353000  0.95565  "
+  ],
+  "queries": [
+    {
+      "kind": "kernels",
+      "args": [
+        "kernels",
+        "list",
+        "-s",
+        "s6e11",
+        "--page-size",
+        "20"
+      ],
+      "chars": 4092,
+      "sec": 1.1
+    },
+    {
+      "kind": "kernels",
+      "args": [
+        "kernels",
+        "list",
+        "-s",
+        "0.955",
+        "--page-size",
+        "15"
+      ],
+      "chars": 3077,
+      "sec": 1.3
+    },
+    {
+      "kind": "kernels",
+      "args": [
+        "kernels",
+        "list",
+        "-s",
+        "0.956",
+        "--page-size",
+        "10"
+      ],
+      "chars": 2160,
+      "sec": 0.8
+    },
+    {
+      "kind": "kernels",
+      "args": [
+        "kernels",
+        "list",
+        "-s",
+        "0.96",
+        "--page-size",
+        "10"
+      ],
+      "chars": 1860,
+      "sec": 1.3
+    },
+    {
+      "kind": "datasets",
+      "args": [
+        "datasets",
+        "list",
+        "-s",
+        "credit card fraud 2026",
+        "--max-size",
+        "20"
+      ],
+      "chars": 935,
+      "sec": 1.2
+    },
+    {
+      "kind": "datasets",
+      "args": [
+        "datasets",
+        "list",
+        "-s",
+        "s6e11",
+        "--max-size",
+        "15"
+      ],
+      "chars": 1086,
+      "sec": 1.1
+    },
+    {
+      "kind": "datasets",
+      "args": [
+        "datasets",
+        "list",
+        "-s",
+        "uditjain",
+        "--max-size",
+        "10"
+      ],
+      "chars": 18,
+      "sec": 1.1
+    },
+    {
+      "kind": "lb",
+      "args": [
+        "competitions",
+        "leaderboard",
+        "-c",
+        "playground-series-s6e11",
+        "--show"
+      ],
+      "chars": 1694,
+      "sec": 0.8
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+[canary] NO_SUBMIT=True hard_cap=$8.0
+[canary] no RUNPOD_POD_ID — skip self-destruct
+[canary] fold0 va=139992 test=299984
+[canary] X=(699960, 32) Xt=(299984, 32) cats=15
+[canary] === Canary 1: TabPFN/bag ensemble ===
+/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/.venv/lib/python3.14/site-packages/sklearn/linear_model/_logistic.py:1435: FutureWarning: 'n_jobs' has no effect since 1.8 and will be removed in 1.10. You provided 'n_jobs=4', please leave it unspecified.
+  warnings.warn(msg, category=FutureWarning)
+/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/.venv/lib/python3.14/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 200 iteration(s) (status=1):
+STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
+
+Increase the number of iterations to improve the convergence (max_iter=200).
+You might also want to scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+[canary1] bag 1/2 done
+/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/.venv/lib/python3.14/site-packages/sklearn/linear_model/_logistic.py:1435: FutureWarning: 'n_jobs' has no effect since 1.8 and will be removed in 1.10. You provided 'n_jobs=4', please leave it unspecified.
+  warnings.warn(msg, category=FutureWarning)
+/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/.venv/lib/python3.14/site-packages/sklearn/linear_model/_logistic.py:599: ConvergenceWarning: lbfgs failed to converge after 200 iteration(s) (status=1):
+STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
+
+Increase the number of iterations to improve the convergence (max_iter=200).
+You might also want to scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+[canary1] bag 2/2 done
+[GATE] {"name": "tabpfn_bags", "solo_f0": 0.712460467211762, "d_auc_fb": -0.23931330717446797, "d_auc_tw": -0.23929015825891153, "r2_delta_B40": 0.29078785156014975, "sub_pos_fb": 0, "sub_pos_tw": 0, "promote": false}
+[canary] wrote /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/logs/overnight/v37_fold0/fold0_canary_result.json
+[canary] FAIL gate — remove pod if on RunPod

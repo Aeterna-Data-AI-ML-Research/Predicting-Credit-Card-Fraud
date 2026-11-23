@@ -1,0 +1,11 @@
+{
+  "pod_id": "khx6qxz80yfenn",
+  "gpu": "NVIDIA A40",
+  "usd_hr": 0.59,
+  "cloud": "SECURE",
+  "foreign": [
+    "efx11br58dkgqp"
+  ],
+  "name": "v37-gm-tfm-lm",
+  "dc": "CA-MTL-1"
+}

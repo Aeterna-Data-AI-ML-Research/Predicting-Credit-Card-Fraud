@@ -1,0 +1,116 @@
+{
+  "l7_bayes": [
+    {
+      "name": "l7_R_mean_diff",
+      "solo_oof": 0.9492651606850682,
+      "raw_disp_fb": 1.0329275936713065,
+      "mean_d_auc_fb": -0.0033197190550883658,
+      "mean_d_auc_tw": -0.0032807070630435755,
+      "d_auc_fb_folds": [
+        -0.004258693281174231,
+        -0.002873768703105628,
+        -0.0025373059737445747,
+        -0.003374981976792313,
+        -0.0035538453406250836
+      ],
+      "d_auc_tw_folds": [
+        -0.004235544365617794,
+        -0.0029661079303444637,
+        -0.002363145329490224,
+        -0.003449094475886927,
+        -0.0033896432138784682
+      ]
+    },
+    {
+      "name": "l7_R_deotte_lse",
+      "solo_oof": 0.9492122654786266,
+      "raw_disp_fb": 1.031930700992751,
+      "mean_d_auc_fb": -0.0033736311061230762,
+      "mean_d_auc_tw": -0.0033346191140782855,
+      "d_auc_fb_folds": [
+        -0.004280410737671159,
+        -0.002958394351650573,
+        -0.002609052353936714,
+        -0.0034434052261033132,
+        -0.003576892861253622
+      ],
+      "d_auc_tw_folds": [
+        -0.004257261822114722,
+        -0.0030507335788894085,
+        -0.002434891709682363,
+        -0.0035175177251979273,
+        -0.0034126907345070068
+      ]
+    },
+    {
+      "name": "l7_R_ranklogit",
+      "solo_oof": 0.9492650450881865,
+      "raw_disp_fb": 1.0329256122606258,
+      "mean_d_auc_fb": -0.0033199882753555342,
+      "mean_d_auc_tw": -0.0032809762833107435,
+      "d_auc_fb_folds": [
+        -0.004256643232857904,
+        -0.002872819459081022,
+        -0.0025401335091368438,
+        -0.00337742266805674,
+        -0.003552922507645162
+      ],
+      "d_auc_tw_folds": [
+        -0.004233494317301467,
+        -0.0029651586863198576,
+        -0.002365972864882493,
+        -0.003451535167151354,
+        -0.0033887203808985467
+      ]
+    }
+  ],
+  "vaults": [
+    {
+      "name": "busyaprime/s6e11-124-voices-the-top-rebuilt-lb-0-95465:V_TabM",
+      "reject": "empty_family"
+    },
+    {
+      "name": "busyaprime/s6e11-124-voices-the-top-rebuilt-lb-0-95465:V_EBM",
+      "reject": "empty_family"
+    },
+    {
+      "name": "busyaprime/s6e11-124-voices-the-top-rebuilt-lb-0-95465:V_BPE_GBDT",
+      "reject": "empty_family"
+    },
+    {
+      "slug": "busyaprime/s6e11-124-voices-the-top-rebuilt-lb-0-95465",
+      "n_files": 0,
+      "download_ok": false,
+      "n_singles_ignored": 0
+    },
+    {
+      "name": "amanatar/s6e11-sovereign-095423-simplex-and-oof-vault:V_TriTabPFN",
+      "reject": "empty_family"
+    },
+    {
+      "slug": "amanatar/s6e11-sovereign-095423-simplex-and-oof-vault",
+      "n_files": 0,
+      "download_ok": true,
+      "n_singles_ignored": 0
+    }
+  ],
+  "vault_tri_tabpfn": [
+    {
+      "name": "V_TriTabPFN",
+      "solo_oof": 0.949682110930825,
+      "raw_disp_fb": 1.0096363380237137,
+      "pass_hygiene": true,
+      "d_auc_fb": -0.0029386143073821813,
+      "d_auc_tw": -0.002898523941540887
+    }
+  ],
+  "busyaprime": {
+    "slug": "busyaprime/s6e11-124-voices-the-top-rebuilt-lb-0-95465",
+    "status": "403_FORBIDDEN",
+    "families": [
+      "V_TabM",
+      "V_EBM",
+      "V_BPE_GBDT"
+    ]
+  }
+}
