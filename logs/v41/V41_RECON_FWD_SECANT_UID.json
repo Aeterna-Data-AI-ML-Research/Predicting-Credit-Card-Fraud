@@ -1,0 +1,189 @@
+{
+  "NO_SUBMIT": true,
+  "LB_01": 0.95569,
+  "LB_02": 0.95568,
+  "LB_06": 0.95568,
+  "quarantine": [
+    "SLOT03",
+    "SLOT04",
+    "SLOT05",
+    "SLOT07",
+    "SLOT08"
+  ],
+  "hold": [
+    "SLOT09",
+    "SLOT10"
+  ],
+  "public_tip_recon": {
+    "any_kernel_above_095569": false,
+    "top_kernel_titles": [
+      "goodpjw2008 Board Model+RealMLP LB 0.95569",
+      "areebbb Which Signals Rank Fraud LB 0.95569"
+    ],
+    "note": "No public Step_AC / tip >0.95569 in scoreDescending top-50; newest kernels are low-score eda.",
+    "datasets": "goodpjw/amanatar/malyshev/masaya \u2014 no new >tip tip-lock dataset since Step_AB; areebbb has no datasets"
+  },
+  "candidates": {
+    "Cand_FWD_AB_areeb": {
+      "file": "Cand_FWD_AB_areeb_0p025e4.csv",
+      "sha": "e50346bd099e96a0317f98baa00c8c673112f05463a5b0b8eb5f4b43342802ef",
+      "formula": "Zr(L(AB) - \u03b1\u00b7clip_p985(L(areeb)-L(AB))) @ 0.025e-4",
+      "alpha": 0.30524434966291303,
+      "1mrho_vs_AB_e4": 0.02499999955607457,
+      "1mrho_vs_S02_e4": 0.10485990705633164,
+      "max_U_zone": 0.05576797429196224,
+      "Zr_ok": true,
+      "w_v10": 0.0,
+      "cos_d_AB_AA": 0.6402696132524255,
+      "cos_loser_S02": -0.9904564797455432,
+      "cos_loser_S06": -0.10829656734227501,
+      "OOF": {
+        "note": "areeb has no OOF; live-geometry candidate only",
+        "mean_e5": null,
+        "pos": null
+      },
+      "loser_gate_S02_nonpos": true,
+      "loser_gate_S06_nonpos": true
+    },
+    "Cand_FWD_AB_AA": {
+      "file": "Cand_FWD_AB_AA_0p030e4.csv",
+      "sha": "6feb162b7a617f435cf81dd3a29ca825f75ebf7aa918adac09c6f01ee9245a37",
+      "formula": "Zr(L(AB) + \u03b2\u00b7clip_p985(L(AB)-L(AA))) @ 0.030e-4",
+      "alpha": 0.3789645795507235,
+      "1mrho_vs_AB_e4": 0.03000000029063088,
+      "1mrho_vs_S02_e4": 0.11302310375160829,
+      "max_U_zone": 0.05576797429196224,
+      "Zr_ok": true,
+      "w_v10": 0.0,
+      "cos_d_AB_AA": 0.657024450097862,
+      "cos_loser_S02": -0.9581940901796232,
+      "cos_loser_S06": -0.08632977604553473,
+      "OOF": {
+        "note": "AA/AB tips are LB-only; secant is live-geometry",
+        "mean_e5": null,
+        "pos": null
+      },
+      "loser_gate_S02_nonpos": true,
+      "loser_gate_S06_nonpos": true
+    },
+    "Cand_UID_clean": {
+      "file": "Cand_UID_clean_clip985.csv",
+      "sha": "76e734e81c6deff9320a8117d808f43b3ac57bc4c43b6b40dc35626637a081a7",
+      "formula": "Zr(L(AB) + \u03b1\u00b7sign(-1)\u00b7clip_p985(uid_v2 \u22a5 B_pub=z_pub_only)) @ ~0.20e-4; ZERO uid_catboost",
+      "alpha": 0.01444035365338811,
+      "sign": -1,
+      "1mrho_vs_AB_e4": 0.19999999942843516,
+      "1mrho_vs_S02_e4": 0.22348969131669172,
+      "max_U_zone": 0.05576797429196224,
+      "Zr_ok": true,
+      "w_v10": 0.0,
+      "uid_catboost": 0.0,
+      "disp": 0.9477103464211466,
+      "KS": 0.013975678299009975,
+      "disp_ok": false,
+      "cos_d_AB_AA": -0.03733511457879866,
+      "cos_loser_S02": 0.04090842623617213,
+      "cos_loser_S06": 0.005675326361871602,
+      "OOF": {
+        "mean_e5": 0.0021534260374878045,
+        "pos": 3,
+        "alpha": 0.005,
+        "folds": [
+          0.48212660166413457,
+          -0.8805753079044187,
+          0.2721891212753569,
+          -0.5251137157102903,
+          0.6621404308626566
+        ],
+        "auc": 0.9526134645110604,
+        "base_auc": 0.9526136241093358
+      },
+      "P1s_AB_uid_a0p015": {
+        "sha": "b8c5b68dccde6941a9648421972655b28bcabe8e6602221dea186980aa30e757",
+        "1mrho_vs_AB_e4": 0.24592489366148662,
+        "max_U_zone": 0.05576797429196224,
+        "cos_d_AB_AA": 0.13030162204981174,
+        "cos_loser_S02": -0.15983455725981185,
+        "cos_loser_S06": -0.052234732690844714
+      },
+      "loser_gate_S02_nonpos": false,
+      "loser_gate_S06_nonpos": false
+    }
+  },
+  "pairwise_1mrho_e4": {
+    "names": [
+      "AB",
+      "FWD_areeb",
+      "FWD_AA",
+      "UID",
+      "S02",
+      "S06",
+      "P1s_uid"
+    ],
+    "matrix": [
+      [
+        0.0,
+        0.02499999955607457,
+        0.03000000029063088,
+        0.19999999942843516,
+        0.027515004979994373,
+        0.2800000486169463,
+        0.24592489366148662
+      ],
+      [
+        0.02499999955607457,
+        0.0,
+        0.002018786597890454,
+        0.22882474949970089,
+        0.10485990705633164,
+        0.328923554139271,
+        0.24125984946277157
+      ],
+      [
+        0.03000000029063088,
+        0.002018786597890454,
+        0.0,
+        0.235510273610684,
+        0.11302310375160829,
+        0.3303864249193378,
+        0.23759620817798144
+      ],
+      [
+        0.19999999942843516,
+        0.22882474949970089,
+        0.235510273610684,
+        0.0,
+        0.22348969131669172,
+        0.4765874174128548,
+        0.8575771898677864
+      ],
+      [
+        0.027515004979994373,
+        0.10485990705633164,
+        0.11302310375160829,
+        0.22348969131669172,
+        0.0,
+        0.2824424980285567,
+        0.3045809108082054
+      ],
+      [
+        0.2800000486169463,
+        0.328923554139271,
+        0.3303864249193378,
+        0.4765874174128548,
+        0.2824424980285567,
+        0.0,
+        0.5555503070964196
+      ],
+      [
+        0.24592489366148662,
+        0.24125984946277157,
+        0.23759620817798144,
+        0.8575771898677864,
+        0.3045809108082054,
+        0.5555503070964196,
+        0.0
+      ]
+    ]
+  }
+}

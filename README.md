@@ -2,7 +2,9 @@
 
 Local research repo for [playground-series-s6e11](https://www.kaggle.com/competitions/playground-series-s6e11).
 
-Public highlight: frozen submission **Public LB `0.95490`** (Kaggle ref `58521009`) — BOLD extrapolate on **goodpjw2008** Board Model steps E/F — published under `notebooks/lb_095490/` with full upstream credits. Earlier open release: **Public LB `0.95330`** (ref `58151250`) under `notebooks/lb_095330/`.
+**Current tip lock (2026-11-24):** Public LB **`0.95569`** — goodpjw **Step_AB** (`SLOT01`, SHA `3e1dba5d…`) and held flat on Diag_A / FWD_AB_AA / δ1_v4. Peephole micro-jumps (`< 0.30e-4`) **terminated**; V42 macro-leap engines did **not** clear +5e-5 OOF (see below).
+
+Earlier public releases: **`0.95490`** (ref `58521009`, `notebooks/lb_095490/`) · **`0.95330`** (ref `58151250`, `notebooks/lb_095330/`).
 
 ## Public notebook (LB 0.95490)
 
@@ -85,41 +87,62 @@ This score sits on public notebooks/datasets as well as our local training. Full
 ```
 notebooks/lb_095490/     # public 0.95490 notebook + frozen dataset CSV (board leap)
 notebooks/lb_095330/     # public 0.95330 notebook + frozen dataset CSV
-scripts/                 # local research / ladder / retake builders
+scripts/v41_*.py         # V41 tip-lock / Step6b–6e portfolio builders
+scripts/v42_*.py         # V42 macro-leap architect (NO_SUBMIT audits)
 preds/                   # local OOF & test prediction banks (gitignored bulk)
+out/v41_*/ out/v42_*/    # staged tip CSVs (local; regenerable, not committed)
 submissions/             # scored CSVs (mostly gitignored)
+logs/v41/ logs/v42/      # tip-lock manifests, 2D diagonal + macro-leap reports
 logs/overnight/          # JSON diagnostics & submit plans
 docs/                    # research notes / audits
 external/                # pulled public kernels & OOF banks
 ```
 
-## Current local ATH (2026-11-20)
+## Current tip (2026-11-24) — V41 tip lock + V42 macro freeze
 
 | | |
 |---|---|
-| **Public ATH** | **0.95531** |
-| **Recipe** | V29 consume goodpjw Board Model + RealMLP `submission.csv` (author LB 0.95531) |
-| **CSV** | `submissions/sub_v29_ATH_PUB531.csv` (gitignored; regenerable) |
-| **Kaggle ref** | `58609056` |
-| **Day reports** | `docs/V29_SCORE_LEAP.md` · `docs/V27_SCORE_LEAP.md` · `logs/overnight/GM_V28_SCORE_SIMULATION.md` |
+| **Public tip** | **0.95569** |
+| **Spearhead** | goodpjw **Step_AB** (`SLOT01_pub_Step_AB_095569.csv`, SHA `3e1dba5d31e01b6f…`) |
+| **Frozen 2D hold** | `Diag_A` (`f83c899dbe63…`) = `0.05e-4` StepAC ⊕ `0.10e-4` +δ1_v4 @ total `0.150e-4` → LB **0.95569** (flat) |
+| **Policy** | Peephole linear nudges `< 0.30e-4` **TERMINATED**. No submit of SLOT09/10 / Diag_B / quarantined areeb/−C3 axes. |
+| **Reports** | `logs/v41/V41_STEP6B_CLEAN_MANIFEST.md` · `logs/v41/V41_STEP6E_2D_DIAGONAL.md` · `logs/v42/V42_MACRO_LEAP_REPORT.md` · `logs/v41/V41_SLOT_DECISION_STATE.md` |
 
-### V22 live ladder (sriram `0.95422` → ATH `0.95426`)
+### V41 live burn ladder (2026-11-24)
 
-| Step | Idea | Public LB |
+| Slot / cand | Idea | `1−ρ` vs AB | Public LB | Δ vs tip |
+|---|---|---:|---:|---:|
+| **SLOT01** | Step_AB tip lock | 0 | **0.95569** | 0 |
+| SLOT02 | AB×areeb geodesic clip985 | 0.028e-4 | 0.95568 | −1 tick |
+| SLOT06 | −C3_harvest_p4 orth | 0.280e-4 | 0.95568 | −1 tick |
+| FWD_AB_AA | +secant `L(AB)−L(AA)` | 0.030e-4 | **0.95569** | 0 (flat) |
+| Cand3 δ1_v4 | `+delta1_v4 ⊥ z_pub_only` | 0.150e-4 | **0.95569** | 0 (flat) |
+| **Diag_A** | 2D orth StepAC ⊕ δ1 | 0.150e-4 | **0.95569** | 0 (flat) |
+
+Quarantined (do not submit): SLOT03/04/05/07 (areeb-family), SLOT08 (−C3 axis), Cand_UID_clean, Diag_C (δ_combo fails loser≤0). Held: Diag_B, SLOT09/10, Cand1/Cand2.
+
+Two live-verified **0.95569** rays from AB (near-orthogonal, cos≈−0.005):
+
+1. **Ray1** public secant / anti-S02 (`FWD_AB_AA` / StepAC)
+2. **Ray2** proprietary Stage-B `+delta1_v4 ⊥ z_pub_only` (OOF +1.53e-5, 4/5)
+
+### V42 macro-leap audit (`NO_SUBMIT`)
+
+| Engine | Finding | Δe5 vs `z_pub_only+Zr` |
 |---|---|---:|
-| V22.1 C1 | ATH lineage + ΔRealMLP | 0.95407 |
-| V22.1 C2pure | sriram + proprietary Slot9 engines | 0.95416 |
-| V22.2h P2 | micro-geodesic sriram × C1 + 5F LM | 0.95425 |
-| **V22.3 R2** | P2 continuation + de-diluted dMLP @ `1.25e-4` | **0.95426** |
-| V22.5 K2 | Ray-1 crest + signed orth4 @ `2.05e-4` | 0.95426 (tie) |
-| V22.6 SLOT1–5 | unattended 5-slot ladder (twilight orth hurt) | 0.95426…0.95412 |
+| E1 SCAN4 within-cohort `id` | IDs **sequential** → raw `u_g` KS fails; SCAN4 0.57489 = **size leak**; hash-u KS-ok but hurts | **−12.2** |
+| E2 cohort EB offset / τ | Capped offsets ≈0; uncapped destroys AUC | **0.00** best |
+| E3 StageB_v42 + Wilcoxon | gpt2 pillar shape miss; stack collapses | **−101.7** / −0.14 |
 
-Key scripts: `scripts/gm_v22_{1,2_hardened,3,4,5,6}_*.py`.  
-Next reset: prefer **Ray-1 crest** in `[1.45e-4, 1.85e-4]` and **`−U_orth` in twilight** (`V22_6_TWI_SIGN=-1`); do not GS-project after quantile gating.
+**No engine cleared the +5e-5 macro gate.** Tip remains Diag_A / Step_AB @ **0.95569**. Scripts: `scripts/v41_step*.py`, `scripts/v42_macro_leap_architect.py`.
 
-## Local next steps (beyond 0.95330)
+### Prior ATH markers
 
-Historical SoftPseudo retake artifacts (pre-V22) remain under `submissions/sub_retake_R*.csv` / `scripts/gm_day2_*`. The active climb is the **sriram-manifold V22 ladder** documented above.
+| Date | Public ATH | Note |
+|---|---:|---|
+| 2026-11-20 | 0.95531 | V29 consume goodpjw Board Model (`docs/V29_SCORE_LEAP.md`) |
+| 2026-11 | 0.95426 | V22 sriram-manifold ladder |
+| — | 0.95490 / 0.95330 | Public notebook freezes (above) |
 
 ## License / competition rules
 

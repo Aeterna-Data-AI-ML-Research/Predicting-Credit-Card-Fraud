@@ -1,0 +1,346 @@
+{
+  "NO_SUBMIT": true,
+  "integrity": [
+    {
+      "name": "our_095567",
+      "filename": "S01_PUB_areeb_95567.csv",
+      "path": "/tmp/s6e11_v39_ssd/out/v40_ladder/S01_PUB_areeb_95567.csv",
+      "reported_LB": 0.95567,
+      "sha256": "60ec5bd11eca0445c3b0b222a2715d3ffeee9594968cbce56061db16d87f5c62",
+      "sha16": "60ec5bd11eca0445",
+      "rows": 299984,
+      "min": 1.6667555602965492e-06,
+      "max": 0.9999983332444397,
+      "mean": 0.5,
+      "is_uniform_rank": true,
+      "n_nan": 0,
+      "n_inf": 0,
+      "id0": 699960,
+      "id_last": 999943
+    },
+    {
+      "name": "Step_V",
+      "filename": "goodpjw_95569/submission_step_v.csv",
+      "path": "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/external/v41_nov23_frontier/goodpjw_95569/submission_step_v.csv",
+      "reported_LB": 0.95558,
+      "sha256": "ac6962c8f32f6d132af3787874f02ea7afdbfde9bde5317d663be6879b2092b3",
+      "sha16": "ac6962c8f32f6d13",
+      "rows": 299984,
+      "min": 1.6667555602965492e-06,
+      "max": 0.9999983332444397,
+      "mean": 0.5,
+      "is_uniform_rank": true,
+      "n_nan": 0,
+      "n_inf": 0,
+      "id0": 699960,
+      "id_last": 999943
+    },
+    {
+      "name": "Step_W",
+      "filename": "goodpjw_95569/submission_step_w.csv",
+      "path": "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/external/v41_nov23_frontier/goodpjw_95569/submission_step_w.csv",
+      "reported_LB": 0.95559,
+      "sha256": "abc5d4a49535086e7f1c6e9cce8b0763253db1f4d6a0778227c651bcdd59b125",
+      "sha16": "abc5d4a49535086e",
+      "rows": 299984,
+      "min": 1.6667555602965492e-06,
+      "max": 0.9999983332444397,
+      "mean": 0.5,
+      "is_uniform_rank": true,
+      "n_nan": 0,
+      "n_inf": 0,
+      "id0": 699960,
+      "id_last": 999943
+    },
+    {
+      "name": "Step_X",
+      "filename": "goodpjw_95569/submission_step_x.csv",
+      "path": "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/external/v41_nov23_frontier/goodpjw_95569/submission_step_x.csv",
+      "reported_LB": 0.9556,
+      "sha256": "5c7e5518ac4beae1680675c585f006a7956d220338abf72a6951ae83f81579b8",
+      "sha16": "5c7e5518ac4beae1",
+      "rows": 299984,
+      "min": 1.6667555602965492e-06,
+      "max": 0.9999983332444397,
+      "mean": 0.5,
+      "is_uniform_rank": true,
+      "n_nan": 0,
+      "n_inf": 0,
+      "id0": 699960,
+      "id_last": 999943
+    },
+    {
+      "name": "Step_Y_095561",
+      "filename": "goodpjw_95569/submission_step_y.csv",
+      "path": "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/external/v41_nov23_frontier/goodpjw_95569/submission_step_y.csv",
+      "reported_LB": 0.95561,
+      "sha256": "6a153c97a54fe0554504b74d8e79917dbe0834e0c058d387f3146a993c063290",
+      "sha16": "6a153c97a54fe055",
+      "rows": 299984,
+      "min": 1.6667555602965492e-06,
+      "max": 0.9999983332444397,
+      "mean": 0.5,
+      "is_uniform_rank": true,
+      "n_nan": 0,
+      "n_inf": 0,
+      "id0": 699960,
+      "id_last": 999943
+    },
+    {
+      "name": "Step_Z_095562",
+      "filename": "goodpjw_95569/submission_step_z.csv",
+      "path": "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/external/v41_nov23_frontier/goodpjw_95569/submission_step_z.csv",
+      "reported_LB": 0.95562,
+      "sha256": "ee61b50611326eb668033f088f8803e28541874c1cff2cf073334ea7d0f05a11",
+      "sha16": "ee61b50611326eb6",
+      "rows": 299984,
+      "min": 1.6667555602965492e-06,
+      "max": 0.9999983332444397,
+      "mean": 0.5,
+      "is_uniform_rank": true,
+      "n_nan": 0,
+      "n_inf": 0,
+      "id0": 699960,
+      "id_last": 999943
+    },
+    {
+      "name": "Step_AA",
+      "filename": "goodpjw_95569/submission_step_aa.csv",
+      "path": "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/external/v41_nov23_frontier/goodpjw_95569/submission_step_aa.csv",
+      "reported_LB": 0.95569,
+      "sha256": "51706855fa6de98ef88c1d02bebfc24ab340092d05eb513e227e048041c0346c",
+      "sha16": "51706855fa6de98e",
+      "rows": 299984,
+      "min": 1.6667555602965492e-06,
+      "max": 0.9999983332444397,
+      "mean": 0.5,
+      "is_uniform_rank": true,
+      "n_nan": 0,
+      "n_inf": 0,
+      "id0": 699960,
+      "id_last": 999943
+    },
+    {
+      "name": "areeb_095568",
+      "filename": "areeb_95568/submission.csv",
+      "path": "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/external/v41_nov23_frontier/areeb_95568/submission.csv",
+      "reported_LB": 0.95568,
+      "sha256": "3b9fe6d72e3102101ab33d35a17cdb90b1e41de40c3792a7dc1a1cd619d1bc8c",
+      "sha16": "3b9fe6d72e310210",
+      "rows": 299984,
+      "min": 1.6667555602965492e-06,
+      "max": 0.9999983332444397,
+      "mean": 0.5,
+      "is_uniform_rank": true,
+      "n_nan": 0,
+      "n_inf": 0,
+      "id0": 699960,
+      "id_last": 999943
+    },
+    {
+      "name": "dennis_clipped",
+      "filename": "dennis/submission.csv",
+      "path": "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/external/v41_nov23_frontier/dennis/submission.csv",
+      "reported_LB": null,
+      "sha256": "7de7fcc291f699bf84ea26ea08c54409fb62018a232382516efe6b2ffc86fd0c",
+      "sha16": "7de7fcc291f699bf",
+      "rows": 299984,
+      "min": 1.6667555602965492e-06,
+      "max": 0.9999983332444397,
+      "mean": 0.5,
+      "is_uniform_rank": true,
+      "n_nan": 0,
+      "n_inf": 0,
+      "id0": 699960,
+      "id_last": 999943
+    },
+    {
+      "name": "malyshev_v42",
+      "filename": "pinned_csv/malyshev_v42_from_npz.csv",
+      "path": "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/external/v41_nov23_frontier/pinned_csv/malyshev_v42_from_npz.csv",
+      "reported_LB": 0.95565,
+      "sha256": "cde594c2098f4e076e755ea1227cb60e8ff05a69bd304234f7944263295c4102",
+      "sha16": "cde594c2098f4e07",
+      "rows": 299984,
+      "min": 1.6667555602965492e-06,
+      "max": 0.9999983332444397,
+      "mean": 0.5,
+      "is_uniform_rank": true,
+      "n_nan": 0,
+      "n_inf": 0,
+      "id0": 699960,
+      "id_last": 999943
+    },
+    {
+      "name": "dennis_Nov23_npz",
+      "filename": "recon/dennis_Nov23_from_npz.csv",
+      "path": "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/external/v41_nov23_frontier/recon/dennis_Nov23_from_npz.csv",
+      "reported_LB": null,
+      "sha256": "c226b49911d20295f5c46ac73a51946cb79ffb4222f691179f9012c3d10d7b05",
+      "sha16": "c226b49911d20295",
+      "rows": 299984,
+      "min": 1.6667555602965492e-06,
+      "max": 0.9999983332444397,
+      "mean": 0.5,
+      "is_uniform_rank": true,
+      "n_nan": 0,
+      "n_inf": 0,
+      "id0": 699960,
+      "id_last": 999943
+    }
+  ],
+  "areeb_recon": {
+    "space": "logit(uniform_rank) with zone mask; residual=AA-quarter; clip p95 abs outside zones; weight 0.70; then uniform ranks",
+    "NOT_Y_minus_Z": true,
+    "cap_p95": 0.02086590712294964,
+    "weight": 0.7,
+    "quarter_sha256": "60ec5bd11eca0445c3b0b222a2715d3ffeee9594968cbce56061db16d87f5c62",
+    "final_sha256": "3b9fe6d72e3102101ab33d35a17cdb90b1e41de40c3792a7dc1a1cd619d1bc8c",
+    "exec_sha256": "3b9fe6d72e3102101ab33d35a17cdb90b1e41de40c3792a7dc1a1cd619d1bc8c",
+    "max_abs_diff": 0.0,
+    "max_rank_diff": 0.0,
+    "one_minus_spearman": 0.0,
+    "sha_prefix_match_notebook": true,
+    "zones_n": 16730,
+    "rebuilt_path": "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/external/v41_nov23_frontier/recon/areeb_095568_rebuilt.csv"
+  },
+  "dennis_recon": {
+    "parent_found": true,
+    "parent_path": "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/external/v41_nov23_frontier/goodpjw_95569/submission.csv",
+    "alt_path": "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/external/v41_nov23_frontier/areeb_95568/submission.csv",
+    "space": "logit(uniform_rank); residual=alt-parent; clip quantile abs 0.985; weight 0.12; then uniform ranks",
+    "NOT_Y_minus_Z_026": true,
+    "limit_p985": 0.10542461491305088,
+    "weight": 0.12,
+    "max_abs_diff": 0.0,
+    "max_rank_diff": 0.0,
+    "one_minus_spearman": 0.0,
+    "rebuilt_sha256": "7de7fcc291f699bf84ea26ea08c54409fb62018a232382516efe6b2ffc86fd0c",
+    "exec_sha256": "7de7fcc291f699bf84ea26ea08c54409fb62018a232382516efe6b2ffc86fd0c"
+  },
+  "yz_hist_summary": {
+    "documented_formula": "Z + 0.26 * clip(logit_rank(Y)-logit_rank(Z), \u00b1p99_abs) \u2192 uniform ranks",
+    "p99": 0.06364578033863297,
+    "one_minus_spearman_vs_dennis_Nov23": 0.0,
+    "max_abs": 0.0,
+    "dennis_Nov23_csv": "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/external/v41_nov23_frontier/recon/dennis_Nov23_from_npz.csv",
+    "dennis_Nov23_sha256": "c226b49911d20295f5c46ac73a51946cb79ffb4222f691179f9012c3d10d7b05"
+  },
+  "pairwise_1mrho_e4": {
+    "our_095567": {
+      "our_095567": 0.0,
+      "Step_V": 4.271036514817972,
+      "Step_W": 3.593540007634788,
+      "Step_X": 3.143246527417265,
+      "Step_Y_095561": 2.768896411174948,
+      "Step_Z_095562": 2.1021035113266695,
+      "dennis_clipped": 0.4237698176534632,
+      "areeb_095568": 0.07123448339529936
+    },
+    "Step_V": {
+      "our_095567": 4.271036514817972,
+      "Step_V": 0.0,
+      "Step_W": 0.09058724887323066,
+      "Step_X": 0.16980226177354396,
+      "Step_Y_095561": 0.47672038771984226,
+      "Step_Z_095562": 1.0108672783859518,
+      "dennis_clipped": 6.494450651061134,
+      "areeb_095568": 5.288673287912049
+    },
+    "Step_W": {
+      "our_095567": 3.593540007634788,
+      "Step_V": 0.09058724887323066,
+      "Step_W": 0.0,
+      "Step_X": 0.050410362170127954,
+      "Step_Y_095561": 0.3623632759208739,
+      "Step_Z_095562": 0.6033527084514656,
+      "dennis_clipped": 5.783736023087238,
+      "areeb_095568": 4.506893104749832
+    },
+    "Step_X": {
+      "our_095567": 3.143246527417265,
+      "Step_V": 0.16980226177354396,
+      "Step_W": 0.050410362170127954,
+      "Step_X": 0.0,
+      "Step_Y_095561": 0.1490867919706762,
+      "Step_Z_095562": 0.3653571955852808,
+      "dennis_clipped": 5.291838074386046,
+      "areeb_095568": 4.03191289395588
+    },
+    "Step_Y_095561": {
+      "our_095567": 2.768896411174948,
+      "Step_V": 0.47672038771984226,
+      "Step_W": 0.3623632759208739,
+      "Step_X": 0.1490867919706762,
+      "Step_Y_095561": 0.0,
+      "Step_Z_095562": 0.29662514092976267,
+      "dennis_clipped": 4.886693727506053,
+      "areeb_095568": 3.6544105807456706
+    },
+    "Step_Z_095562": {
+      "our_095567": 2.1021035113266695,
+      "Step_V": 1.0108672783859518,
+      "Step_W": 0.6033527084514656,
+      "Step_X": 0.3653571955852808,
+      "Step_Y_095561": 0.29662514092976267,
+      "Step_Z_095562": 0.0,
+      "dennis_clipped": 4.061132842183568,
+      "areeb_095568": 2.790401322857461
+    },
+    "dennis_clipped": {
+      "our_095567": 0.4237698176534632,
+      "Step_V": 6.494450651061134,
+      "Step_W": 5.783736023087238,
+      "Step_X": 5.291838074386046,
+      "Step_Y_095561": 4.886693727506053,
+      "Step_Z_095562": 4.061132842183568,
+      "dennis_clipped": 0.0,
+      "areeb_095568": 0.22701793515267354
+    },
+    "areeb_095568": {
+      "our_095567": 0.07123448339529936,
+      "Step_V": 5.288673287912049,
+      "Step_W": 4.506893104749832,
+      "Step_X": 4.03191289395588,
+      "Step_Y_095561": 3.6544105807456706,
+      "Step_Z_095562": 2.790401322857461,
+      "dennis_clipped": 0.22701793515267354,
+      "areeb_095568": 0.0
+    }
+  },
+  "match_yz": {
+    "Y": {
+      "max_abs_npz_vs_csv": 0.0,
+      "1mrho": 0.0
+    },
+    "Z": {
+      "max_abs_npz_vs_csv": 0.0,
+      "1mrho": 0.0
+    },
+    "V": {
+      "max_abs_npz_vs_csv": 0.0,
+      "1mrho": 0.0
+    }
+  },
+  "inventory": {
+    "busyaprime_52": {
+      "path": "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/external/v41_nov23_frontier/busyaprime_52",
+      "files": [
+        "manifest.csv",
+        "oof.npy",
+        "tabm_oof.npy",
+        "tabm_test.npy",
+        "test.npy"
+      ]
+    },
+    "kabartay_d27_notebook": {
+      "path": "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/external/v41_nov23_frontier/kabartay",
+      "files": [
+        "kernel-metadata.json",
+        "s6e11-own-models-only-honest-5-fold-cv.ipynb"
+      ],
+      "note": "Notebook pulled for Step 4; D27 zone rules to be parsed then."
+    },
+    "goodpjw_step_AA_LB_note": "goodpjw board tip now publishes Step AA; areeb 0.95568 uses AA sha 51706855\u2026"
+  }
+}

@@ -1,0 +1,192 @@
+{
+  "NO_SUBMIT": true,
+  "LB_delta1": 0.95569,
+  "dual_rays": {
+    "Ray1_StepAC": {
+      "cos_S02": -0.975,
+      "verified_at_e4": 0.03,
+      "LB": 0.95569
+    },
+    "Ray2_delta1_v4": {
+      "cos_S02": -0.006,
+      "cos_S06": -0.107,
+      "verified_at_e4": 0.15,
+      "LB": 0.95569,
+      "OOF_e5": 1.53,
+      "pos": 4
+    },
+    "ray_cross_cos": -0.005120896857611829
+  },
+  "delta_v4_combo_audit": {
+    "from_cache": true,
+    "corr_with_precomputed": 0.9445091196815415,
+    "delta1_v4": {
+      "name": "delta1_v4",
+      "sign": 1,
+      "OOF_mean_e5": 1.5252233295082185,
+      "pos": 4,
+      "disp": 0.9994781987801621,
+      "KS": 0.00778708197770539,
+      "disp_ok": true,
+      "cos_S02": -0.0060530487591095835,
+      "cos_S06": -0.10696292484397303,
+      "cos_d_AB_AA": -0.006581997366424418,
+      "loser_ok": true,
+      "1mrho_vs_AB_e4": 0.14999999922382656,
+      "tip_alpha": 0.009143773014379316
+    },
+    "delta_v4_combo": {
+      "name": "delta_v4_combo",
+      "sign": 1,
+      "OOF_mean_e5": 6.935284688438514,
+      "pos": 5,
+      "disp": 1.000417229824736,
+      "KS": 0.008357112379326903,
+      "disp_ok": true,
+      "cos_S02": 0.02785483543905132,
+      "cos_S06": 0.04473241322383571,
+      "cos_d_AB_AA": -0.023908427218557054,
+      "loser_ok": false,
+      "1mrho_vs_AB_e4": 0.14999999948250853,
+      "tip_alpha": 0.010051782841636422
+    },
+    "delta_v4_combo_precomputed": {
+      "name": "delta_v4_combo_precomputed",
+      "sign": 1,
+      "OOF_mean_e5": 7.097710430492566,
+      "pos": 5,
+      "disp": 0.9998122030048266,
+      "KS": 0.008233772467864942,
+      "disp_ok": true,
+      "cos_S02": 0.041856289833906095,
+      "cos_S06": -0.03247345119996512,
+      "cos_d_AB_AA": -0.03147993906170819,
+      "loser_ok": false,
+      "1mrho_vs_AB_e4": 0.15000000027409754,
+      "tip_alpha": 0.009791202659537153
+    },
+    "combo_beats_d1_and_loser0": false
+  },
+  "step_AB_internal_levers_proxy": {
+    "note": "Exact Sriram_orth / RECENT / MOVE6 / MSTEP arrays are NOT cached locally (require full v43 notebook pinned-input replay). Proxies from tip geometry below.",
+    "levers": {
+      "proxy_Sriram_like_areeb_AA": {
+        "alpha": 0.013934852435862413,
+        "e4": 0.03999999984904967,
+        "cos_S02": -0.0014408966286661256,
+        "cos_S06": 0.00010827970928339715,
+        "cos_d_AB_AA": 0.15171970942259902,
+        "cos_vs_Cand2": 0.17085353686915636,
+        "1mrho_vs_Cand2_e4": 0.06104849623933539,
+        "loser_ok": false
+      },
+      "proxy_RECENT_Z_to_AA": {
+        "alpha": 0.006492953859724659,
+        "e4": 0.040000001828577325,
+        "cos_S02": -0.6939147346950086,
+        "cos_S06": -0.1480599556665794,
+        "cos_d_AB_AA": 0.3684741974436856,
+        "cos_vs_Cand2": 0.602546594629954,
+        "1mrho_vs_Cand2_e4": 0.0469507105227418,
+        "loser_ok": true
+      },
+      "proxy_MOVE_AA_to_AB": {
+        "alpha": 0.0069754443184750275,
+        "e4": 0.040000000162132565,
+        "cos_S02": -0.9583571803516404,
+        "cos_S06": -0.08648446499270104,
+        "cos_d_AB_AA": 0.6571535236125328,
+        "cos_vs_Cand2": 0.9950935756509847,
+        "1mrho_vs_Cand2_e4": 0.002310439850550239,
+        "loser_ok": true
+      },
+      "proxy_anti_RECENT": {
+        "alpha": 0.007265699228059924,
+        "e4": 0.040000000103290745,
+        "cos_S02": -0.011580579344260678,
+        "cos_S06": -0.0008805843841489234,
+        "cos_d_AB_AA": 0.11566032778310656,
+        "cos_vs_Cand2": 0.12310894208485337,
+        "1mrho_vs_Cand2_e4": 0.08948290954324811,
+        "loser_ok": true
+      },
+      "proxy_neg_RECENT_plus_MSTEP": {
+        "alpha": 0.006182804389033613,
+        "e4": 0.039999998627804345,
+        "cos_S02": -0.011865622233515422,
+        "cos_S06": -0.0005817374199745803,
+        "cos_d_AB_AA": 0.12346383863194292,
+        "cos_vs_Cand2": 0.13550184003712482,
+        "1mrho_vs_Cand2_e4": 0.08631732311248363,
+        "loser_ok": true
+      }
+    }
+  },
+  "candidates": {
+    "Diag_A": {
+      "file": "Diag_A_0p050AC_0p100d1_tot0p150e4.csv",
+      "sha": "f83c899dbe63d69ad104f891da1c968a3869c767cb562e81058787f69881a817",
+      "formula": "Zr(L(AB)+scale(0.050\u00b7StepAC \u2295 0.100\u00b7+delta1_v4)) total 0.150e-4",
+      "meta": {
+        "a1": 0.9278138067693276,
+        "a2": 0.8205050710734149,
+        "a_tot": 0.008957904218368711,
+        "partial_e1": 0.05,
+        "partial_e2": 0.1,
+        "total_e4": 0.14999999211173787,
+        "raw_1mrho_before_rescale": 0.14924071250033144,
+        "label": "Diag_A"
+      },
+      "1mrho_vs_AB_e4": 0.14999999211173787,
+      "1mrho_vs_FWD030_e4": 0.10397541779449959,
+      "1mrho_vs_Cand3_e4": 0.05544350695108058,
+      "1mrho_vs_S02_e4": 0.250710737333959,
+      "1mrho_vs_S06_e4": 0.49565603406742653,
+      "cos_S02": -0.6083494492833218,
+      "cos_S06": -0.14703928715570846,
+      "max_U_zone": 0.05576797429196224,
+      "Zr_ok": true,
+      "w_v10": 0.0,
+      "OOF_mean_e5": null,
+      "pos": null,
+      "disp": 0.9994781987801621,
+      "KS": 0.00778708197770539,
+      "OOF_note": "inherits \u03b41 ray OOF \u0394e5=1.53 pos=4/5"
+    },
+    "Diag_B": {
+      "file": "Diag_B_0p060AC_0p160d1_tot0p220e4.csv",
+      "sha": "795cb4f1c919775e65c27fd8227b59fff31eace64db202a9302baa22b203c032",
+      "formula": "Zr(L(AB)+scale(0.060\u00b7StepAC \u2295 0.160\u00b7+delta1_v4)) total 0.220e-4",
+      "meta": {
+        "a1": 1.018103041774094,
+        "a2": 1.0389233290217932,
+        "a_tot": 0.010729891994796986,
+        "partial_e1": 0.06,
+        "partial_e2": 0.16,
+        "total_e4": 0.2199999969909605,
+        "raw_1mrho_before_rescale": 0.2189729118262651,
+        "label": "Diag_B"
+      },
+      "1mrho_vs_AB_e4": 0.2199999969909605,
+      "1mrho_vs_FWD030_e4": 0.16692279604657578,
+      "1mrho_vs_Cand3_e4": 0.060495795038972844,
+      "1mrho_vs_S02_e4": 0.3278155066510635,
+      "1mrho_vs_S06_e4": 0.5780823849699246,
+      "cos_S02": -0.5562408446993413,
+      "cos_S06": -0.14607473746444521,
+      "max_U_zone": 0.05576797429196224,
+      "Zr_ok": true,
+      "w_v10": 0.0,
+      "OOF_mean_e5": null,
+      "pos": null,
+      "disp": 0.9994781987801621,
+      "KS": 0.00778708197770539,
+      "OOF_note": "inherits \u03b41 ray OOF \u0394e5=1.53 pos=4/5"
+    },
+    "Diag_C": {
+      "file": null,
+      "staged": false,
+      "reason": "\u03b4_v4_combo does not beat \u03b41 on OOF+loser (combo \u0394e5=6.94 loser=False vs \u03b41 \u0394e5=1.53 loser=True)"
+    }
+  }
+}

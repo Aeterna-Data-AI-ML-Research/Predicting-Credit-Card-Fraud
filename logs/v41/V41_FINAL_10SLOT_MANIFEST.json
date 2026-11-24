@@ -1,0 +1,1071 @@
+{
+  "NO_SUBMIT": true,
+  "step": 6,
+  "public_bank": {
+    "n_cand": 123,
+    "pillars": {
+      "LM_GPT2": {
+        "n": 18,
+        "auc": 0.9509792312466021,
+        "members": [
+          "busy52:lgb_g2_glminit_l7",
+          "busy52:glm_plain_g2_s50",
+          "busy52:glm_plain_s50",
+          "gpw70:glm_dl_s50_bag",
+          "gpw70:glm_dl_s50",
+          "gpw70:glm_dl_bag",
+          "gpw70:glm_dl",
+          "busy52:glm_ohk_g2_c0003_s50"
+        ]
+      },
+      "GBDT": {
+        "n": 18,
+        "auc": 0.9514627784717646,
+        "members": [
+          "gpw70:gb_bag5",
+          "gpw70:gb_bag10",
+          "gpw70:gbx_bag5",
+          "gpw70:gbx_bag3",
+          "gpw70:gb_l3",
+          "gpw70:gbc_bag3",
+          "gpw70:gbn_bag5_w512",
+          "gpw70:gbn_bag5_w128"
+        ]
+      },
+      "TabM_RealMLP": {
+        "n": 16,
+        "auc": 0.9503232435540238,
+        "members": [
+          "busy52:tabm_dl",
+          "busy52:rmlp2_dl_hier",
+          "busy52:rmlp2_dl",
+          "gpw70:realmlp_dig_s2",
+          "gpw70:realmlp_dig_s100",
+          "busy52:rmlp_dl",
+          "gpw70:realmlp_dig",
+          "busy52:rmlp_dl_g2"
+        ]
+      },
+      "EBM_GLM": {
+        "n": 15,
+        "auc": 0.9506401790048588,
+        "members": [
+          "busy52:ebm_g2_glminit",
+          "gpw70:ebm_i25_bag",
+          "gpw70:ebm_i25_bag4",
+          "gpw70:ebm_lead4_bag",
+          "gpw70:ebm_diglead_i25",
+          "gpw70:ebm_all_bag",
+          "gpw70:ebm_diglead_bag",
+          "gpw70:ebm_diglead_r11"
+        ]
+      }
+    }
+  },
+  "S_indep_vs_fullbank": {
+    "1mrho_oof_e4": 114.72227348839459,
+    "1mrho_test_e4": 140.91706995308706,
+    "ratio_test_over_oof": 1.2283322642428487
+  },
+  "S_cv_champ": {
+    "oof_auc": 0.9526207252382072,
+    "oof_auc_zr": 0.9526697935042275,
+    "folds": [
+      0.9516596493310757,
+      0.9526700683926745,
+      0.9573845424394607,
+      0.9528872541826177,
+      0.9482928540673687
+    ],
+    "folds_zr": [
+      0.9517062735535048,
+      0.9527136248664425,
+      0.9574212600061973,
+      0.9529192892264574,
+      0.9483580986697495
+    ],
+    "sf25_vs_fb_zr": 11,
+    "sf25_vs_p12_zr": 14,
+    "meta_names": [
+      "Fullbank",
+      "S_indep_pillars",
+      "prop:xgb_llr",
+      "prop:l7_s2026",
+      "prop:gpt2_med_4ep",
+      "prop:lgb_gpt2_3ep_fixed",
+      "prop:gb_gpt2_bag5",
+      "resid:v10_ridge_resid",
+      "resid:v10_ridge_orth_LM",
+      "resid:harvest_p4_cuda_xgb"
+    ],
+    "sign_logs": [
+      {
+        "fold": 0,
+        "signs": {
+          "Fullbank": 1,
+          "S_indep_pillars": 1,
+          "prop:xgb_llr": 1,
+          "prop:l7_s2026": 1,
+          "prop:gpt2_med_4ep": 1,
+          "prop:lgb_gpt2_3ep_fixed": 1,
+          "prop:gb_gpt2_bag5": 1,
+          "resid:v10_ridge_resid": 1,
+          "resid:v10_ridge_orth_LM": 1,
+          "resid:harvest_p4_cuda_xgb": -1
+        }
+      },
+      {
+        "fold": 1,
+        "signs": {
+          "Fullbank": 1,
+          "S_indep_pillars": 1,
+          "prop:xgb_llr": 1,
+          "prop:l7_s2026": 1,
+          "prop:gpt2_med_4ep": 1,
+          "prop:lgb_gpt2_3ep_fixed": 1,
+          "prop:gb_gpt2_bag5": 1,
+          "resid:v10_ridge_resid": 1,
+          "resid:v10_ridge_orth_LM": 1,
+          "resid:harvest_p4_cuda_xgb": -1
+        }
+      },
+      {
+        "fold": 2,
+        "signs": {
+          "Fullbank": 1,
+          "S_indep_pillars": 1,
+          "prop:xgb_llr": 1,
+          "prop:l7_s2026": 1,
+          "prop:gpt2_med_4ep": 1,
+          "prop:lgb_gpt2_3ep_fixed": 1,
+          "prop:gb_gpt2_bag5": 1,
+          "resid:v10_ridge_resid": 1,
+          "resid:v10_ridge_orth_LM": 1,
+          "resid:harvest_p4_cuda_xgb": -1
+        }
+      },
+      {
+        "fold": 3,
+        "signs": {
+          "Fullbank": 1,
+          "S_indep_pillars": 1,
+          "prop:xgb_llr": 1,
+          "prop:l7_s2026": 1,
+          "prop:gpt2_med_4ep": 1,
+          "prop:lgb_gpt2_3ep_fixed": 1,
+          "prop:gb_gpt2_bag5": 1,
+          "resid:v10_ridge_resid": 1,
+          "resid:v10_ridge_orth_LM": 1,
+          "resid:harvest_p4_cuda_xgb": -1
+        }
+      },
+      {
+        "fold": 4,
+        "signs": {
+          "Fullbank": 1,
+          "S_indep_pillars": 1,
+          "prop:xgb_llr": 1,
+          "prop:l7_s2026": 1,
+          "prop:gpt2_med_4ep": 1,
+          "prop:lgb_gpt2_3ep_fixed": 1,
+          "prop:gb_gpt2_bag5": 1,
+          "resid:v10_ridge_resid": 1,
+          "resid:v10_ridge_orth_LM": 1,
+          "resid:harvest_p4_cuda_xgb": -1
+        }
+      }
+    ],
+    "note": "Nested blend with residuals scored 0.952548; SLOT09 promotes Fullbank artifact 0.952621/+Zr0.952670 as CV champion floor.",
+    "nested_blend_oof": 0.9525477696845229,
+    "nested_blend_oof_zr": 0.9525922828119167
+  },
+  "prop_assets": {
+    "prop:xgb_llr": {
+      "kind": "base",
+      "status": "OK",
+      "auc": 0.9519489439041481,
+      "cal_KS": 5.238292976494918e-06,
+      "pass": true,
+      "nan": 0
+    },
+    "prop:l7_s2026": {
+      "kind": "base",
+      "status": "OK",
+      "auc": 0.9492651606850682,
+      "cal_KS": 8.287391724676185e-06,
+      "pass": true,
+      "nan": 0
+    },
+    "prop:gpt2_med_4ep": {
+      "kind": "base",
+      "status": "OK",
+      "auc": 0.9482383414278046,
+      "cal_KS": 7.398912619249742e-06,
+      "pass": true,
+      "nan": 0
+    },
+    "prop:lgb_gpt2_3ep_fixed": {
+      "kind": "base",
+      "status": "OK",
+      "auc": 0.9523089475835048,
+      "cal_KS": 6.904381796291048e-06,
+      "pass": true,
+      "nan": 0
+    },
+    "prop:gb_gpt2_bag5": {
+      "kind": "base",
+      "status": "OK",
+      "auc": 0.9516766134367235,
+      "cal_KS": 1.3046507955388753e-05,
+      "pass": true,
+      "nan": 0
+    },
+    "resid:v10_ridge_resid": {
+      "kind": "residual",
+      "status": "OK",
+      "disp": 0.9265863504108793,
+      "KS": 0.0122275938302438,
+      "nan": 0,
+      "nuniq": 575628,
+      "pass": true,
+      "ok_shape": true,
+      "path_oof": "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/preds/v10_transductive_bulsah/v10_ridge_resid_oof.npy"
+    },
+    "resid:v10_ridge_orth_LM": {
+      "kind": "residual",
+      "status": "OK",
+      "disp": 1.0377583431671427,
+      "KS": 5.497102520279906e-05,
+      "nan": 0,
+      "nuniq": 696803,
+      "pass": true,
+      "ok_shape": true,
+      "path_oof": "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/preds/v10_transductive_bulsah/v10_ridge_resid_orth_LM_oof.npy"
+    },
+    "resid:harvest_p4_cuda_xgb": {
+      "kind": "residual",
+      "status": "OK",
+      "disp": 0.9999999999920395,
+      "KS": 4.6956425518995815e-06,
+      "nan": 0,
+      "nuniq": 695394,
+      "pass": true,
+      "ok_shape": true,
+      "path_oof": "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/preds/matrix_v2/harvest_p4_cuda_xgb_oof.npy"
+    },
+    "resid:P4_L4.2_pure5f": {
+      "kind": "residual",
+      "status": "FAIL",
+      "disp": 0.41384348152525235,
+      "KS": 0.12447094467740538,
+      "nan": 0,
+      "nuniq": 16918,
+      "pass": false,
+      "ok_shape": true,
+      "path_oof": "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/preds/matrix_v2/P4_L4.2_pure5f_oof.npy"
+    },
+    "resid:P4_L4.3_pure5f": {
+      "kind": "residual",
+      "status": "FAIL",
+      "disp": 0.7916641334257757,
+      "KS": 0.09191723831000842,
+      "nan": 0,
+      "nuniq": 823,
+      "pass": false,
+      "ok_shape": true,
+      "path_oof": "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/preds/matrix_v2/P4_L4.3_pure5f_oof.npy"
+    },
+    "resid:P4_L4.5_pure5f": {
+      "kind": "residual",
+      "status": "FAIL",
+      "disp": 0.564143412089493,
+      "KS": 0.13636155674688155,
+      "nan": 0,
+      "nuniq": 12825,
+      "pass": false,
+      "ok_shape": true,
+      "path_oof": "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/preds/matrix_v2/P4_L4.5_pure5f_oof.npy"
+    },
+    "prop:uid_v2": {
+      "kind": "base",
+      "status": "OK",
+      "auc": 0.9348450403584069,
+      "cal_KS": 5.238292976494918e-06,
+      "pass": true,
+      "nan": 0
+    },
+    "prop:uid_catboost": {
+      "kind": "base",
+      "status": "HARD_BAN"
+    }
+  },
+  "z_AB_twin": {
+    "R2_test_nonzone": 0.9559639469984177,
+    "1mrho_test_vs_AB_e4": 188.14921043126654,
+    "oof_auc_zr": 0.9509073598176513,
+    "n_cols": 52
+  },
+  "dual_baseline_gate_scorecard": {
+    "u_seq_tree": {
+      "fullbank": {
+        "sign": -1,
+        "pos": 1,
+        "mean_e5": -0.897789094778112,
+        "sf25": 8,
+        "t25": -1.1364166066402555,
+        "folds": [
+          0.0,
+          -0.13050163351069344,
+          -2.028989682589799,
+          1.3637420699486036,
+          -3.693196227738671
+        ]
+      },
+      "twin": {
+        "sign": 1,
+        "pos": 5,
+        "mean_e5": 32.14623693935881,
+        "sf25": 23,
+        "t25": 4.070461652820796,
+        "folds": [
+          8.344737989907092,
+          34.96138761169831,
+          36.3269939907207,
+          20.225267445372896,
+          60.872797659095035
+        ]
+      },
+      "same_sign": false,
+      "raw_disp": 0.9999999999989999,
+      "KS": 0.002729491364060782,
+      "R2_u_test_on_B52": 0.04284607627973258,
+      "pass": false,
+      "sign": 0,
+      "P_perp": {
+        "cos_d_AB_Z": 33971.02123836648,
+        "projected": false
+      },
+      "cos_d_AB_AA": 26175.179559060765,
+      "cos_d_AB_Z_after": 33971.02123836648
+    },
+    "u_resid_p4_ridge": {
+      "fullbank": {
+        "sign": 1,
+        "pos": 4,
+        "mean_e5": 1.6758579493503234,
+        "sf25": 15,
+        "t25": 1.377131054547835,
+        "folds": [
+          -2.5927904479083885,
+          0.5331923882523348,
+          1.2608943540382,
+          4.170459344488009,
+          5.007534107881462
+        ]
+      },
+      "twin": {
+        "sign": 1,
+        "pos": 4,
+        "mean_e5": 10.849664184053864,
+        "sf25": 16,
+        "t25": 3.0202847513507676,
+        "folds": [
+          -3.6123747506389137,
+          11.967310509131135,
+          9.913152654372759,
+          15.826740960434016,
+          20.153491546970326
+        ]
+      },
+      "same_sign": true,
+      "raw_disp": 0.9999999999989999,
+      "KS": 0.0031099837982558887,
+      "R2_u_test_on_B52": 0.01064266983562967,
+      "pass": true,
+      "sign": 1,
+      "P_perp": {
+        "cos_d_AB_Z": 24394.041705885887,
+        "projected": false
+      },
+      "cos_d_AB_AA": 17596.863720029833,
+      "cos_d_AB_Z_after": 24394.041705885887
+    },
+    "u_sub_resid:v10_ridge_resid": {
+      "fullbank": {
+        "sign": 1,
+        "pos": 5,
+        "mean_e5": 9.454283939109853,
+        "sf25": 19,
+        "t25": 2.7134395687923334,
+        "folds": [
+          0.7376443751261341,
+          3.024530715201035,
+          12.03162917134959,
+          8.648529682198092,
+          22.829085751674416
+        ]
+      },
+      "twin": {
+        "sign": 1,
+        "pos": 5,
+        "mean_e5": 33.01978263801742,
+        "sf25": 19,
+        "t25": 4.777144474186913,
+        "folds": [
+          12.691026929168014,
+          26.01146129975751,
+          38.073540852212595,
+          29.025116878800272,
+          59.29776723014868
+        ]
+      },
+      "same_sign": true,
+      "raw_disp": 0.9999999999990001,
+      "KS": 0.00436824173529804,
+      "R2_u_test_on_B52": 0.015369484251044785,
+      "pass": true,
+      "sign": 1,
+      "P_perp": {
+        "cos_d_AB_Z": 3239.3772540778355,
+        "projected": false
+      },
+      "cos_d_AB_AA": 8618.064102384917,
+      "cos_d_AB_Z_after": 3239.377254077834
+    },
+    "u_sub_resid:v10_ridge_orth_LM": {
+      "fullbank": {
+        "sign": 1,
+        "pos": 5,
+        "mean_e5": 11.55046940426896,
+        "sf25": 20,
+        "t25": 3.2616982803739143,
+        "folds": [
+          2.4358117671430257,
+          5.646059957431504,
+          12.062079552488392,
+          12.09315136997402,
+          25.515244374307855
+        ]
+      },
+      "twin": {
+        "sign": 1,
+        "pos": 5,
+        "mean_e5": 31.29844736368126,
+        "sf25": 19,
+        "t25": 4.571866343545696,
+        "folds": [
+          9.512286356072597,
+          27.352831661120458,
+          31.56554867741468,
+          30.667573151710315,
+          57.393996972088246
+        ]
+      },
+      "same_sign": true,
+      "raw_disp": 0.999999999998999,
+      "KS": 0.027431502672884966,
+      "R2_u_test_on_B52": 0.15027183014290513,
+      "pass": true,
+      "sign": 1,
+      "P_perp": {
+        "cos_d_AB_Z": -3671.089828747153,
+        "projected": true
+      },
+      "cos_d_AB_AA": 198275.95874999563,
+      "cos_d_AB_Z_after": 283253.9894921031
+    },
+    "u_sub_resid:harvest_p4_cuda_xgb": {
+      "fullbank": {
+        "sign": -1,
+        "pos": 4,
+        "mean_e5": 0.9272288397865758,
+        "sf25": 16,
+        "t25": 0.4473959256667291,
+        "folds": [
+          5.717754166012501,
+          0.975655069412884,
+          3.2255653744095447,
+          -7.822019336800601,
+          2.53918892589855
+        ]
+      },
+      "twin": {
+        "sign": -1,
+        "pos": 4,
+        "mean_e5": 1.7265310489333885,
+        "sf25": 16,
+        "t25": 1.0157715566096988,
+        "folds": [
+          7.323910291678892,
+          1.682538917502363,
+          2.7113267948353226,
+          -4.588064571675599,
+          1.502943812325963
+        ]
+      },
+      "same_sign": true,
+      "raw_disp": 0.999999999999,
+      "KS": 0.0023332636677324547,
+      "R2_u_test_on_B52": 0.01838277150670431,
+      "pass": true,
+      "sign": -1,
+      "P_perp": {
+        "cos_d_AB_Z": 40495.34918464461,
+        "projected": false
+      },
+      "cos_d_AB_AA": 23678.35905753367,
+      "cos_d_AB_Z_after": 40495.34918464461
+    },
+    "u_uid_orth": {
+      "fullbank": {
+        "sign": 1,
+        "pos": 0,
+        "mean_e5": 0.0,
+        "sf25": 0,
+        "t25": 0.0,
+        "folds": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "twin": {
+        "sign": 1,
+        "pos": 3,
+        "mean_e5": 0.16362175360828957,
+        "sf25": 12,
+        "t25": 0.35190342502273253,
+        "folds": [
+          -1.506995335287531,
+          1.2779838536758348,
+          -0.5602248694724921,
+          0.9234544160019453,
+          0.6838907031236907
+        ]
+      },
+      "same_sign": true,
+      "raw_disp": 0.999999999999,
+      "KS": 0.007966614992234194,
+      "R2_u_test_on_B52": 0.044451408860190056,
+      "pass": false,
+      "sign": 1,
+      "P_perp": {
+        "cos_d_AB_Z": 1013.0212419976239,
+        "projected": false
+      },
+      "cos_d_AB_AA": 2249.9712410812217,
+      "cos_d_AB_Z_after": 1013.021241997624
+    },
+    "u_ownstack_diff": {
+      "fullbank": {
+        "sign": 1,
+        "pos": 0,
+        "mean_e5": -0.529215195614885,
+        "sf25": 2,
+        "t25": -1.118033988747533,
+        "folds": [
+          0.0,
+          0.0,
+          0.0,
+          -2.6460759780744247,
+          0.0
+        ]
+      },
+      "twin": {
+        "sign": 1,
+        "pos": 5,
+        "mean_e5": 103.3045214476891,
+        "sf25": 25,
+        "t25": 6.8850779525758155,
+        "folds": [
+          114.39922386008439,
+          87.44386239197821,
+          95.44671970658226,
+          59.05944638991967,
+          160.17335488988093
+        ]
+      },
+      "same_sign": true,
+      "raw_disp": 0.999999999999,
+      "KS": 0.007904155025418635,
+      "R2_u_test_on_B52": 0.05470267689132813,
+      "pass": false,
+      "sign": 1,
+      "P_perp": {
+        "cos_d_AB_Z": 14117.729304645542,
+        "projected": false
+      },
+      "cos_d_AB_AA": 17248.252497550304,
+      "cos_d_AB_Z_after": 14117.729304645542
+    },
+    "u_master": {
+      "fullbank": {
+        "sign": 1,
+        "pos": 4,
+        "mean_e5": 1.6758579493503234,
+        "sf25": 15,
+        "t25": 1.377131054547835,
+        "folds": [
+          -2.5927904479083885,
+          0.5331923882523348,
+          1.2608943540382,
+          4.170459344488009,
+          5.007534107881462
+        ]
+      },
+      "twin": {
+        "sign": 1,
+        "pos": 4,
+        "mean_e5": 10.849664184053864,
+        "sf25": 16,
+        "t25": 3.0202847513507676,
+        "folds": [
+          -3.6123747506389137,
+          11.967310509131135,
+          9.913152654372759,
+          15.826740960434016,
+          20.153491546970326
+        ]
+      },
+      "same_sign": true,
+      "raw_disp": 0.9999999999989999,
+      "KS": 0.0031099837982558887,
+      "R2_u_test_on_B52": 0.01064266983562967,
+      "pass": true,
+      "sign": 1,
+      "P_perp": {
+        "cos_d_AB_Z": 24394.041705885887,
+        "projected": false
+      },
+      "members": [
+        "u_resid_p4_ridge"
+      ],
+      "weights": {
+        "u_resid_p4_ridge": 1.0
+      }
+    }
+  },
+  "passing_dirs": [
+    "u_resid_p4_ridge",
+    "u_sub_resid:v10_ridge_resid",
+    "u_sub_resid:v10_ridge_orth_LM",
+    "u_sub_resid:harvest_p4_cuda_xgb",
+    "u_master"
+  ],
+  "slots": {
+    "SLOT01": {
+      "file": "SLOT01_pub_Step_AB_095569.csv",
+      "sha": "3e1dba5d31e01b6f36554459cfe092cf4c760b5d7d228f23bd4e2777dfc86038",
+      "role": "PUB Tip Lock 0.95569",
+      "1mrho_vs_AB_e4": 0.0,
+      "integrity": {
+        "rows": 299984,
+        "max_U_zone": 0.05576797429196224,
+        "Zr_ok": true,
+        "min_1mrho_vs_earlier_e4": null,
+        "diversity_ok": true,
+        "1mrho_vs_AB_e4": 0.0,
+        "trust_ok": true,
+        "uid_catboost_weight": 0.0
+      }
+    },
+    "SLOT02": {
+      "file": "SLOT02_AB_clip985_areeb_a0p32.csv",
+      "sha": "4787cf9f41b8eca723d9a280101fe1b151847d3036afb554d05c3c2efb019188",
+      "role": "Top-2 Geodesic Clip AB\u00d7areeb",
+      "alpha": 0.32,
+      "1mrho_vs_AB_e4": 0.027515004979994373,
+      "integrity": {
+        "rows": 299984,
+        "max_U_zone": 0.05576797429196224,
+        "Zr_ok": true,
+        "min_1mrho_vs_earlier_e4": 0.027515004979994373,
+        "diversity_ok": true,
+        "1mrho_vs_AB_e4": 0.027515004979994373,
+        "trust_ok": true,
+        "uid_catboost_weight": 0.0
+      }
+    },
+    "SLOT03": {
+      "file": "SLOT03_AB_clip985_quarter_a0p28.csv",
+      "sha": "4eeda710c592c1b3a69e5a5ad5da11b16b03ec71f7ab3c8e1c0c6fae1656fc4f",
+      "role": "Quarter Diversity Clip on AB (escalated for >=0.020e-4 vs SLOT02)",
+      "alpha": 0.3381260681245513,
+      "1mrho_vs_AB_e4": 0.12000000283896028,
+      "1mrho_vs_SLOT02_e4": 0.03916267876213908,
+      "integrity": {
+        "rows": 299984,
+        "max_U_zone": 0.05576797429196224,
+        "Zr_ok": true,
+        "min_1mrho_vs_earlier_e4": 0.03916267876213908,
+        "diversity_ok": true,
+        "1mrho_vs_AB_e4": 0.12000000283896028,
+        "trust_ok": true,
+        "uid_catboost_weight": 0.0
+      }
+    },
+    "SLOT04": {
+      "file": "SLOT04_AB_nonpub_seq_llr_clip985_0p25e4.csv",
+      "sha": "691b9a5b5869e0dbcc7c83372ed49c8b396d960f28cc7ea126bc58b8cd20e324",
+      "role": "Dual-Gated resid pillars (seq_tree FAILED dual-baseline; resid substituted)",
+      "alpha": 0.9649603315799906,
+      "1mrho_vs_AB_e4": 0.2500000589644724,
+      "integrity": {
+        "rows": 299984,
+        "max_U_zone": 0.05576797429196224,
+        "Zr_ok": true,
+        "min_1mrho_vs_earlier_e4": 0.2500000589644724,
+        "diversity_ok": true,
+        "1mrho_vs_AB_e4": 0.2500000589644724,
+        "trust_ok": true,
+        "uid_catboost_weight": 0.0
+      }
+    },
+    "SLOT05": {
+      "file": "SLOT05_AB_nonpub_seq_llr_clip985_0p55e4.csv",
+      "sha": "e5ea28eac4f1468522f996ceda3125385c1ef57f33eee639eef175f866f397f5",
+      "role": "Dual-Gated resid pillars step-up (seq_tree FAILED; resid substituted)",
+      "alpha": 1.4328775052296705,
+      "1mrho_vs_AB_e4": 0.5499998503644132,
+      "integrity": {
+        "rows": 299984,
+        "max_U_zone": 0.05576797429196224,
+        "Zr_ok": true,
+        "min_1mrho_vs_earlier_e4": 0.05855982084579381,
+        "diversity_ok": true,
+        "1mrho_vs_AB_e4": 0.5499998503644132,
+        "trust_ok": true,
+        "uid_catboost_weight": 0.0
+      }
+    },
+    "SLOT06": {
+      "file": "SLOT06_AB_prop_resid_pillars_clip985_0p30e4.csv",
+      "sha": "46bd556e6ceb68cae5d970ca723a9d65eb69a26476b3b5c4d3e191cbb1bd7af4",
+      "role": "Dual-Gated pure residual pillars",
+      "alpha": 0.013411111069865525,
+      "1mrho_vs_AB_e4": 0.30000009464070665,
+      "integrity": {
+        "rows": 299984,
+        "max_U_zone": 0.05576797429196224,
+        "Zr_ok": true,
+        "min_1mrho_vs_earlier_e4": 0.30000009464070665,
+        "diversity_ok": true,
+        "1mrho_vs_AB_e4": 0.30000009464070665,
+        "trust_ok": true,
+        "uid_catboost_weight": 0.0
+      }
+    },
+    "SLOT07": {
+      "file": "SLOT07_AB_cvchamp_vs_twin_clip985_0p35e4.csv",
+      "sha": "c782b1988108e7fa1b6395ac56f94796f5d0bdde11ae9b3c3e3bce09548cf340",
+      "role": "Own-stack vs AB-twin clipped residual",
+      "alpha": 0.06748555158229917,
+      "1mrho_vs_AB_e4": 0.34999997347462397,
+      "integrity": {
+        "rows": 299984,
+        "max_U_zone": 0.05576797429196224,
+        "Zr_ok": true,
+        "min_1mrho_vs_earlier_e4": 0.34999997347462397,
+        "diversity_ok": true,
+        "1mrho_vs_AB_e4": 0.34999997347462397,
+        "trust_ok": true,
+        "uid_catboost_weight": 0.0
+      }
+    },
+    "SLOT08": {
+      "file": "SLOT08_AB_master_dual_gated_combo_0p40e4.csv",
+      "sha": "c068642ffcd9043ebc120dddf2d8f1436c5cf69d543d2c88610ecfdb52f3bd8d",
+      "role": "Dynamic A/B winner composite master ray",
+      "alpha": 0.016481587852019815,
+      "1mrho_vs_AB_e4": 0.3999997434067648,
+      "integrity": {
+        "rows": 299984,
+        "max_U_zone": 0.05576797429196224,
+        "Zr_ok": true,
+        "min_1mrho_vs_earlier_e4": 0.027395923278827894,
+        "diversity_ok": true,
+        "1mrho_vs_AB_e4": 0.3999997434067648,
+        "trust_ok": true,
+        "uid_catboost_weight": 0.0
+      }
+    },
+    "SLOT09": {
+      "file": "SLOT09_pure_nested_cv_champion_zr.csv",
+      "sha": "7dea53b9b6cd6b18a1c49d13fd48d50c2ebf44ee6eed4a33d369355863704096",
+      "role": "Pure nested-CV champion = Step3 Fullbank+Zr (nested blend 0.952548 < Fullbank 0.952621)",
+      "oof_auc": 0.9526207252382072,
+      "oof_auc_zr": 0.9526697935042275,
+      "1mrho_vs_AB_e4": 170.56989034213154,
+      "integrity": {
+        "rows": 299984,
+        "max_U_zone": 0.05576797429196224,
+        "Zr_ok": true,
+        "min_1mrho_vs_earlier_e4": 165.40324325489354,
+        "diversity_ok": true,
+        "1mrho_vs_AB_e4": 170.56989034213154,
+        "trust_ok": true,
+        "uid_catboost_weight": 0.0
+      }
+    },
+    "SLOT10": {
+      "file": "SLOT10_private_hedge_55BestTip_45CVChamp_zr.csv",
+      "sha": "5ef51cb093cffd48702b0eb4f84d3e8bcdf80795a942271e3bd63d458840a4a3",
+      "role": "Private-LB Bayesian shrinkage hedge",
+      "1mrho_vs_AB_e4": 34.76758896680532,
+      "integrity": {
+        "rows": 299984,
+        "max_U_zone": 0.05576797429196224,
+        "Zr_ok": true,
+        "min_1mrho_vs_earlier_e4": 32.614890085426175,
+        "diversity_ok": true,
+        "1mrho_vs_AB_e4": 34.76758896680532,
+        "trust_ok": true,
+        "uid_catboost_weight": 0.0
+      }
+    }
+  },
+  "integrity": {
+    "SLOT01": {
+      "rows": 299984,
+      "max_U_zone": 0.05576797429196224,
+      "Zr_ok": true,
+      "min_1mrho_vs_earlier_e4": null,
+      "diversity_ok": true,
+      "1mrho_vs_AB_e4": 0.0,
+      "trust_ok": true,
+      "uid_catboost_weight": 0.0
+    },
+    "SLOT02": {
+      "rows": 299984,
+      "max_U_zone": 0.05576797429196224,
+      "Zr_ok": true,
+      "min_1mrho_vs_earlier_e4": 0.027515004979994373,
+      "diversity_ok": true,
+      "1mrho_vs_AB_e4": 0.027515004979994373,
+      "trust_ok": true,
+      "uid_catboost_weight": 0.0
+    },
+    "SLOT03": {
+      "rows": 299984,
+      "max_U_zone": 0.05576797429196224,
+      "Zr_ok": true,
+      "min_1mrho_vs_earlier_e4": 0.03916267876213908,
+      "diversity_ok": true,
+      "1mrho_vs_AB_e4": 0.12000000283896028,
+      "trust_ok": true,
+      "uid_catboost_weight": 0.0
+    },
+    "SLOT04": {
+      "rows": 299984,
+      "max_U_zone": 0.05576797429196224,
+      "Zr_ok": true,
+      "min_1mrho_vs_earlier_e4": 0.2500000589644724,
+      "diversity_ok": true,
+      "1mrho_vs_AB_e4": 0.2500000589644724,
+      "trust_ok": true,
+      "uid_catboost_weight": 0.0
+    },
+    "SLOT05": {
+      "rows": 299984,
+      "max_U_zone": 0.05576797429196224,
+      "Zr_ok": true,
+      "min_1mrho_vs_earlier_e4": 0.05855982084579381,
+      "diversity_ok": true,
+      "1mrho_vs_AB_e4": 0.5499998503644132,
+      "trust_ok": true,
+      "uid_catboost_weight": 0.0
+    },
+    "SLOT06": {
+      "rows": 299984,
+      "max_U_zone": 0.05576797429196224,
+      "Zr_ok": true,
+      "min_1mrho_vs_earlier_e4": 0.30000009464070665,
+      "diversity_ok": true,
+      "1mrho_vs_AB_e4": 0.30000009464070665,
+      "trust_ok": true,
+      "uid_catboost_weight": 0.0
+    },
+    "SLOT07": {
+      "rows": 299984,
+      "max_U_zone": 0.05576797429196224,
+      "Zr_ok": true,
+      "min_1mrho_vs_earlier_e4": 0.34999997347462397,
+      "diversity_ok": true,
+      "1mrho_vs_AB_e4": 0.34999997347462397,
+      "trust_ok": true,
+      "uid_catboost_weight": 0.0
+    },
+    "SLOT08": {
+      "rows": 299984,
+      "max_U_zone": 0.05576797429196224,
+      "Zr_ok": true,
+      "min_1mrho_vs_earlier_e4": 0.027395923278827894,
+      "diversity_ok": true,
+      "1mrho_vs_AB_e4": 0.3999997434067648,
+      "trust_ok": true,
+      "uid_catboost_weight": 0.0
+    },
+    "SLOT09": {
+      "rows": 299984,
+      "max_U_zone": 0.05576797429196224,
+      "Zr_ok": true,
+      "min_1mrho_vs_earlier_e4": 165.40324325489354,
+      "diversity_ok": true,
+      "1mrho_vs_AB_e4": 170.56989034213154,
+      "trust_ok": true,
+      "uid_catboost_weight": 0.0
+    },
+    "SLOT10": {
+      "rows": 299984,
+      "max_U_zone": 0.05576797429196224,
+      "Zr_ok": true,
+      "min_1mrho_vs_earlier_e4": 32.614890085426175,
+      "diversity_ok": true,
+      "1mrho_vs_AB_e4": 34.76758896680532,
+      "trust_ok": true,
+      "uid_catboost_weight": 0.0
+    }
+  },
+  "matrix_1mrho_e4": [
+    [
+      0.0,
+      0.027515004979994373,
+      0.12000000283896028,
+      0.2500000589644724,
+      0.5499998503644132,
+      0.30000009464070665,
+      0.34999997347462397,
+      0.3999997434067648,
+      170.56989034213154,
+      34.76758896680532
+    ],
+    [
+      0.027515004979994373,
+      0.0,
+      0.03916267876213908,
+      0.26130818547853707,
+      0.5534763860248759,
+      0.34672263764190525,
+      0.39713605326840984,
+      0.39943058266156406,
+      172.5288260264224,
+      35.67384023608567
+    ],
+    [
+      0.12000000283896028,
+      0.03916267876213908,
+      0.0,
+      0.3203238740545622,
+      0.5963281769461037,
+      0.46593953681783873,
+      0.514525902469698,
+      0.4738567424489304,
+      173.62396217218802,
+      36.22239263979421
+    ],
+    [
+      0.2500000589644724,
+      0.26130818547853707,
+      0.3203238740545622,
+      0.0,
+      0.05855982084579381,
+      0.5616477240488749,
+      0.48678722566863897,
+      0.6468641338919223,
+      172.2128900071507,
+      35.65282814444571
+    ],
+    [
+      0.5499998503644132,
+      0.5534763860248759,
+      0.5963281769461037,
+      0.05855982084579381,
+      0.0,
+      0.8673002156744936,
+      0.7320768591423388,
+      0.945371786468252,
+      173.18335504273085,
+      36.25967575560662
+    ],
+    [
+      0.30000009464070665,
+      0.34672263764190525,
+      0.46593953681783873,
+      0.5616477240488749,
+      0.8673002156744936,
+      0.0,
+      0.6454024410129655,
+      0.027395923278827894,
+      169.2552137053649,
+      34.33472661105053
+    ],
+    [
+      0.34999997347462397,
+      0.39713605326840984,
+      0.514525902469698,
+      0.48678722566863897,
+      0.7320768591423388,
+      0.6454024410129655,
+      0.0,
+      0.7622657685957268,
+      165.40324325489354,
+      32.614890085426175
+    ],
+    [
+      0.3999997434067648,
+      0.39943058266156406,
+      0.4738567424489304,
+      0.6468641338919223,
+      0.945371786468252,
+      0.027395923278827894,
+      0.7622657685957268,
+      0.0,
+      170.8730798710545,
+      35.12568422004203
+    ],
+    [
+      170.56989034213154,
+      172.5288260264224,
+      173.62396217218802,
+      172.2128900071507,
+      173.18335504273085,
+      169.2552137053649,
+      165.40324325489354,
+      170.8730798710545,
+      0.0,
+      51.78790946496537
+    ],
+    [
+      34.76758896680532,
+      35.67384023608567,
+      36.22239263979421,
+      35.65282814444571,
+      36.25967575560662,
+      34.33472661105053,
+      32.614890085426175,
+      35.12568422004203,
+      51.78790946496537,
+      0.0
+    ]
+  ],
+  "sequential_feedback_tree": {
+    "SLOT01": "LOCK tip. Always keep as pub baseline.",
+    "SLOT02": "If SLOT02 \u2265 SLOT01: geodesic helps \u2192 prefer SLOT02/08 path. If \u22121 tick: abort geodesic family, keep SLOT01.",
+    "SLOT03": "If SLOT03 \u2265 max(S01,S02): quarter diversity real. If drop: skip quarter branch.",
+    "SLOT04": "If \u2265 best tip: unlock SLOT05 step-up. If \u22121 tick: flip seq sign to \u22120.20e-4 or SKIP SLOT05.",
+    "SLOT05": "Only live if SLOT04 tied/gained. If SLOT05 drops while SLOT04 held: keep SLOT04 scale.",
+    "SLOT06": "If gain: residual pillars live. If drop: drop failing sub-pillars, do not raise \u03b1.",
+    "SLOT07": "If uid_orth path and drop: treat as uid fail confirmation. If ownstack path gains: CV champ injects.",
+    "SLOT08": "ALL-NEGATIVE A/B FALLBACK: if SLOT02\u201307 all \u2264 SLOT01\u22121tick \u2192 SLOT08 becomes 0.70*AB+0.30*SLOT09 (private hedge early).",
+    "SLOT09": "Honest CV readout. Not a tip climb. Compare private LB vs tip delta.",
+    "SLOT10": "Final pick #2 candidate if tip overfits public. Prefer when SLOT09 private \u226b tip private."
+  },
+  "baselines": {
+    "fullbank_zr": 0.9526697935042275,
+    "part12_zr": 0.9526136241093358,
+    "S_cv_champ_zr": 0.9525922828119167
+  },
+  "patch_note": "Post-pass fix: SLOT03 diversity escalate; SLOT04/05 resid-substitute after seq_tree dual-gate fail; SLOT09/10 Fullbank floor."
+}
