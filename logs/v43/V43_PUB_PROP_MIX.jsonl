@@ -1,0 +1,83 @@
+{"ts": 1795582575.634628, "msg": "=== V43 pub\u2295prop tip-mix on Step_AB ==="}
+{"ts": 1795582590.798941, "msg": "l7_llr shapes (699960,) (299984,)"}
+{"ts": 1795582594.5112681, "msg": "RAY modern_vs_pub: \u0394e5=0.00 pos=0/5 \u03b1=0.005 sgn=1 cosS02=-0.273 cosS06=-0.071 loser=False"}
+{"ts": 1795582594.512307, "msg": "  weak gate \u2014 skip tip fire for modern_vs_pub"}
+{"ts": 1795582597.636717, "msg": "RAY soft_diff: \u0394e5=0.03 pos=5/5 \u03b1=0.08 sgn=1 cosS02=-0.051 cosS06=-0.008 loser=False"}
+{"ts": 1795582597.638954, "msg": "  weak gate \u2014 skip tip fire for soft_diff"}
+{"ts": 1795582600.25509, "msg": "RAY B_xgb_llr: \u0394e5=0.00 pos=0/5 \u03b1=0.005 sgn=1 cosS02=0.066 cosS06=0.020 loser=False"}
+{"ts": 1795582600.257086, "msg": "  weak gate \u2014 skip tip fire for B_xgb_llr"}
+{"ts": 1795582603.393353, "msg": "RAY delta1_v4: \u0394e5=0.02 pos=5/5 \u03b1=0.08 sgn=1 cosS02=-0.003 cosS06=-0.098 loser=False"}
+{"ts": 1795582603.4039161, "msg": "  weak gate \u2014 skip tip fire for delta1_v4"}
+{"ts": 1795582606.376152, "msg": "RAY l7_llr: \u0394e5=0.00 pos=4/5 \u03b1=0.08 sgn=-1 cosS02=0.063 cosS06=0.018 loser=False"}
+{"ts": 1795582606.389395, "msg": "  weak gate \u2014 skip tip fire for l7_llr"}
+{"ts": 1795582609.952707, "msg": "  FORCE micro AB_x_modern_micro_e0.03.csv gate=0.00 sha=a68265c8da57"}
+{"ts": 1795582610.745753, "msg": "  FORCE micro AB_x_modern_micro_e0.06.csv gate=0.00 sha=bcd8f91198e6"}
+{"ts": 1795582611.771199, "msg": "  FORCE micro AB_x_modern_micro_e0.12.csv gate=0.00 sha=f5802ca312b7"}
+{"ts": 1795582611.9913201, "msg": "staged=3 picked=2"}
+{"ts": 1795582612.0367749, "msg": "NO_SUBMIT or empty \u2014 done build"}
+{"ts": 1795582773.9113479, "msg": "=== V43 pub\u2295prop tip-mix on Step_AB (rankmap + residual) ==="}
+{"ts": 1795582780.433942, "msg": "RANKBANK modern: \u0394e5=2.22 pos=4/5 w*=0.3 folds=[0.99, 1.71, 3.62, 5.5, -0.74]"}
+{"ts": 1795582781.221751, "msg": "  STAGED AB_x_modern_rmap_e0.05.csv got=0.0500 cosS02=-0.266 cosS06=-0.072 sha=435eb5f6b59a"}
+{"ts": 1795582781.852722, "msg": "  STAGED AB_x_modern_rmap_anti_e0.05.csv got=0.0500 cosS02=0.266 cosS06=0.072 sha=1569130f8db7"}
+{"ts": 1795582782.4711602, "msg": "  STAGED AB_x_modern_rmap_e0.10.csv got=0.1000 cosS02=-0.266 cosS06=-0.072 sha=355bdd4112df"}
+{"ts": 1795582783.107488, "msg": "  STAGED AB_x_modern_rmap_anti_e0.10.csv got=0.1000 cosS02=0.266 cosS06=0.072 sha=888b03655bf3"}
+{"ts": 1795582783.727134, "msg": "  STAGED AB_x_modern_rmap_e0.18.csv got=0.1800 cosS02=-0.266 cosS06=-0.072 sha=c89b31201c2b"}
+{"ts": 1795582784.385908, "msg": "  STAGED AB_x_modern_rmap_anti_e0.18.csv got=0.1800 cosS02=0.266 cosS06=0.072 sha=42c5b39d83cc"}
+{"ts": 1795582785.0106251, "msg": "  STAGED AB_x_modern_rmap_e0.28.csv got=0.2800 cosS02=-0.266 cosS06=-0.072 sha=e33c76789049"}
+{"ts": 1795582785.6385632, "msg": "  STAGED AB_x_modern_rmap_anti_e0.28.csv got=0.2800 cosS02=0.266 cosS06=0.072 sha=f6f822ced34f"}
+{"ts": 1795582786.8613708, "msg": "RANKBANK own_restack: \u0394e5=1.75 pos=4/5 w*=0.3 folds=[1.48, 2.73, -1.93, 3.94, 2.53]"}
+{"ts": 1795582787.5119529, "msg": "  STAGED AB_x_own_restack_rmap_e0.05.csv got=0.0500 cosS02=-0.275 cosS06=-0.027 sha=ae62d94d8b93"}
+{"ts": 1795582788.137405, "msg": "  STAGED AB_x_own_restack_rmap_anti_e0.05.csv got=0.0500 cosS02=0.275 cosS06=0.027 sha=7943651b877b"}
+{"ts": 1795582788.770946, "msg": "  STAGED AB_x_own_restack_rmap_e0.10.csv got=0.1000 cosS02=-0.275 cosS06=-0.027 sha=391654a6d145"}
+{"ts": 1795582789.3989792, "msg": "  STAGED AB_x_own_restack_rmap_anti_e0.10.csv got=0.1000 cosS02=0.275 cosS06=0.027 sha=fa2cc05e3adc"}
+{"ts": 1795582790.0256598, "msg": "  STAGED AB_x_own_restack_rmap_e0.18.csv got=0.1800 cosS02=-0.275 cosS06=-0.027 sha=d90c74bee436"}
+{"ts": 1795582790.6667662, "msg": "  STAGED AB_x_own_restack_rmap_anti_e0.18.csv got=0.1800 cosS02=0.275 cosS06=0.027 sha=9b8aef779950"}
+{"ts": 1795582791.285748, "msg": "  STAGED AB_x_own_restack_rmap_e0.28.csv got=0.2800 cosS02=-0.275 cosS06=-0.027 sha=994afb5eb5f5"}
+{"ts": 1795582791.932543, "msg": "  STAGED AB_x_own_restack_rmap_anti_e0.28.csv got=0.2800 cosS02=0.275 cosS06=0.027 sha=92b1aa0a6c9b"}
+{"ts": 1795582795.093835, "msg": "RESID soft_diff: \u0394e5=0.05 pos=5/5 \u03b1=0.12 sgn=1 folds=[0.03, 0.03, 0.06, 0.08, 0.04]"}
+{"ts": 1795582795.741893, "msg": "  STAGED AB_x_soft_diff_add_e0.05.csv got=0.0500 cosS02=-0.051 cosS06=-0.008 sha=7330546d3825"}
+{"ts": 1795582796.363342, "msg": "  STAGED AB_x_soft_diff_add_anti_e0.05.csv got=0.0500 cosS02=0.051 cosS06=0.008 sha=63ce0dae2986"}
+{"ts": 1795582797.0012338, "msg": "  STAGED AB_x_soft_diff_add_e0.10.csv got=0.1000 cosS02=-0.051 cosS06=-0.008 sha=05acee915f6d"}
+{"ts": 1795582797.6483252, "msg": "  STAGED AB_x_soft_diff_add_anti_e0.10.csv got=0.1000 cosS02=0.051 cosS06=0.008 sha=41cf0d4e6ecc"}
+{"ts": 1795582798.4890728, "msg": "  STAGED AB_x_soft_diff_add_e0.15.csv got=0.1500 cosS02=-0.051 cosS06=-0.008 sha=0a6dc51d9484"}
+{"ts": 1795582799.305005, "msg": "  STAGED AB_x_soft_diff_add_anti_e0.15.csv got=0.1500 cosS02=0.051 cosS06=0.008 sha=7f394c9685a0"}
+{"ts": 1795582801.991482, "msg": "RESID delta1_v4: \u0394e5=0.03 pos=5/5 \u03b1=0.12 sgn=1 folds=[0.02, 0.04, 0.02, 0.03, 0.04]"}
+{"ts": 1795582802.6564019, "msg": "  STAGED AB_x_delta1_v4_add_e0.05.csv got=0.0500 cosS02=-0.003 cosS06=-0.098 sha=1d0a9e30b81e"}
+{"ts": 1795582803.3119879, "msg": "  STAGED AB_x_delta1_v4_add_anti_e0.05.csv got=0.0500 cosS02=0.003 cosS06=0.098 sha=521ce1ae2903"}
+{"ts": 1795582804.460209, "msg": "  STAGED AB_x_delta1_v4_add_e0.10.csv got=0.1000 cosS02=-0.003 cosS06=-0.098 sha=d9c1f8e46677"}
+{"ts": 1795582805.225446, "msg": "  STAGED AB_x_delta1_v4_add_anti_e0.10.csv got=0.1000 cosS02=0.003 cosS06=0.098 sha=b02d701712fc"}
+{"ts": 1795582805.908391, "msg": "  STAGED AB_x_delta1_v4_add_e0.15.csv got=0.1500 cosS02=-0.003 cosS06=-0.098 sha=31c3a538ee52"}
+{"ts": 1795582807.324532, "msg": "  STAGED AB_x_delta1_v4_add_anti_e0.15.csv got=0.1500 cosS02=0.003 cosS06=0.098 sha=264e5a2c7f71"}
+{"ts": 1795582808.302937, "msg": "  STAGED AB_x_modern_soft_2D_e0.10.csv got=0.1000 cosS02=-0.235 cosS06=-0.060 sha=733a7ceb1132"}
+{"ts": 1795582808.9916081, "msg": "  STAGED AB_x_modern_soft_2D_anti_e0.10.csv got=0.1000 cosS02=0.235 cosS06=0.060 sha=ec316902138c"}
+{"ts": 1795582809.692327, "msg": "  STAGED AB_x_modern_soft_2D_e0.18.csv got=0.1800 cosS02=-0.235 cosS06=-0.060 sha=c604385a06cc"}
+{"ts": 1795582810.4130938, "msg": "  STAGED AB_x_modern_soft_2D_anti_e0.18.csv got=0.1800 cosS02=0.235 cosS06=0.060 sha=e3de3bdc4831"}
+{"ts": 1795582810.44079, "msg": "staged=32 picked=6"}
+{"ts": 1795582810.441569, "msg": "PICK[0] AB_x_modern_rmap_e0.05.csv gate=2.22 e4=0.05"}
+{"ts": 1795582810.442327, "msg": "PICK[1] AB_x_modern_rmap_e0.10.csv gate=2.22 e4=0.1"}
+{"ts": 1795582810.443018, "msg": "PICK[2] AB_x_own_restack_rmap_e0.05.csv gate=1.75 e4=0.05"}
+{"ts": 1795582810.443666, "msg": "PICK[3] AB_x_own_restack_rmap_e0.10.csv gate=1.75 e4=0.1"}
+{"ts": 1795582810.444714, "msg": "PICK[4] AB_x_modern_soft_2D_e0.10.csv gate=1.13 e4=0.1"}
+{"ts": 1795582810.445424, "msg": "PICK[5] AB_x_modern_soft_2D_e0.18.csv gate=1.13 e4=0.18"}
+{"ts": 1795582811.019018, "msg": "SUBMIT ladder take=5 today=5 live=0.95569 left=5"}
+{"ts": 1795582811.514496, "msg": "SUBMIT 1/5 AB_x_modern_rmap_e0.05.csv"}
+{"ts": 1795582816.816315, "msg": "resp=Warning: Looks like you're using an outdated `kaggle` version (installed: 2.2.4), please consider upgrading to the latest version (2.2.5)\n\n  0%|          | 0.00/7.52M [00:00<?, ?B/s]\n  0%|          | 16.0k/7.52M [00:00<01:14, 105kB/s]\n 16%|"}
+{"ts": 1795582862.530761, "msg": "LB[1]=0.95568 live_was=0.95569"}
+{"ts": 1795582862.638914, "msg": "DOWN -0.00001"}
+{"ts": 1795582866.3926861, "msg": "SUBMIT 2/5 AB_x_modern_rmap_e0.10.csv"}
+{"ts": 1795582872.049823, "msg": "resp=Warning: Looks like you're using an outdated `kaggle` version (installed: 2.2.4), please consider upgrading to the latest version (2.2.5)\n\n  0%|          | 0.00/7.52M [00:00<?, ?B/s]\n  0%|          | 16.0k/7.52M [00:00<01:06, 118kB/s]\n  7%|"}
+{"ts": 1795582897.7380438, "msg": "LB[2]=0.95568 live_was=0.95569"}
+{"ts": 1795582897.8265321, "msg": "DOWN -0.00001"}
+{"ts": 1795582901.331349, "msg": "SUBMIT 3/5 AB_x_own_restack_rmap_e0.05.csv"}
+{"ts": 1795582906.350941, "msg": "resp=Warning: Looks like you're using an outdated `kaggle` version (installed: 2.2.4), please consider upgrading to the latest version (2.2.5)\n\n  0%|          | 0.00/7.52M [00:00<?, ?B/s]\n  0%|          | 16.0k/7.52M [00:00<00:59, 132kB/s]\n  6%|"}
+{"ts": 1795582919.4621272, "msg": "LB[3]=0.95568 live_was=0.95569"}
+{"ts": 1795582919.5239732, "msg": "DOWN -0.00001"}
+{"ts": 1795582923.106199, "msg": "SUBMIT 4/5 AB_x_own_restack_rmap_e0.10.csv"}
+{"ts": 1795582927.711352, "msg": "resp=Warning: Looks like you're using an outdated `kaggle` version (installed: 2.2.4), please consider upgrading to the latest version (2.2.5)\n\n  0%|          | 0.00/7.52M [00:00<?, ?B/s]\n  0%|          | 16.0k/7.52M [00:00<00:49, 160kB/s]\n  7%|"}
+{"ts": 1795582940.864318, "msg": "LB[4]=0.95568 live_was=0.95569"}
+{"ts": 1795582940.875689, "msg": "DOWN -0.00001"}
+{"ts": 1795582944.419544, "msg": "SUBMIT 5/5 AB_x_modern_soft_2D_e0.10.csv"}
+{"ts": 1795582950.784909, "msg": "resp=Warning: Looks like you're using an outdated `kaggle` version (installed: 2.2.4), please consider upgrading to the latest version (2.2.5)\n\n  0%|          | 0.00/7.52M [00:00<?, ?B/s]\n  0%|          | 16.0k/7.52M [00:00<00:49, 159kB/s]\n  8%|"}
+{"ts": 1795582976.354123, "msg": "LB[5]=0.95568 live_was=0.95569"}
+{"ts": 1795582976.362376, "msg": "DOWN -0.00001"}
+{"ts": 1795582979.376992, "msg": "DONE live=0.95569 n=5"}

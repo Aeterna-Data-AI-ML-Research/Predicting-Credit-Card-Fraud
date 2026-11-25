@@ -1,0 +1,45 @@
+{
+  "live": 0.95569,
+  "results": [
+    {
+      "file": "AB_x_modern_rmap_e0.05.csv",
+      "score": 0.95568,
+      "delta": -1.0000000000065512e-05,
+      "ray": "modern_rmap",
+      "e4": 0.05,
+      "sha": "435eb5f6b59a"
+    },
+    {
+      "file": "AB_x_modern_rmap_e0.10.csv",
+      "score": 0.95568,
+      "delta": -1.0000000000065512e-05,
+      "ray": "modern_rmap",
+      "e4": 0.1,
+      "sha": "355bdd4112df"
+    },
+    {
+      "file": "AB_x_own_restack_rmap_e0.05.csv",
+      "score": 0.95568,
+      "delta": -1.0000000000065512e-05,
+      "ray": "own_restack_rmap",
+      "e4": 0.05,
+      "sha": "ae62d94d8b93"
+    },
+    {
+      "file": "AB_x_own_restack_rmap_e0.10.csv",
+      "score": 0.95568,
+      "delta": -1.0000000000065512e-05,
+      "ray": "own_restack_rmap",
+      "e4": 0.1,
+      "sha": "391654a6d145"
+    },
+    {
+      "file": "AB_x_modern_soft_2D_e0.10.csv",
+      "score": 0.95568,
+      "delta": -1.0000000000065512e-05,
+      "ray": "modern_soft_2D",
+      "e4": 0.1,
+      "sha": "733a7ceb1132"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "NO_SUBMIT": true,
+  "pods_started": 0,
+  "hf_tokenizer": false,
+  "orders_K": 8,
+  "field24_smoke_shape": [
+    16,
+    24
+  ],
+  "fold0_sizes": {
+    "train": 559968,
+    "va": 139992
+  },
+  "digit_single_token_byte": true,
+  "assert_field_sum_atol": 1e-05,
+  "status": "PASS"
+}

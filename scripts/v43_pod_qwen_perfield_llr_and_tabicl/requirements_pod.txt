@@ -1,0 +1,12 @@
+torch>=2.2
+transformers>=4.44
+peft>=0.12
+accelerate>=0.33
+numpy>=1.26
+pandas>=2.0
+scikit-learn>=1.4
+scipy>=1.11
+tabicl>=0.1.0
+safetensors
+sentencepiece
+protobuf

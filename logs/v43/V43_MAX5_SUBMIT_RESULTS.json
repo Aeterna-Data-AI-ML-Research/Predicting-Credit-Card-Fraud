@@ -1,0 +1,36 @@
+{
+  "live": 0.95569,
+  "results": [
+    {
+      "file": "Diag_B_0p060AC_0p160d1_tot0p220e4.csv",
+      "score": 0.95569,
+      "delta": 0.0,
+      "sha": "795cb4f1c919"
+    },
+    {
+      "file": "Cand2_Board_StepAC.csv",
+      "score": 0.95569,
+      "delta": 0.0,
+      "sha": "f0418672156e"
+    },
+    {
+      "file": "DiagA_x_modern_w0.08.csv",
+      "score": 0.95565,
+      "delta": -4.0000000000040004e-05,
+      "sha": "5e85b5e85493"
+    },
+    {
+      "file": "DiagA_x_modern_w0.15.csv",
+      "score": 0.95559,
+      "delta": -9.999999999998899e-05,
+      "sha": "24591788a8cd"
+    },
+    {
+      "file": "DiagA_x_modern_w0.25.csv",
+      "score": 0.95548,
+      "delta": -0.00021000000000004349,
+      "sha": "59fd8dbe5cd4"
+    }
+  ],
+  "NO_PARALLEL": true
+}

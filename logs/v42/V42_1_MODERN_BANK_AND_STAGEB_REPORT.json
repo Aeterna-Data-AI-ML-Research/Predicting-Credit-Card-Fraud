@@ -1,0 +1,2576 @@
+{
+  "NO_SUBMIT": true,
+  "env": {
+    "deadline_utc": "2026-11-30T23:59:00+00:00",
+    "days_left": 6.36,
+    "mps": true,
+    "cuda": false,
+    "runpodctl": true,
+    "note": "GPU for new foundation LLM: local MPS unavailable in this env; runpodctl present for cloud pod."
+  },
+  "gpt2_shape_fix": {
+    "oof_raw": [
+      [
+        139992,
+        8,
+        2
+      ],
+      [
+        139992,
+        8,
+        2
+      ],
+      [
+        139992,
+        8,
+        2
+      ],
+      [
+        139992,
+        8,
+        2
+      ],
+      [
+        139992,
+        8,
+        2
+      ]
+    ],
+    "test_raw": [
+      [
+        299984,
+        4,
+        2
+      ],
+      [
+        299984,
+        4,
+        2
+      ],
+      [
+        299984,
+        4,
+        2
+      ],
+      [
+        299984,
+        4,
+        2
+      ],
+      [
+        299984,
+        4,
+        2
+      ]
+    ]
+  },
+  "inventory": [
+    {
+      "asset_name": "gpt2_med_4ep_5f",
+      "family": "proprietary",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9482383414278046,
+      "disp": 0.9999999999979997,
+      "KS": 9.285978232131953e-06,
+      "status": "OK",
+      "in_z_pub_only": false
+    },
+    {
+      "asset_name": "l7_s2026_5f",
+      "family": "proprietary",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9492651606850682,
+      "disp": 0.9999999999979999,
+      "KS": 1.0338589755548577e-05,
+      "status": "OK",
+      "in_z_pub_only": false
+    },
+    {
+      "asset_name": "B_xgb_llr",
+      "family": "proprietary",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9519489439041481,
+      "disp": 0.9999999999979999,
+      "KS": 7.53873759007373e-06,
+      "status": "OK",
+      "in_z_pub_only": false
+    },
+    {
+      "asset_name": "delta1_v4",
+      "family": "proprietary",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.7618614554123042,
+      "disp": 0.9999999999979999,
+      "KS": 7.53873759007373e-06,
+      "status": "OK",
+      "in_z_pub_only": false
+    },
+    {
+      "asset_name": "soft_diff_orth_LM",
+      "family": "proprietary",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.576130001602512,
+      "disp": 0.999999999998,
+      "KS": 7.53873759007373e-06,
+      "status": "OK",
+      "in_z_pub_only": false
+    },
+    {
+      "asset_name": "P4_L4.2_pure5f",
+      "family": "proprietary",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "flipped": true,
+      "solo_oof_auc": 0.500154969925365,
+      "disp": 0.9999999999979999,
+      "KS": 0.0014007936072152338,
+      "status": "REJECT_AUC<0.52",
+      "in_z_pub_only": false
+    },
+    {
+      "asset_name": "P4_L4.5_pure5f",
+      "family": "proprietary",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "flipped": true,
+      "solo_oof_auc": 0.5344172721214207,
+      "disp": 0.9999999999979998,
+      "KS": 0.006145307729553906,
+      "status": "OK_LOCKED",
+      "in_z_pub_only": false
+    },
+    {
+      "asset_name": "P4_L4.3_pure5f",
+      "family": "proprietary",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "flipped": true,
+      "solo_oof_auc": 0.5276782100230668,
+      "disp": 0.9999999999979999,
+      "KS": 0.035396151962247546,
+      "status": "OK_LOCKED",
+      "in_z_pub_only": false
+    },
+    {
+      "asset_name": "L4.6C_top12_5f",
+      "family": "proprietary",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "flipped": true,
+      "solo_oof_auc": 0.8326874417025272,
+      "disp": 0.9999999999979997,
+      "KS": 1.3583291065016878e-05,
+      "status": "OK",
+      "in_z_pub_only": false
+    },
+    {
+      "asset_name": "E2_heavy_proxy_v34_3",
+      "family": "proprietary",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "flipped": true,
+      "solo_oof_auc": 0.5059640692805528,
+      "disp": 0.9999999999979999,
+      "KS": 0.0003000171438368726,
+      "status": "REJECT_AUC<0.55",
+      "in_z_pub_only": false
+    },
+    {
+      "asset_name": "U5_gini10_llr",
+      "status": "MISSING",
+      "note": "not found as named array on disk"
+    },
+    {
+      "asset_name": "G26_5f",
+      "status": "MISSING",
+      "note": "not in local cache / v43 pinned folder as 5f npy"
+    },
+    {
+      "asset_name": "MS_5f",
+      "status": "MISSING",
+      "note": "not found as named 5f MS array; using Aman megayak/masaya streams"
+    },
+    {
+      "asset_name": "gpw70:gb_bag5",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9515058163094932,
+      "disp": 0.9999999999979997,
+      "KS": 1.2577960955328926e-05,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:gb_bag10",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9514958561465638,
+      "disp": 0.9999999999979999,
+      "KS": 1.0525353245083302e-05,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:gbx_bag5",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9514576396931831,
+      "disp": 0.9999999999980002,
+      "KS": 1.1238003402302965e-05,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:gbx_bag3",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9514194223697183,
+      "disp": 0.9999999999979998,
+      "KS": 1.2364032560191474e-05,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:gb_l3",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9513246425598151,
+      "disp": 0.9999999999979997,
+      "KS": 9.293217127087638e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:gbc_bag3",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.951258080694516,
+      "disp": 0.9999999999979997,
+      "KS": 1.2571865043886632e-05,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:gbn_bag5_w512",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.951222973548657,
+      "disp": 0.9999999999979997,
+      "KS": 1.355806923103442e-05,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:gbn_bag5_w128",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.951220411648304,
+      "disp": 0.9999999999979999,
+      "KS": 1.2098288916947975e-05,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:gb_ohk",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9511859727269998,
+      "disp": 0.9999999999979997,
+      "KS": 1.0853770478824742e-05,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:gbe_bag3",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9511492062065487,
+      "disp": 0.999999999998,
+      "KS": 1.3969352762099874e-05,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:gbr_bag3",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9510742861273647,
+      "disp": 0.9999999999979999,
+      "KS": 1.2072952784714097e-05,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:lgb_diglead_l3",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9506444964240918,
+      "disp": 0.9999999999979999,
+      "KS": 9.237591934496692e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:lgb_diglead_l3_bag",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.950626761687232,
+      "disp": 0.999999999998,
+      "KS": 9.29778906072487e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:lgb_diglead_bag5",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9505400518447962,
+      "disp": 0.9999999999979999,
+      "KS": 9.150725195083975e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:lgb_diglead_bag",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9505103584240805,
+      "disp": 0.9999999999979997,
+      "KS": 9.20520740435582e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:glm_dl_s50_bag",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9505074547049912,
+      "disp": 0.9999999999979999,
+      "KS": 9.119483648567517e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:lgb_dig_s100_l3_bag",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9504967719994025,
+      "disp": 0.9999999999979998,
+      "KS": 9.268071492013474e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:glm_dl_s50",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.950489432902542,
+      "disp": 0.999999999998,
+      "KS": 9.265976022465594e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:lgb_dig_s100_bag5",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9504875308366474,
+      "disp": 0.999999999998,
+      "KS": 9.261975580487913e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:lgb_dig_s100_l3",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9504341351454274,
+      "disp": 0.9999999999979999,
+      "KS": 9.28388276266734e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:glm_dl_bag",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9504274866467115,
+      "disp": 0.999999999998,
+      "KS": 9.295693591149234e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:lgb_dig_s100_bag",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9504258336734523,
+      "disp": 0.9999999999979999,
+      "KS": 9.280263315092352e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:glm_dl",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9504051993193283,
+      "disp": 0.9999999999979999,
+      "KS": 9.280644309606068e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:lgb_diglead_l4",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9503999740916812,
+      "disp": 0.9999999999979999,
+      "KS": 9.29016917131098e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:lgb_dig_l4",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9503587999739997,
+      "disp": 0.9999999999979999,
+      "KS": 9.272643425650706e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:lgb_dig_s100",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9502855033473656,
+      "disp": 0.9999999999979998,
+      "KS": 9.165583979425795e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:ebm_i25_bag",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9502625025510569,
+      "disp": 0.9999999999979999,
+      "KS": 9.256070166191455e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:ebm_i25_bag4",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9502616704399554,
+      "disp": 0.999999999998,
+      "KS": 9.133199449506968e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:xgb_dig_d2",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.950254313009181,
+      "disp": 0.9999999999979999,
+      "KS": 9.29131215471335e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:ebm_lead4_bag",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9502410842511988,
+      "disp": 0.9999999999979999,
+      "KS": 9.289597679595918e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:ebm_diglead_i25",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9502161395006631,
+      "disp": 0.9999999999979999,
+      "KS": 9.191682100673226e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:lgb_diglead_l2",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.950204575897117,
+      "disp": 0.999999999998,
+      "KS": 9.295312596746541e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:lgb_dig_l7",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9501554321823792,
+      "disp": 0.999999999998,
+      "KS": 9.268833480957639e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:ebm_all_bag",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9501274929754172,
+      "disp": 0.9999999999979999,
+      "KS": 9.100814919560385e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:ebm_diglead_bag",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9501252414464764,
+      "disp": 0.9999999999979999,
+      "KS": 8.503606086757154e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:glm_ohk2",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9501206719514628,
+      "disp": 0.9999999999979999,
+      "KS": 9.165774476654898e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:glm_ohk2_bag",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9501151091933507,
+      "disp": 0.9999999999979999,
+      "KS": 9.28407325978542e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:ebm_diglead_r11",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9500881481473139,
+      "disp": 0.9999999999979997,
+      "KS": 9.286359226617913e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:ebm_diglead_r13",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.950046955882165,
+      "disp": 0.9999999999979999,
+      "KS": 9.252641215956592e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:glm_ohkl_bag",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9500252551157332,
+      "disp": 0.9999999999979999,
+      "KS": 1.0513732913719487e-05,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:glm_ohkl",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.950017717142517,
+      "disp": 0.999999999998,
+      "KS": 9.289978674081878e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:ebm_dig_r7",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9499618513448119,
+      "disp": 0.999999999998,
+      "KS": 9.166917460057267e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:ebm_dig_bag",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9499605055733732,
+      "disp": 0.9999999999979999,
+      "KS": 9.29740806623891e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:glm_ohk_c01",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9499073661219074,
+      "disp": 0.9999999999979999,
+      "KS": 9.256832155246641e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:ebm_dig",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9498084549664615,
+      "disp": 0.9999999999979999,
+      "KS": 9.653828393685338e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:glm_ohk",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9492371985451764,
+      "disp": 0.9999999999979999,
+      "KS": 9.274929392621978e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:lgb_dk_l4",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9490109787416205,
+      "disp": 0.9999999999979999,
+      "KS": 9.290740663137065e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:lgb_te_l4_s100",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9488523895151794,
+      "disp": 0.9999999999979999,
+      "KS": 9.296074585773972e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:lgb_te_l4",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9488452589277478,
+      "disp": 0.9999999999979998,
+      "KS": 1.061622042627941e-05,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:xgb_te_d2",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9488134428126807,
+      "disp": 0.9999999999979999,
+      "KS": 9.28388276266734e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:glm_dig",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9487861923393974,
+      "disp": 0.9999999999979999,
+      "KS": 9.166917460112778e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:lgb_te_l4_s5",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9487773373696653,
+      "disp": 0.9999999999979999,
+      "KS": 9.2749293924832e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:lgb_te_l4_s300",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9487302097018332,
+      "disp": 0.9999999999979997,
+      "KS": 9.226352597591081e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:realmlp_dig_s2",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9486712882932222,
+      "disp": 0.9999999999979997,
+      "KS": 9.059096024888191e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:realmlp_dig_s100",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9485764989745433,
+      "disp": 0.9999999999979998,
+      "KS": 9.293788618913723e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:realmlp_dig",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9485288055034796,
+      "disp": 0.9999999999979999,
+      "KS": 9.2974080664332e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:lgb_rawdig_l4",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.948374909883328,
+      "disp": 0.9999999999979999,
+      "KS": 9.29169314919931e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:lgb_raw_l4_cnt",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9477817305134324,
+      "disp": 0.9999999999979999,
+      "KS": 9.17072740477809e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:lgb_raw_l4",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9477724293770264,
+      "disp": 0.9999999999979999,
+      "KS": 9.786223972074737e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:realmlp_te",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9477104886524447,
+      "disp": 0.9999999999980002,
+      "KS": 9.288645193450407e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:realmlp_te_s2",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9476213940339099,
+      "disp": 0.9999999999980002,
+      "KS": 9.194539559276294e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:realmlp_te_cnt",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9476016088196754,
+      "disp": 0.9999999999979997,
+      "KS": 9.273976906309933e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:xgb_raw_d3",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.947493264710089,
+      "disp": 0.9999999999979998,
+      "KS": 9.259308619280482e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:lgb_raw_l31",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9470612992373372,
+      "disp": 0.9999999999979999,
+      "KS": 9.269214475526866e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:glm_te",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9470568398079565,
+      "disp": 0.9999999999979999,
+      "KS": 9.814417562870048e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:realmlp_cnt",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.946643645217877,
+      "disp": 0.9999999999979997,
+      "KS": 9.277215359315694e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:realmlp_allcat",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9463971628346843,
+      "disp": 0.999999999998,
+      "KS": 9.289026187880856e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:realmlp_rawdig",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9461483965429945,
+      "disp": 0.9999999999979998,
+      "KS": 9.313790828580082e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:glm_sb",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9458629767174833,
+      "disp": 0.9999999999979999,
+      "KS": 9.29778906072487e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "gpw70:realmlp_v1",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9458383039303639,
+      "disp": 0.9999999999979999,
+      "KS": 9.271309945019235e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "busy52:lgb_g2_plaininit_l4",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9510850724351048,
+      "disp": 0.9999999999979999,
+      "KS": 2.381070663407171e-05,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "busy52:lgb_g2_plaininit_l3",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9510217247224562,
+      "disp": 0.9999999999979999,
+      "KS": 3.285883001822272e-05,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "busy52:lgb_g2_glminit_l4",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9508853630361939,
+      "disp": 0.9999999999979997,
+      "KS": 2.523935969996119e-05,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "busy52:lgb_g2_glminit_l5",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9508832719756127,
+      "disp": 0.9999999999980002,
+      "KS": 4.000228584490542e-05,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "busy52:lgb_g2_glminit_s50",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9508337421921496,
+      "disp": 0.9999999999979997,
+      "KS": 1.5715107525890153e-05,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "busy52:lgb_g2_glminit",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9508206991349646,
+      "disp": 0.9999999999979998,
+      "KS": 2.5715564688775327e-05,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "busy52:lgb_g2_glminit_l7",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9507989182586506,
+      "disp": 0.9999999999979999,
+      "KS": 2.285844905423167e-05,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "busy52:lgb_g2_glminit_l4_hier",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9507940347875907,
+      "disp": 0.9999999999979998,
+      "KS": 4.14309389107949e-05,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "busy52:xgb_g2_glminit",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9507750667687309,
+      "disp": 0.9999999999979999,
+      "KS": 3.2382586929961524e-05,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "busy52:lgb_dl3_g2c3",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9507195454000139,
+      "disp": 0.999999999998,
+      "KS": 9.221399669412378e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "busy52:lgb_dl3",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9506683056527861,
+      "disp": 0.9999999999979999,
+      "KS": 9.282358784667988e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "busy52:lgb_dl4_g2cc",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9506683045962554,
+      "disp": 0.9999999999979997,
+      "KS": 9.27111944792891e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "busy52:lgb_dl4_g2",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9506363045827079,
+      "disp": 0.9999999999979999,
+      "KS": 9.277596353940432e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "busy52:glm_plain_g2_s50",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9506245695104539,
+      "disp": 0.9999999999979999,
+      "KS": 1.571506942644309e-05,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "busy52:lgb_dl3_cc",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9506196247606169,
+      "disp": 0.9999999999979999,
+      "KS": 9.26730950306931e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "busy52:lgb_dl3_hier",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9506039753044943,
+      "disp": 0.9999999999979998,
+      "KS": 9.288073701707589e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "busy52:lgb_dl3_trie",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9505926980829001,
+      "disp": 0.9999999999980002,
+      "KS": 9.255689171705495e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "busy52:ebm_g2_glminit",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9505914749311646,
+      "disp": 0.9999999999979999,
+      "KS": 9.288645193561429e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "busy52:lgb_g2_glminit_l2",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9505787030294606,
+      "disp": 0.9999999999979997,
+      "KS": 9.999580875594272e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "busy52:lgb_dl3_s10",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.950563633484361,
+      "disp": 0.9999999999979999,
+      "KS": 9.568295134987359e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "busy52:lgb_dl4_hier",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9505273207127451,
+      "disp": 0.9999999999979999,
+      "KS": 9.277596353940432e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "busy52:xgb_dl2",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9505138472125481,
+      "disp": 0.9999999999979997,
+      "KS": 1.0745187054544969e-05,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "busy52:glm_plain_s50",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9505079980724839,
+      "disp": 0.9999999999979998,
+      "KS": 1.4286530658894793e-05,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "busy52:lgb_dl4",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9504753698582482,
+      "disp": 0.9999999999979999,
+      "KS": 9.208826851819785e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "busy52:lgb_dl4_c3",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9504744944293905,
+      "disp": 0.9999999999979999,
+      "KS": 9.293026629886292e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "busy52:lgb_dl3_s100",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9504353476697078,
+      "disp": 0.9999999999979997,
+      "KS": 9.246164309972826e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "busy52:lgb_dl4_s100",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9504088390052309,
+      "disp": 0.9999999999979998,
+      "KS": 9.268833481068661e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "busy52:lgb_dl4_s10",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9503894062371878,
+      "disp": 0.9999999999980002,
+      "KS": 9.274548398052751e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "busy52:glm_ohk_g2_c0003_s50",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9503392673948857,
+      "disp": 0.9999999999979998,
+      "KS": 9.23092453131158e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "busy52:glm_ohk_g2_c0003_s100",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9503241020783911,
+      "disp": 0.9999999999979997,
+      "KS": 9.266928508666616e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "busy52:glm_ohk_g2_c0005_s50",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.950313105458905,
+      "disp": 0.9999999999979999,
+      "KS": 9.256451160677415e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "busy52:glm_ohk_g2_c0005_s100",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9503009825156089,
+      "disp": 0.9999999999979999,
+      "KS": 9.285216243326566e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "busy52:glm_ohk_g2_c0002_s50",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.950294015939022,
+      "disp": 0.999999999998,
+      "KS": 9.291502651942452e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "busy52:glm_ohk_g2_c0003",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9502937836265789,
+      "disp": 0.9999999999979999,
+      "KS": 9.259308619197215e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "busy52:glm_ohk_g2_c0005_m2",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9502692401712396,
+      "disp": 0.999999999998,
+      "KS": 9.285406740500157e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "busy52:glm_ohk_g2_c0005",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.950254579192753,
+      "disp": 0.9999999999979999,
+      "KS": 1.8572489856563232e-05,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "busy52:lgb_dl2_hier",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9502264100971538,
+      "disp": 0.9999999999979997,
+      "KS": 9.254355691212801e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "busy52:glm_ohk_g2x_c0005",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9501879182621693,
+      "disp": 0.999999999998,
+      "KS": 9.266547514208412e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "busy52:glm_ohk_c0005",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9501681993607697,
+      "disp": 0.9999999999979999,
+      "KS": 9.25111723815153e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "busy52:ebm_dl",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9500831917134909,
+      "disp": 0.999999999998,
+      "KS": 0.0003143036744956855,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "busy52:ebm_dl_g2",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9500638205349691,
+      "disp": 0.999999999998,
+      "KS": 9.291502651942452e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "busy52:glm_ohk_c0002",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9500566374317501,
+      "disp": 0.9999999999979999,
+      "KS": 9.231496022832353e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "busy52:glm_ohk_g2_c001",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.950050553741884,
+      "disp": 0.9999999999979999,
+      "KS": 9.278167845572227e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "busy52:glm_ohk_c001",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9500162921312805,
+      "disp": 0.9999999999979999,
+      "KS": 9.253974696754597e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "busy52:tabm_dl",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9497032440295594,
+      "disp": 0.999999999998,
+      "KS": 1.0149502199907623e-05,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "busy52:rmlp2_dl_hier",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9496690069056071,
+      "disp": 0.9999999999979998,
+      "KS": 1.790845459373469e-05,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "busy52:rmlp2_dl",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9495932030074691,
+      "disp": 0.9999999999979999,
+      "KS": 1.4604280047347817e-05,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "busy52:glm_dl",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.948872335322071,
+      "disp": 0.9999999999979997,
+      "KS": 9.158345084525621e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "busy52:rmlp_dl",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.948564700075409,
+      "disp": 0.9999999999979999,
+      "KS": 9.294360110490008e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "busy52:slr_c003",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9485282259653497,
+      "disp": 0.9999999999979999,
+      "KS": 9.197016023254623e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "busy52:rmlp_dl_g2",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9483913125214983,
+      "disp": 0.999999999998,
+      "KS": 9.181776244426842e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "busy52:lgb_rawdig",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9483540954218045,
+      "disp": 0.9999999999979999,
+      "KS": 1.0366097556321896e-05,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "aman:anchor_095370",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9525424154358397,
+      "disp": 0.9999999999979998,
+      "KS": 0.0069598707835612445,
+      "status": "OK_LOCKED",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "aman:megayak_5f_lm",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9504282674228537,
+      "disp": 0.9999999999979999,
+      "KS": 1.333366348788001e-05,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "aman:masaya_gpt2",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9500272047255064,
+      "disp": 0.9999999999979999,
+      "KS": 7.704965477473014e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "aman:lm7_5fold",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9494475201107185,
+      "disp": 0.9999999999979999,
+      "KS": 7.53873759007373e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "aman:gpt2_seed2026",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9501396986388475,
+      "disp": 0.9999999999979997,
+      "KS": 8.78032237075499e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "aman:tabpfn_slimypunk_tp1",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9492943359707291,
+      "disp": 0.9999999999979999,
+      "KS": 7.53873759007373e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "aman:sadam_tabpfn_100k_tp3",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9488330057825877,
+      "disp": 0.9999999999979999,
+      "KS": 0.00017905536176094012,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "aman:yekenot_realmlp",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9500162915719409,
+      "disp": 0.999999999998,
+      "KS": 9.297598563468013e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "aman:alex_glm_gen",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9504716815719364,
+      "disp": 0.9999999999979997,
+      "KS": 1.039524363331823e-05,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "aman:daoviet_gpdvae",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.946489033767143,
+      "disp": 0.9999999999979999,
+      "KS": 9.27340541459487e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "aman:gbn_bag5_w512",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.951222973548657,
+      "disp": 0.9999999999979998,
+      "KS": 1.1701102181405076e-05,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "aman:sameer_glm10f",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.951594937279145,
+      "disp": 0.9999999999979997,
+      "KS": 1.4717054410695596e-05,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "aman:sadam_v6_gb_xgb",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9507706939127138,
+      "disp": 0.9999999999979999,
+      "KS": 9.276643867628387e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "aman:sadam_v6_gb_lgb",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9509418011006124,
+      "disp": 0.9999999999979998,
+      "KS": 9.265785525292003e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "aman:sadam_v4_cat",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9500714069842968,
+      "disp": 0.9999999999979999,
+      "KS": 9.315124309156042e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "aman:gb_bag5",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9515058163094932,
+      "disp": 0.9999999999979997,
+      "KS": 1.0524210261708689e-05,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "aman:megayak_shallow_tree",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9514702806472366,
+      "disp": 0.9999999999979999,
+      "KS": 1.2491856205082419e-05,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "part12:lm",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9504282674228537,
+      "disp": 0.9999999999979999,
+      "KS": 1.333366348788001e-05,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "board:weni_bpe_cat_d3",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9506654977672406,
+      "disp": 0.9999999999979997,
+      "KS": 1.0630507718906168e-05,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "board:weni_bpe_cat_d5",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9506820125219566,
+      "disp": 0.9999999999979999,
+      "KS": 1.2296596538896587e-05,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "board:weni_bpe_glm",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9502650685532347,
+      "disp": 0.9999999999979998,
+      "KS": 1.0444391920022555e-05,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "board:weni_bpe_lgb_l4",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9509309163490761,
+      "disp": 0.9999999999979997,
+      "KS": 1.0863866832244717e-05,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "board:weni_realmlp_bpe",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9436828959721192,
+      "disp": 0.9999999999980002,
+      "KS": 1.5189982847038652e-05,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "board:weni_realmlp_bpe_v2",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.95000546928001,
+      "disp": 0.9999999999979999,
+      "KS": 9.268833481068661e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    },
+    {
+      "asset_name": "board:weni_tabm_bpe",
+      "family": "public",
+      "oof_shape": [
+        699960
+      ],
+      "test_shape": [
+        299984
+      ],
+      "solo_oof_auc": 0.9484176362309645,
+      "disp": 0.9999999999979999,
+      "KS": 9.27835834285684e-06,
+      "status": "OK",
+      "in_z_pub_only": true
+    }
+  ],
+  "counts": {
+    "public_admitted": 147,
+    "prop_admitted": 8
+  },
+  "z_modern_pub": {
+    "auc_zr": 0.9526516442966131,
+    "delta_e5_vs_z_pub": 5.207698976601449,
+    "pos": 4,
+    "folds": [
+      1.1111292957610708,
+      3.233644046940487,
+      10.003105566014359,
+      16.36956561213987,
+      -4.67894963784854
+    ],
+    "t25": 1.4279522808232206,
+    "sf25": 16,
+    "1mrho_vs_AB_e4": 200.92491280989222
+  },
+  "z_modern_all": {
+    "auc_zr": 0.9526516442966131,
+    "delta_e5_vs_z_pub": 5.207698976601449,
+    "pos": 4,
+    "folds": [
+      1.1111292957610708,
+      3.233644046940487,
+      10.003105566014359,
+      16.36956561213987,
+      -4.67894963784854
+    ],
+    "t25": 1.4279522808232206,
+    "sf25": 16,
+    "1mrho_vs_AB_e4": 200.92491280989222
+  },
+  "stageB_v42_1": {
+    "mean_e5_vs_modern_all": 0.0002796986309228089,
+    "pos": 3,
+    "folds": [
+      0.0006216977377349053,
+      -1.1102230246251565e-11,
+      0.00015535908115538177,
+      0.0009321545313412116,
+      -0.00031071818451522404
+    ],
+    "sf25": 13,
+    "t25": 1.2603732545116246,
+    "sign": 1,
+    "alpha": 0.01,
+    "disp": 0.999999999998,
+    "KS": 0.030107319574025904,
+    "delta_e5_vs_z_pub": 5.207978675236813,
+    "pos_vs_z_pub": 4,
+    "tips": {
+      "1.0": {
+        "e4": 1.0000017953970541,
+        "alpha": 0.021799721574015912,
+        "cos_S02": -0.10755464439205312,
+        "cos_S06": -0.9994232363936484
+      },
+      "2.0": {
+        "e4": 1.9999966006167824,
+        "alpha": 0.030833457054179156,
+        "cos_S02": -0.10751878186868498,
+        "cos_S06": -0.9994382285647663
+      },
+      "5.0": {
+        "e4": 5.000007852041799,
+        "alpha": 0.04876840081743895,
+        "cos_S02": -0.10758131767751515,
+        "cos_S06": -0.9993318937616301
+      },
+      "8.0": {
+        "e4": 8.000010774528166,
+        "alpha": 0.06170409833239017,
+        "cos_S02": -0.107546867787079,
+        "cos_S06": -0.9991884136829181
+      },
+      "12.0": {
+        "e4": 11.999997501944693,
+        "alpha": 0.07560175889618323,
+        "cos_S02": -0.10757741604931394,
+        "cos_S06": -0.9990023188948371
+      },
+      "15.0": {
+        "e4": 15.000000112943557,
+        "alpha": 0.08454962643840165,
+        "cos_S02": -0.10765555326364194,
+        "cos_S06": -0.9988663267205962
+      }
+    },
+    "file": "V42_1_StageB_soft_delta_NOSUBMIT.csv",
+    "sha": "33852654a535348abb69531c5e5d2ab8bb6b9c86261177fa51a5015341473dc0",
+    "bugs_fixed": [
+      "init_score=0.25*L(z_modern_pub) not 1.0*z_pub",
+      "ECDF/Method-B only on continuous logits; discrete raw",
+      "post-orth Method-B disp lock on residual"
+    ]
+  },
+  "L46C_regime": {
+    "mean_e5": 0.00021767262436966917,
+    "pos": 2,
+    "folds": [
+      0.0020205176642917877,
+      -0.0012428726936519752,
+      -0.0010875136124965934,
+      -0.00031071818451522404,
+      0.0017089499482203507
+    ],
+    "sign": -1,
+    "alpha": 0.01,
+    "sf25": 12,
+    "t25": 0.3143461703530085,
+    "disp": 0.9999999999979998,
+    "KS": 1.3846482045387631e-05
+  },
+  "missing": [
+    {
+      "asset_name": "U5_gini10_llr",
+      "status": "MISSING",
+      "note": "not found as named array on disk"
+    },
+    {
+      "asset_name": "G26_5f",
+      "status": "MISSING",
+      "note": "not in local cache / v43 pinned folder as 5f npy"
+    },
+    {
+      "asset_name": "MS_5f",
+      "status": "MISSING",
+      "note": "not found as named 5f MS array; using Aman megayak/masaya streams"
+    }
+  ]
+}

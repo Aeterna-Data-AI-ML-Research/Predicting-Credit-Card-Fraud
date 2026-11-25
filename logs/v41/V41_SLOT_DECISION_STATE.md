@@ -92,3 +92,7 @@
 - SCAN4: sequential IDs → raw u_g KS fails; hash-u KS-ok but OOF −12e-5
 - Cohort offsets ≈0; StageB_v42 FAIL (−102e-5)
 - **No macro≥5 candidate authorized** — see logs/v42/V42_MACRO_LEAP_REPORT.md
+
+## V42.1 — modern bank + StageB redesign (NO_SUBMIT)
+- Peephole still FREEZE; Diag_A spearhead held
+- Goal: ingest modern OOF bank, fix Eng3 bugs, measure OOF leap vs 0.952614

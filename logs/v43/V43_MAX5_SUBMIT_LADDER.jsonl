@@ -1,0 +1,47 @@
+{"ts": 1795572228.681699, "msg": "=== MAX5 tip ladder | today=0 best=0.95569 left=10 ==="}
+{"ts": 1795572242.0231318, "msg": "z_modern_pub OOF AUC=0.952598"}
+{"ts": 1795572249.446505, "msg": "PLAN[0] pri=100.0 sha=795cb4f1c919 Diag_B_0p060AC_0p160d1_tot0p220e4.csv"}
+{"ts": 1795572249.447642, "msg": "PLAN[1] pri=90.0 sha=f0418672156e Cand2_Board_StepAC.csv"}
+{"ts": 1795572249.448155, "msg": "PLAN[2] pri=80.0 sha=5e85b5e85493 DiagA_x_modern_w0.08.csv"}
+{"ts": 1795572249.448651, "msg": "PLAN[3] pri=70.0 sha=24591788a8cd DiagA_x_modern_w0.15.csv"}
+{"ts": 1795572249.4491498, "msg": "PLAN[4] pri=60.0 sha=59fd8dbe5cd4 DiagA_x_modern_w0.25.csv"}
+{"ts": 1795572249.4496891, "msg": "SUBMIT 1/5 Diag_B_0p060AC_0p160d1_tot0p220e4.csv"}
+{"ts": 1795572255.0878878, "msg": "resp={\"code\":400,\"message\":\"BlobFileTokens must be specified.\"}"}
+{"ts": 1795573046.369785, "msg": "=== MAX5 tip ladder | today=1 best=0.95569 left=9 ==="}
+{"ts": 1795573051.2940412, "msg": "z_modern_pub OOF AUC=0.952598"}
+{"ts": 1795573054.255392, "msg": "PLAN[0] pri=100.0 sha=795cb4f1c919 Diag_B_0p060AC_0p160d1_tot0p220e4.csv"}
+{"ts": 1795573054.259126, "msg": "PLAN[1] pri=90.0 sha=f0418672156e Cand2_Board_StepAC.csv"}
+{"ts": 1795573054.286475, "msg": "PLAN[2] pri=80.0 sha=5e85b5e85493 DiagA_x_modern_w0.08.csv"}
+{"ts": 1795573054.28823, "msg": "PLAN[3] pri=70.0 sha=24591788a8cd DiagA_x_modern_w0.15.csv"}
+{"ts": 1795573054.302254, "msg": "PLAN[4] pri=60.0 sha=59fd8dbe5cd4 DiagA_x_modern_w0.25.csv"}
+{"ts": 1795573055.311899, "msg": "ALREADY Diag_B_0p060AC_0p160d1_tot0p220e4.csv LB=0.95569"}
+{"ts": 1795573056.31426, "msg": "SUBMIT 2/5 Cand2_Board_StepAC.csv"}
+{"ts": 1795573062.2885928, "msg": "resp=Warning: Looks like you're using an outdated `kaggle` version (installed: 2.2.4), please consider upgrading to the latest version (2.2.5)\n\n  0%|          | 0.00/7.52M [00:00<?, ?B/s]\n  0%|          | 16.0k/7.52M [00:00<00:49, 159kB/s]\n  7%|"}
+{"ts": 1795573079.972789, "msg": "LB[2]=0.95569 live_was=0.95569"}
+{"ts": 1795573101.840033, "msg": "FLAT"}
+{"ts": 1795573122.103341, "msg": "SUBMIT 3/5 DiagA_x_modern_w0.08.csv"}
+{"ts": 1795573132.842751, "msg": "resp=Warning: Looks like you're using an outdated `kaggle` version (installed: 2.2.4), please consider upgrading to the latest version (2.2.5)\n\n  0%|          | 0.00/7.52M [00:00<?, ?B/s]\n  0%|          | 16.0k/7.52M [00:00<01:47, 72.9kB/s]\n  5%"}
+{"ts": 1795573146.005857, "msg": "LB[3]=0.95565 live_was=0.95569"}
+{"ts": 1795573146.022178, "msg": "DOWN -0.00004"}
+{"ts": 1795573150.029716, "msg": "SUBMIT 4/5 DiagA_x_modern_w0.15.csv"}
+{"ts": 1795573156.3058681, "msg": "resp=Warning: Looks like you're using an outdated `kaggle` version (installed: 2.2.4), please consider upgrading to the latest version (2.2.5)\n\n  0%|          | 0.00/7.52M [00:00<?, ?B/s]\n  0%|          | 16.0k/7.52M [00:00<01:11, 109kB/s]\n  5%|"}
+{"ts": 1795573187.0634282, "msg": "LB[4]=0.95559 live_was=0.95569"}
+{"ts": 1795573202.8102772, "msg": "DOWN -0.00010"}
+{"ts": 1795573222.446909, "msg": "SUBMIT 5/5 DiagA_x_modern_w0.25.csv"}
+{"ts": 1795573239.834529, "msg": "resp=Warning: Looks like you're using an outdated `kaggle` version (installed: 2.2.4), please consider upgrading to the latest version (2.2.5)\n\n  0%|          | 0.00/7.52M [00:00<?, ?B/s]\n  0%|          | 16.0k/7.52M [00:00<01:54, 68.7kB/s]\n  5%"}
+{"ts": 1795573265.507325, "msg": "LB[5]=0.95548 live_was=0.95569"}
+{"ts": 1795573265.513501, "msg": "DOWN -0.00021"}
+{"ts": 1795573268.550283, "msg": "DONE live=0.95569 n=5"}
+{"ts": 1795573291.245174, "msg": "=== MAX5 tip ladder | today=5 best=0.95569 left=5 ==="}
+{"ts": 1795573297.9810612, "msg": "z_modern_pub OOF AUC=0.952598"}
+{"ts": 1795573300.3685818, "msg": "PLAN[0] pri=100.0 sha=795cb4f1c919 Diag_B_0p060AC_0p160d1_tot0p220e4.csv"}
+{"ts": 1795573300.369494, "msg": "PLAN[1] pri=90.0 sha=f0418672156e Cand2_Board_StepAC.csv"}
+{"ts": 1795573300.370081, "msg": "PLAN[2] pri=80.0 sha=5e85b5e85493 DiagA_x_modern_w0.08.csv"}
+{"ts": 1795573300.370602, "msg": "PLAN[3] pri=70.0 sha=24591788a8cd DiagA_x_modern_w0.15.csv"}
+{"ts": 1795573300.371148, "msg": "PLAN[4] pri=60.0 sha=59fd8dbe5cd4 DiagA_x_modern_w0.25.csv"}
+{"ts": 1795573301.3400588, "msg": "ALREADY Diag_B_0p060AC_0p160d1_tot0p220e4.csv LB=0.95569"}
+{"ts": 1795573301.820261, "msg": "ALREADY Cand2_Board_StepAC.csv LB=0.95569"}
+{"ts": 1795573302.312703, "msg": "ALREADY DiagA_x_modern_w0.08.csv LB=0.95565"}
+{"ts": 1795573302.725207, "msg": "ALREADY DiagA_x_modern_w0.15.csv LB=0.95559"}
+{"ts": 1795573303.247048, "msg": "ALREADY DiagA_x_modern_w0.25.csv LB=0.95548"}
+{"ts": 1795573303.261816, "msg": "DONE live=0.95569 n=5"}
