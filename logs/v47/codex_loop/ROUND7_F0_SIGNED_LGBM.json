@@ -1,0 +1,25 @@
+{
+  "scope": "F0_DEV_ONLY_signed_digit_LGBM",
+  "base_auc": 0.9512507991341679,
+  "cand_auc": 0.9512423098514521,
+  "delta_e5": -0.8489282715795632,
+  "pos5": 2,
+  "sub_e5": [
+    15.064603165293455,
+    17.641341058571847,
+    -4.99339774817642,
+    -19.048023497292288,
+    -8.415664117633614
+  ],
+  "weights": [
+    -0.025,
+    -0.025,
+    -0.05,
+    -0.05,
+    -0.05
+  ],
+  "solo_auc": 0.8882066999526746,
+  "verdict": "NO-GO",
+  "note": "DEV probe only; folds1-4 must NOT be used to promote. Not CROSS_FOLD.",
+  "NO_SUBMIT": true
+}

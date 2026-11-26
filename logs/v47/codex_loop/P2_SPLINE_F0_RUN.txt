@@ -1,0 +1,50 @@
+Fitting additive stream on 559968 outer-training rows
+{
+  "scope": "historical_F0_DEV_ONLY",
+  "base_auc": 0.9446644275289812,
+  "solo_auc": 0.9420998870266402,
+  "candidate_auc": 0.9445494165545395,
+  "delta_e5": -11.501097444166497,
+  "positive_subfolds": 1,
+  "subfold_deltas_e5": [
+    -1.7385219520993367,
+    -1.7850895044024817,
+    0.34222663695127054,
+    -41.76720546359425,
+    -8.76566863267092
+  ],
+  "fixed_spline_weight": 0.15,
+  "continuous_features": [
+    "amount_usd",
+    "hours_since_last_txn",
+    "distance_from_home_km",
+    "card_age_months",
+    "customer_age",
+    "account_balance_usd",
+    "velocity_score",
+    "time_of_day_hour",
+    "merchant_risk_score"
+  ],
+  "discrete_features": [
+    "txn_count_last_24h",
+    "cvv_retry_count",
+    "day_of_week",
+    "prior_disputes",
+    "is_foreign_transaction",
+    "is_new_merchant",
+    "used_vpn",
+    "ip_country_mismatch",
+    "billing_shipping_mismatch",
+    "is_ai_generated_scam_attempt"
+  ],
+  "categorical_features": [
+    "merchant_category",
+    "card_type",
+    "auth_method",
+    "channel",
+    "device_type"
+  ],
+  "verdict": "NO-GO",
+  "NO_SUBMIT": true,
+  "SUBMIT_ARMED": false
+}

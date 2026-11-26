@@ -1,0 +1,201 @@
+OpenAI Codex v0.172.0
+--------
+workdir: /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+model: gpt-6.2-sol
+provider: openai
+approval: never
+sandbox: read-only
+reasoning effort: none
+reasoning summaries: none
+session id: 01a2180a-0cec-7810-bcbf-4a725485c87f
+--------
+user
+# Cursor → Codex Round22
+
+Class-conditional decimal+categorical dependency tree as 6th stream vs matched 5-stream control (F0 DEV):
+- base_auc 0.9468323528460475 (assert OK)
+- candidate_auc 0.9467584423095654
+- stream_solo_auc 0.84655 (weak)
+- Δe-5 −7.39 · pos 1/5 · NO-GO
+- meta 6th coef ~0.089
+- Artifact: P2_DECIMAL_DEPENDENCY_TREE_F0_DEV.json / P2_DECIMAL_DEPENDENCY_TREE_RUN.txt
+
+Recent 6th-stream NO-GOs on same 5-stream control: context-MLP (−13.95e-5 0/5), magnitude (+0.85e-5 2/5), dependency-tree (−7.39e-5 1/5). Best verified recipe still 5-stream B_TRANSPORT_PASS (decimal 2031 + char-ngram 2033), absolute fold AUCs ≤~0.95012 vs public 0.95726 (~0.007 gap). Milestone=LOCAL_GATE_PASS. Signed-CB retired. NO_SUBMIT/NO_GPU/$0.
+
+Highest-EV next measurable step? Prefer orthogonal lift (new representation / meta / cross-fold protocol on locked recipe) over another weak decimal co-occurrence 6th stream.
+ONE bash command after short verdict. Keep /tmp/s6e11_isol/data/train.csv. No signed-CB. No public arrays. Do not retune dependency-tree/MLP/magnitude on same F0.
+codex
+**Test an AUC-aligned stacker on the existing five streams.** The last three sixth streams failed the dev gate. This comparison keeps every base learner, inner split, rank transform, and averaging rule fixed. It changes the meta-model from row-wise logistic loss to pairwise logistic loss on fraud–legitimate score differences. Fit the new head on inner OOF scores from the outer training partition, reproduce the saved control, and score historical Fold-0 once. A gain of **≥+8e-5 with ≥4/5 positive** earns a frozen transport test.
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python -u - <<'PY'
+from pathlib import Path
+
+source_path = Path("/tmp/s6e11_isol/char_ngram.sh")
+lines = source_path.read_text().splitlines(keepends=True)
+assert lines[0].rstrip().endswith("<<'PY'") and lines[-1].strip() == "PY"
+assembly, boundary, _ = "".join(lines[1:-1]).partition('\nevaluation = """')
+assert boundary, "Character n-gram runner boundary changed"
+namespace = {"__name__": "_assemble_five_stream"}
+exec(compile(assembly, str(source_path), "exec"), namespace)
+runner = namespace["runner"]
+assert runner.count('"/tmp/s6e11_isol/data/train.csv"') == 2
+assert 'device="cpu"' in runner
+
+evaluation = """
+control, control_coefficients = stack(5)
+with np.load(pred / "p2_decimal_char_ngram_f0_dev.npz", allow_pickle=False) as saved:
+    np.testing.assert_array_equal(saved["row_indices"], valid)
+    np.testing.assert_array_equal(saved["ids"], ids[valid])
+    np.testing.assert_allclose(control, saved["candidate"], rtol=1e-8, atol=1e-8)
+
+scaler = StandardScaler().fit(inner_design)
+design = scaler.transform(inner_design)
+training_labels = labels[train]
+fraud = np.flatnonzero(training_labels == 1)
+legitimate = np.flatnonzero(training_labels == 0)
+rng = np.random.default_rng(2035)
+pairs_per_fraud = 64
+fraud_rows = np.repeat(fraud, pairs_per_fraud)
+legitimate_rows = rng.choice(legitimate, size=len(fraud_rows), replace=True)
+pair_design = design[fraud_rows] - design[legitimate_rows]
+pair_labels = rng.integers(0, 2, size=len(pair_design))
+pair_design *= (2 * pair_labels - 1)[:, None]
+head = LogisticRegression(
+    C=0.03, solver="lbfgs", fit_intercept=False, max_iter=2000,
+).fit(pair_design, pair_labels)
+assert np.max(head.n_iter_) < head.max_iter
+candidate = np.mean([
+    head.decision_function(scaler.transform(outer_design))
+    for outer_design in outer_designs
+], axis=0)
+assert np.isfinite(candidate).all()
+
+observed = labels[valid]
+base_auc = roc_auc_score(observed, control)
+assert abs(base_auc - 0.9468323528460475) < 1e-12
+candidate_auc = roc_auc_score(observed, candidate)
+delta = candidate_auc - base_auc
+subfold_deltas = [
+    (roc_auc_score(observed[held], candidate[held])
+     - roc_auc_score(observed[held], control[held])) * 1e5
+    for _, held in StratifiedKFold(5, shuffle=True, random_state=7).split(control, observed)
+]
+positive = sum(change > 0 for change in subfold_deltas)
+verdict = "DEV_ADVANCE" if delta >= 8e-5 and positive >= 4 else "NO-GO"
+result = {
+    "scope": "historical_F0_DEV_ONLY",
+    "experiment": "pairwise_logistic_head_on_frozen_five_stream_inner_oof",
+    "pair_seed": 2035, "pairs_per_fraud": pairs_per_fraud, "n_pairs": len(pair_design),
+    "base_auc": base_auc, "candidate_auc": candidate_auc, "delta_e5": delta * 1e5,
+    "positive_subfolds": positive, "subfold_deltas_e5": subfold_deltas,
+    "control_coefficients": control_coefficients,
+    "pairwise_coefficients": head.coef_.ravel().tolist(),
+    "verdict": verdict, "NO_SUBMIT": True, "NO_GPU": True,
+}
+payload = json.dumps(result, indent=2)
+(logs / "P2_FIVE_STREAM_PAIRWISE_META_F0_DEV.json").write_text(payload + "\\n")
+np.savez(
+    pred / "p2_five_stream_pairwise_meta_f0_dev.npz",
+    ids=ids[valid], row_indices=valid, control=control, candidate=candidate,
+)
+with Path("logs/v47/CODEX_DS_REVIEW_NEXT.md").open("a") as review:
+    review.write(
+        "\\n## P2 five-stream pairwise meta-model\\n\\n"
+        f"Historical Fold-0. Control {base_auc:.16f}, candidate {candidate_auc:.16f}, "
+        f"Δe-5 {delta * 1e5:+.8f}, {positive}/5 positive, {verdict}. "
+        f"Subfold Δe-5 {subfold_deltas}.\\n"
+    )
+print(payload)
+"""
+exec(compile(runner + "\n" + evaluation, str(source_path), "exec"), {"__name__": "__main__"})
+PY
+```
+tokens used
+236,634
+**Test an AUC-aligned stacker on the existing five streams.** The last three sixth streams failed the dev gate. This comparison keeps every base learner, inner split, rank transform, and averaging rule fixed. It changes the meta-model from row-wise logistic loss to pairwise logistic loss on fraud–legitimate score differences. Fit the new head on inner OOF scores from the outer training partition, reproduce the saved control, and score historical Fold-0 once. A gain of **≥+8e-5 with ≥4/5 positive** earns a frozen transport test.
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python -u - <<'PY'
+from pathlib import Path
+
+source_path = Path("/tmp/s6e11_isol/char_ngram.sh")
+lines = source_path.read_text().splitlines(keepends=True)
+assert lines[0].rstrip().endswith("<<'PY'") and lines[-1].strip() == "PY"
+assembly, boundary, _ = "".join(lines[1:-1]).partition('\nevaluation = """')
+assert boundary, "Character n-gram runner boundary changed"
+namespace = {"__name__": "_assemble_five_stream"}
+exec(compile(assembly, str(source_path), "exec"), namespace)
+runner = namespace["runner"]
+assert runner.count('"/tmp/s6e11_isol/data/train.csv"') == 2
+assert 'device="cpu"' in runner
+
+evaluation = """
+control, control_coefficients = stack(5)
+with np.load(pred / "p2_decimal_char_ngram_f0_dev.npz", allow_pickle=False) as saved:
+    np.testing.assert_array_equal(saved["row_indices"], valid)
+    np.testing.assert_array_equal(saved["ids"], ids[valid])
+    np.testing.assert_allclose(control, saved["candidate"], rtol=1e-8, atol=1e-8)
+
+scaler = StandardScaler().fit(inner_design)
+design = scaler.transform(inner_design)
+training_labels = labels[train]
+fraud = np.flatnonzero(training_labels == 1)
+legitimate = np.flatnonzero(training_labels == 0)
+rng = np.random.default_rng(2035)
+pairs_per_fraud = 64
+fraud_rows = np.repeat(fraud, pairs_per_fraud)
+legitimate_rows = rng.choice(legitimate, size=len(fraud_rows), replace=True)
+pair_design = design[fraud_rows] - design[legitimate_rows]
+pair_labels = rng.integers(0, 2, size=len(pair_design))
+pair_design *= (2 * pair_labels - 1)[:, None]
+head = LogisticRegression(
+    C=0.03, solver="lbfgs", fit_intercept=False, max_iter=2000,
+).fit(pair_design, pair_labels)
+assert np.max(head.n_iter_) < head.max_iter
+candidate = np.mean([
+    head.decision_function(scaler.transform(outer_design))
+    for outer_design in outer_designs
+], axis=0)
+assert np.isfinite(candidate).all()
+
+observed = labels[valid]
+base_auc = roc_auc_score(observed, control)
+assert abs(base_auc - 0.9468323528460475) < 1e-12
+candidate_auc = roc_auc_score(observed, candidate)
+delta = candidate_auc - base_auc
+subfold_deltas = [
+    (roc_auc_score(observed[held], candidate[held])
+     - roc_auc_score(observed[held], control[held])) * 1e5
+    for _, held in StratifiedKFold(5, shuffle=True, random_state=7).split(control, observed)
+]
+positive = sum(change > 0 for change in subfold_deltas)
+verdict = "DEV_ADVANCE" if delta >= 8e-5 and positive >= 4 else "NO-GO"
+result = {
+    "scope": "historical_F0_DEV_ONLY",
+    "experiment": "pairwise_logistic_head_on_frozen_five_stream_inner_oof",
+    "pair_seed": 2035, "pairs_per_fraud": pairs_per_fraud, "n_pairs": len(pair_design),
+    "base_auc": base_auc, "candidate_auc": candidate_auc, "delta_e5": delta * 1e5,
+    "positive_subfolds": positive, "subfold_deltas_e5": subfold_deltas,
+    "control_coefficients": control_coefficients,
+    "pairwise_coefficients": head.coef_.ravel().tolist(),
+    "verdict": verdict, "NO_SUBMIT": True, "NO_GPU": True,
+}
+payload = json.dumps(result, indent=2)
+(logs / "P2_FIVE_STREAM_PAIRWISE_META_F0_DEV.json").write_text(payload + "\\n")
+np.savez(
+    pred / "p2_five_stream_pairwise_meta_f0_dev.npz",
+    ids=ids[valid], row_indices=valid, control=control, candidate=candidate,
+)
+with Path("logs/v47/CODEX_DS_REVIEW_NEXT.md").open("a") as review:
+    review.write(
+        "\\n## P2 five-stream pairwise meta-model\\n\\n"
+        f"Historical Fold-0. Control {base_auc:.16f}, candidate {candidate_auc:.16f}, "
+        f"Δe-5 {delta * 1e5:+.8f}, {positive}/5 positive, {verdict}. "
+        f"Subfold Δe-5 {subfold_deltas}.\\n"
+    )
+print(payload)
+"""
+exec(compile(runner + "\n" + evaluation, str(source_path), "exec"), {"__name__": "__main__"})
+PY
+```

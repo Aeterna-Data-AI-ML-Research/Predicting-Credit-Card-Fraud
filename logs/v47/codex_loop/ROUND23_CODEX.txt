@@ -1,0 +1,345 @@
+OpenAI Codex v0.172.0
+--------
+workdir: /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+model: gpt-6.2-sol
+provider: openai
+approval: never
+sandbox: read-only
+reasoning effort: none
+reasoning summaries: none
+session id: 01a2180a-0cec-7810-bcbf-4a725485c87f
+--------
+user
+# Cursor → Codex Round23
+
+Pairwise logistic head on frozen five-stream inner OOF (F0 DEV) — DEV_ADVANCE:
+- base_auc 0.9468323528460475 (assert OK vs p2_decimal_char_ngram_f0_dev.npz)
+- candidate_auc 0.946929365670755
+- Δe-5 +9.701282470753192
+- positive_subfolds 5/5
+- subfold_deltas_e5 [2.88, 11.06, 26.76, 3.52, 6.92]
+- control_coefs [0.488, 0.444, 0.437, 0.952, 0.191]
+- pairwise_coefs [0.339, 0.531, 0.175, 1.199, 0.185]
+- pair_seed 2035, pairs_per_fraud 64, n_pairs 598528
+- Artifacts: P2_FIVE_STREAM_PAIRWISE_META_F0_DEV.json / p2_five_stream_pairwise_meta_f0_dev.npz
+
+Gate met (≥+8e-5 & ≥4/5). Absolute still ~0.94693 << public 0.95726. Milestone=LOCAL_GATE_PASS. Signed-CB retired. NO_SUBMIT/NO_GPU/$0.
+
+Issue the sealed Protocol-B transport command for this pairwise meta (same frozen streams; previously examined rows; lock+JSON like B2031/B2033). ONE bash after short verdict. Keep /tmp/s6e11_isol/data/train.csv. No submit. No public arrays.
+codex
+I’ll check the saved pairwise runner and B template.
+exec
+/bin/bash -lc "ls /tmp/s6e11_isol
+ls artifacts/research_loop
+rg -n 'pairwise|candidate =' /tmp/s6e11_isol/*pairwise*" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 0ms:
+char_ngram.sh
+context_mlp.sh
+data
+decimal_token.sh
+dependency_tree.sh
+logs
+magnitude.sh
+mlp_runner.sh
+p2_p4_stepgrid_runner.sh
+p2_spline.py
+p2_xgb_inner.py
+pair_rate.sh
+pairwise_meta.sh
+preds
+run_isol.py
+sealed_b.sh
+sealed_b_decimal.sh
+xgb_capacity.sh
+CURRENT_RESEARCH.json
+SEALED_EVAL_PROTOCOL_DRAFT.md
+SEALED_LOCK.json
+SEALED_LOCK_DECIMAL_CHAR_NGRAM_B2033.json
+SEALED_LOCK_DECIMAL_TOKEN_B2031.json
+38:candidate = np.mean([
+58:    "experiment": "pairwise_logistic_head_on_frozen_five_stream_inner_oof",
+63:    "pairwise_coefficients": head.coef_.ravel().tolist(),
+69:    pred / "p2_five_stream_pairwise_meta_f0_dev.npz",
+74:        "\\n## P2 five-stream pairwise meta-model\\n\\n"
+
+exec
+/bin/bash -lc "sed -n '1,49p' /tmp/s6e11_isol/pairwise_meta.sh
+sed -n '8,75p' /tmp/s6e11_isol/sealed_b.sh" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 0ms:
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python -u - <<'PY'
+from pathlib import Path
+
+source_path = Path("/tmp/s6e11_isol/char_ngram.sh")
+lines = source_path.read_text().splitlines(keepends=True)
+assert lines[0].rstrip().endswith("<<'PY'") and lines[-1].strip() == "PY"
+assembly, boundary, _ = "".join(lines[1:-1]).partition('\nevaluation = """')
+assert boundary, "Character n-gram runner boundary changed"
+namespace = {"__name__": "_assemble_five_stream"}
+exec(compile(assembly, str(source_path), "exec"), namespace)
+runner = namespace["runner"]
+assert runner.count('"/tmp/s6e11_isol/data/train.csv"') == 2
+assert 'device="cpu"' in runner
+
+evaluation = """
+control, control_coefficients = stack(5)
+with np.load(pred / "p2_decimal_char_ngram_f0_dev.npz", allow_pickle=False) as saved:
+    np.testing.assert_array_equal(saved["row_indices"], valid)
+    np.testing.assert_array_equal(saved["ids"], ids[valid])
+    np.testing.assert_allclose(control, saved["candidate"], rtol=1e-8, atol=1e-8)
+
+scaler = StandardScaler().fit(inner_design)
+design = scaler.transform(inner_design)
+training_labels = labels[train]
+fraud = np.flatnonzero(training_labels == 1)
+legitimate = np.flatnonzero(training_labels == 0)
+rng = np.random.default_rng(2035)
+pairs_per_fraud = 64
+fraud_rows = np.repeat(fraud, pairs_per_fraud)
+legitimate_rows = rng.choice(legitimate, size=len(fraud_rows), replace=True)
+pair_design = design[fraud_rows] - design[legitimate_rows]
+pair_labels = rng.integers(0, 2, size=len(pair_design))
+pair_design *= (2 * pair_labels - 1)[:, None]
+head = LogisticRegression(
+    C=0.03, solver="lbfgs", fit_intercept=False, max_iter=2000,
+).fit(pair_design, pair_labels)
+assert np.max(head.n_iter_) < head.max_iter
+candidate = np.mean([
+    head.decision_function(scaler.transform(outer_design))
+    for outer_design in outer_designs
+], axis=0)
+assert np.isfinite(candidate).all()
+
+observed = labels[valid]
+base_auc = roc_auc_score(observed, control)
+assert abs(base_auc - 0.9468323528460475) < 1e-12
+candidate_auc = roc_auc_score(observed, candidate)
+delta = candidate_auc - base_auc
+subfold_deltas = [
+
+source_path = Path("/tmp/s6e11_isol/p2_xgb_inner.py")
+protocol_path = Path("artifacts/research_loop/SEALED_EVAL_PROTOCOL_DRAFT.md")
+lock_path = Path("artifacts/research_loop/SEALED_LOCK.json")
+report_path = Path("logs/v47/codex_loop/SEALED_B_XGB_TRANSPORT.json")
+scores_path = Path("preds/v47_sovereign/sealed_b_xgb_transport.npz")
+assert not report_path.exists() and not scores_path.exists(), "B has already produced artifacts"
+
+source = source_path.read_text()
+runner, marker, _ = source.partition("\ncontrol, _ = stack(2)")
+assert marker, "Round 10 runner boundary changed"
+data_start = runner.index('frame = pd.read_csv(')
+fit_start = runner.index('categories = frame.select_dtypes(')
+runner = runner[:data_start] + """train, valid = panel_train, panel_valid
+assert np.intersect1d(train, valid).size == 0
+""" + runner[fit_start:]
+assert 'device="cpu"' in runner, "Confirm Round 10 XGB device before freezing"
+runner += "\ncontrol, _ = stack(2)\ncandidate, coefficients = stack(3)\n"
+
+def sha256(path):
+    checksum = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1 << 20), b""):
+            checksum.update(chunk)
+    return checksum.hexdigest()
+
+train_path = Path("data/train.csv")
+study = {
+    "scope": "B_transport_diagnostic_previously_examined_rows",
+    "outer_split": {"n_splits": 5, "shuffle": True, "seed": 2027, "evaluation_folds": [1, 2, 3, 4]},
+    "inner_split": {"n_splits": 3, "shuffle": True, "seed": 2026},
+    "baseline": "Round 10 raw LR + LGBM",
+    "candidate": "Round 10 raw LR + LGBM + CPU hist-XGB",
+    "runner_sha256": hashlib.sha256(runner.encode()).hexdigest(),
+    "source_sha256": sha256(source_path),
+    "data_sha256": sha256(train_path),
+    "protocol_sha256": sha256(protocol_path),
+    "python": sys.version,
+    "platform": platform.platform(),
+    "packages": {
+        name: importlib.metadata.version(name)
+        for name in ("numpy", "pandas", "scipy", "scikit-learn", "lightgbm", "xgboost")
+    },
+    "primary": "fold-size-weighted mean of within-fold paired AUC differences",
+    "bootstrap": {"unit": "paired row within fold and class", "replicates": 1000, "seed": 2027},
+    "gate": {"min_delta": 8e-5, "min_positive_folds": 3, "min_loo": 0, "min_ci95_lower": 0},
+    "NO_SUBMIT": True, "SUBMIT_ARMED": False, "NO_GPU": True,
+    "cloud_spend_usd": 0, "tip_csvs": 0,
+}
+with lock_path.open("x") as handle:
+    handle.write(json.dumps(study, indent=2) + "\n")
+
+import numpy as np
+import pandas as pd
+from sklearn.metrics import roc_auc_score
+from sklearn.model_selection import StratifiedKFold
+
+frame = pd.read_csv(train_path, low_memory=False)
+labels = frame.pop("is_fraud").to_numpy()
+ids = frame.pop("id").to_numpy()
+panels = list(StratifiedKFold(5, shuffle=True, random_state=2027).split(frame, labels))
+code = compile(runner, str(source_path), "exec")
+results, paired = [], []
+for fold in (1, 2, 3, 4):
+    print(f"Frozen B fold {fold}/4", flush=True)
+    train, valid = panels[fold]
+    namespace = {"__name__": "__sealed_b__", "frame": frame, "labels": labels,
+                 "panel_train": train, "panel_valid": valid}
+
+codex
+**Freeze the pairwise head for Protocol B on SKF seed 2037.** The **+9.70e-5** dev lift cleared the gate by **1.70e-5**, with **5/5** positive subfolds. Compare the row-wise and pairwise heads on identical five-stream scores, keeping the pair seed, sampling rate, and regularization fixed. Use a new lock and the existing transport gate. This test reuses previously examined rows and leaves the independent holdout milestone pending.
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python -u - <<'PY'
+from pathlib import Path
+
+def python_body(path):
+    lines = path.read_text().splitlines(keepends=True)
+    assert lines[0].rstrip().endswith("<<'PY'") and lines[-1].strip() == "PY", path
+    return "".join(lines[1:-1])
+
+def replace_once(text, old, new):
+    assert text.count(old) == 1, f"Runner changed near {old!r}"
+    return text.replace(old, new, 1)
+
+scratch = Path("/tmp/s6e11_isol")
+pairwise_path = scratch / "pairwise_meta.sh"
+lexical_path = scratch / "char_ngram.sh"
+decimal_path = scratch / "decimal_token.sh"
+transport_path = scratch / "sealed_b.sh"
+
+assembly, boundary, evaluation = python_body(pairwise_path).partition('\nevaluation = """')
+assert boundary, "Pairwise runner assembly boundary changed"
+namespace = {"__name__": "_assemble_pairwise_transport"}
+exec(compile(assembly, str(pairwise_path), "exec"), namespace)
+runner = namespace["runner"]
+data_start = runner.index("frame = pd.read_csv(")
+fit_start = runner.index("categories = frame.select_dtypes(")
+runner = runner[:data_start] + """train, valid = panel_train, panel_valid
+assert np.intersect1d(train, valid).size == 0
+""" + runner[fit_start:]
+assert runner.count('"/tmp/s6e11_isol/data/train.csv"') == 1 and 'device="cpu"' in runner
+
+_, head_start, remainder = evaluation.partition("scaler = StandardScaler().fit(inner_design)")
+head_tail, score_boundary, _ = remainder.partition("\nobserved = labels[valid]")
+assert head_start and score_boundary, "Pairwise head boundary changed"
+head = head_start + head_tail
+assert "np.random.default_rng(2035)" in head and "pairs_per_fraud = 64" in head
+runner += "\ncontrol, _ = stack(5)\n" + head
+compile(runner, str(pairwise_path), "exec")
+
+transport = python_body(transport_path)
+setup = transport.index("source = source_path.read_text()")
+hash_function = transport.index("\ndef sha256(path):", setup)
+transport = transport[:setup] + "runner = frozen_pairwise_runner\n" + transport[hash_function:]
+for old, new in {
+    'Path("data/train.csv")': 'Path("/tmp/s6e11_isol/data/train.csv")',
+    "SEALED_LOCK.json": "SEALED_LOCK_FIVE_STREAM_PAIRWISE_B2037.json",
+    "SEALED_B_XGB_TRANSPORT.json": "SEALED_B_FIVE_STREAM_PAIRWISE_2037_TRANSPORT.json",
+    "sealed_b_xgb_transport.npz": "sealed_b_five_stream_pairwise_2037_transport.npz",
+    '"B_transport_diagnostic_previously_examined_rows"': '"B_pairwise_meta_transport_previously_examined_rows"',
+    '"baseline": "Round 10 raw LR + LGBM"': '"baseline": "Frozen five streams with row-wise logistic head"',
+    '"candidate": "Round 10 raw LR + LGBM + CPU hist-XGB"': (
+        '"candidate": "Same five streams with Round23 pairwise logistic head",\n'
+        '    "pairwise_head": {"seed": 2035, "pairs_per_fraud": 64, "C": 0.03},'
+    ).rstrip(","),
+    '"source_sha256": sha256(source_path),': (
+        '"source_sha256": sha256(source_path),\n'
+        '    "decimal_source_sha256": sha256(decimal_path),\n'
+        '    "lexical_source_sha256": sha256(lexical_path),\n'
+        '    "pairwise_source_sha256": sha256(pairwise_path),\n'
+        '    "transport_template_sha256": sha256(transport_path),'
+    ),
+    "## Frozen B transport diagnostic": "## Frozen five-stream pairwise B transport diagnostic",
+}.items():
+    transport = replace_once(transport, old, new)
+assert transport.count("2027") == 5, "Check seed and report substitutions"
+transport = transport.replace("2027", "2037")
+exec(compile(transport, str(transport_path), "exec"), {
+    "__name__": "__main__",
+    "frozen_pairwise_runner": runner,
+    "decimal_path": decimal_path,
+    "lexical_path": lexical_path,
+    "pairwise_path": pairwise_path,
+    "transport_path": transport_path,
+})
+PY
+```
+tokens used
+242,213
+**Freeze the pairwise head for Protocol B on SKF seed 2037.** The **+9.70e-5** dev lift cleared the gate by **1.70e-5**, with **5/5** positive subfolds. Compare the row-wise and pairwise heads on identical five-stream scores, keeping the pair seed, sampling rate, and regularization fixed. Use a new lock and the existing transport gate. This test reuses previously examined rows and leaves the independent holdout milestone pending.
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python -u - <<'PY'
+from pathlib import Path
+
+def python_body(path):
+    lines = path.read_text().splitlines(keepends=True)
+    assert lines[0].rstrip().endswith("<<'PY'") and lines[-1].strip() == "PY", path
+    return "".join(lines[1:-1])
+
+def replace_once(text, old, new):
+    assert text.count(old) == 1, f"Runner changed near {old!r}"
+    return text.replace(old, new, 1)
+
+scratch = Path("/tmp/s6e11_isol")
+pairwise_path = scratch / "pairwise_meta.sh"
+lexical_path = scratch / "char_ngram.sh"
+decimal_path = scratch / "decimal_token.sh"
+transport_path = scratch / "sealed_b.sh"
+
+assembly, boundary, evaluation = python_body(pairwise_path).partition('\nevaluation = """')
+assert boundary, "Pairwise runner assembly boundary changed"
+namespace = {"__name__": "_assemble_pairwise_transport"}
+exec(compile(assembly, str(pairwise_path), "exec"), namespace)
+runner = namespace["runner"]
+data_start = runner.index("frame = pd.read_csv(")
+fit_start = runner.index("categories = frame.select_dtypes(")
+runner = runner[:data_start] + """train, valid = panel_train, panel_valid
+assert np.intersect1d(train, valid).size == 0
+""" + runner[fit_start:]
+assert runner.count('"/tmp/s6e11_isol/data/train.csv"') == 1 and 'device="cpu"' in runner
+
+_, head_start, remainder = evaluation.partition("scaler = StandardScaler().fit(inner_design)")
+head_tail, score_boundary, _ = remainder.partition("\nobserved = labels[valid]")
+assert head_start and score_boundary, "Pairwise head boundary changed"
+head = head_start + head_tail
+assert "np.random.default_rng(2035)" in head and "pairs_per_fraud = 64" in head
+runner += "\ncontrol, _ = stack(5)\n" + head
+compile(runner, str(pairwise_path), "exec")
+
+transport = python_body(transport_path)
+setup = transport.index("source = source_path.read_text()")
+hash_function = transport.index("\ndef sha256(path):", setup)
+transport = transport[:setup] + "runner = frozen_pairwise_runner\n" + transport[hash_function:]
+for old, new in {
+    'Path("data/train.csv")': 'Path("/tmp/s6e11_isol/data/train.csv")',
+    "SEALED_LOCK.json": "SEALED_LOCK_FIVE_STREAM_PAIRWISE_B2037.json",
+    "SEALED_B_XGB_TRANSPORT.json": "SEALED_B_FIVE_STREAM_PAIRWISE_2037_TRANSPORT.json",
+    "sealed_b_xgb_transport.npz": "sealed_b_five_stream_pairwise_2037_transport.npz",
+    '"B_transport_diagnostic_previously_examined_rows"': '"B_pairwise_meta_transport_previously_examined_rows"',
+    '"baseline": "Round 10 raw LR + LGBM"': '"baseline": "Frozen five streams with row-wise logistic head"',
+    '"candidate": "Round 10 raw LR + LGBM + CPU hist-XGB"': (
+        '"candidate": "Same five streams with Round23 pairwise logistic head",\n'
+        '    "pairwise_head": {"seed": 2035, "pairs_per_fraud": 64, "C": 0.03},'
+    ).rstrip(","),
+    '"source_sha256": sha256(source_path),': (
+        '"source_sha256": sha256(source_path),\n'
+        '    "decimal_source_sha256": sha256(decimal_path),\n'
+        '    "lexical_source_sha256": sha256(lexical_path),\n'
+        '    "pairwise_source_sha256": sha256(pairwise_path),\n'
+        '    "transport_template_sha256": sha256(transport_path),'
+    ),
+    "## Frozen B transport diagnostic": "## Frozen five-stream pairwise B transport diagnostic",
+}.items():
+    transport = replace_once(transport, old, new)
+assert transport.count("2027") == 5, "Check seed and report substitutions"
+transport = transport.replace("2027", "2037")
+exec(compile(transport, str(transport_path), "exec"), {
+    "__name__": "__main__",
+    "frozen_pairwise_runner": runner,
+    "decimal_path": decimal_path,
+    "lexical_path": lexical_path,
+    "pairwise_path": pairwise_path,
+    "transport_path": transport_path,
+})
+PY
+```

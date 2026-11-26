@@ -1,0 +1,52 @@
+{
+  "scope": "B_transport_diagnostic_previously_examined_rows",
+  "outer_split": {
+    "n_splits": 5,
+    "shuffle": true,
+    "seed": 2027,
+    "evaluation_folds": [
+      1,
+      2,
+      3,
+      4
+    ]
+  },
+  "inner_split": {
+    "n_splits": 3,
+    "shuffle": true,
+    "seed": 2026
+  },
+  "baseline": "Round 10 raw LR + LGBM",
+  "candidate": "Round 10 raw LR + LGBM + CPU hist-XGB",
+  "runner_sha256": "ddda44204846ac9e684038dd2e71ec325985720ffd3828ee11f39ef77a8d2361",
+  "source_sha256": "fc6daaf1a840bde51380b01121ed1fb4dc53847e523dcbcf7b033c4f6f12476c",
+  "data_sha256": "87eaa10b8d17a7e4f657b8da1c66242431338bdd8b6ad45861521ac0c0e9fbd5",
+  "protocol_sha256": "e0318cf02c35c8b9d305cd993d4bde092e8115b0de09502d6aec679abb921d3f",
+  "python": "3.14.3 (main, Feb  3 2026, 15:32:20) [Clang 17.0.0 (clang-1700.6.3.2)]",
+  "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+  "packages": {
+    "numpy": "2.5.5",
+    "pandas": "3.1.1",
+    "scipy": "1.18.1",
+    "scikit-learn": "1.9.1",
+    "lightgbm": "4.7.0",
+    "xgboost": "3.4.1"
+  },
+  "primary": "fold-size-weighted mean of within-fold paired AUC differences",
+  "bootstrap": {
+    "unit": "paired row within fold and class",
+    "replicates": 1000,
+    "seed": 2027
+  },
+  "gate": {
+    "min_delta": 8e-05,
+    "min_positive_folds": 3,
+    "min_loo": 0,
+    "min_ci95_lower": 0
+  },
+  "NO_SUBMIT": true,
+  "SUBMIT_ARMED": false,
+  "NO_GPU": true,
+  "cloud_spend_usd": 0,
+  "tip_csvs": 0
+}

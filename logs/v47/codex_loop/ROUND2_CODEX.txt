@@ -1,0 +1,703 @@
+OpenAI Codex v0.172.0
+--------
+workdir: /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+model: gpt-6.2-sol
+provider: openai
+approval: never
+sandbox: read-only
+reasoning effort: none
+reasoning summaries: none
+session id: 01a2180a-0cec-7810-bcbf-4a725485c87f
+--------
+user
+# Cursor → Codex Round2 results (S6E11 fraud ONLY)
+
+Executed your next command:
+`OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python scripts/v47_sovereign/conditional_f0.py --tabular --regime-splines`
+
+## Result vs z_sovereign_v0 Fold-0 (0.9512507991341679)
+- candidate_auc = 0.9472101119386994
+- Δe-5 = −404.0687195468462
+- positive_subfolds = 0/5
+- subfold Δe-5 = [−263.07, −382.58, −398.34, −491.40, −419.79]
+- verdict = NO-GO
+
+Round1 also NO-GO:
+1. Conditional LM pooling: Δe-5 −430.68 · 0/5
+2. + outer LightGBM: Δe-5 −405.62 · 0/5
+
+VERIFIED_LIFT=NO still. Champion intact. Locks unchanged (NO_SUBMIT, $0 RunPod, 0 tip CSVs).
+
+## Ask (adversarial DS reviewer)
+Hypothesis #3 (splines) is exhausted. Do NOT stop the research loop.
+
+1. Rank remaining highest-EV strategies under locks (include alternatives that challenge the assumption that conditional re-pooling of L7/GPT2 can beat the Deotte 14-stream stack).
+2. Prefer levers that start FROM z_sovereign_v0 (residual / gated blend / calibration / diversity from unused self-owned P_super_* or CB/LGB streams) rather than replacing the champion.
+3. EXECUTE the single next experiment yourself OR give one bash command.
+4. Update logs/v47/CODEX_DS_REVIEW_NEXT.md with metrics.
+5. End with VERIFIED_LIFT=YES or next command.
+
+Do not submit. No RunPod. No tip CSVs.
+codex
+I’ll check which local streams could add signal to the champion and look for a Fold-0 test that keeps their provenance auditable.
+exec
+/bin/bash -lc "rg -n 'P_super_v7_regime_only|P_super_v7_pure_oof|oof_xgb_clean' scripts/build_v7_sovereign_cpu.py scripts/v47_sovereign/step2_provenance_and_z_v1.py
+ls logs/v47
+ls preds/v47_sovereign
+rg -n 'lgb_raw|raw_lgbm|raw_xgb' scripts/validation_stage3_baselines.py scripts/gboost.py
+cat logs/v47/STEP2_PROVENANCE.json | head -110" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 0ms:
+scripts/v47_sovereign/step2_provenance_and_z_v1.py:109:            assets["oof_xgb_clean"] = {"oof": p}
+CODEX_DS_REVIEW_NEXT.md
+CODEX_EXEC_SESSION.log
+HGDT_V2_RUN.log
+LAUNCH_F0_CONTRACT.json
+PRE_EXISTING_PODS.txt
+PRE_EXISTING_PODS_RAW.txt
+STEP1_POD_TEARDOWN.md
+STEP1_RUN.log
+STEP1_SCHEMA_SCAN.json
+STEP1_SCHEMA_SCAN.md
+STEP1_Z_SOVEREIGN.json
+STEP1_Z_SOVEREIGN.md
+STEP2_BILLING_GATE.json
+STEP2_PROVENANCE.json
+STEP2_PROVENANCE.md
+STEP2_RUN.log
+STEP2_Z_SOVEREIGN_V1.json
+STEP2_Z_SOVEREIGN_V1.md
+STEP3_GATE.json
+STEP4_GATE.json
+STEP4_RUN.log
+V47_2_HARDENED_SOVEREIGN_REPORT.md
+V47_3_GATE.json
+V47_3_GATE_RUN.log
+V47_3_KAGGLE_OUTPUT.log
+V47_3_KAGGLE_POLL.log
+V47_3_KAGGLE_PRIVATE_HGDT_F0_REPORT.md
+V47_SOVEREIGN_F0_REPORT.md
+codex_loop
+conditional_f0.json
+conditional_f0_tabular.json
+conditional_f0_tabular_splines.json
+HGDT_V2_SKIPPED.json
+HGDT_V2_THROUGHPUT.json
+conditional_f0_oof.npy
+conditional_f0_tabular_oof.npy
+conditional_f0_tabular_splines_oof.npy
+folds_skf42.npy
+peer_z_sovereign_raw_oof.npy
+peer_z_sovereign_raw_test.npy
+z_sovereign_v0_oof.npy
+z_sovereign_v0_test.npy
+z_sovereign_v1_oof.npy
+z_sovereign_v1_test.npy
+scripts/validation_stage3_baselines.py:340:        "raw_lgbm": ("lgb", xy_raw, LGB_SHALLOW),
+scripts/validation_stage3_baselines.py:343:        "raw_xgb": ("xgb", xy_raw, XGB_SHALLOW),
+{
+  "streams_v0": [
+    "B_xgb_llr",
+    "P4_L4.2_pure5f",
+    "P4_L4.3_pure5f",
+    "P4_L4.5_pure5f",
+    "P_super_v4p_hc",
+    "P_super_v5_harvest",
+    "delta1_v4",
+    "gpt2_med_4ep_mean",
+    "gpt2_med_4ep_shrink",
+    "l7_R5",
+    "l7_U5_gini10",
+    "l7_curv",
+    "l7_mean10",
+    "zone_honest"
+  ],
+  "assets": {
+    "P_super_v5_harvest": {
+      "exists": {
+        "oof": true
+      },
+      "verdict": "KEEP",
+      "note": "finalize blends v4p_hc + paradigm_B xgb_llr (self); no tip CSV loads",
+      "builder_ban_substr": []
+    },
+    "B_xgb_llr": {
+      "exists": {
+        "oof": true
+      },
+      "verdict": "KEEP"
+    },
+    "P4_L4.2_pure5f": {
+      "exists": {
+        "oof": true
+      },
+      "verdict": "KEEP",
+      "builder_ban_substr": []
+    },
+    "P4_L4.3_pure5f": {
+      "exists": {
+        "oof": true
+      },
+      "verdict": "KEEP"
+    },
+    "P4_L4.5_pure5f": {
+      "exists": {
+        "oof": true
+      },
+      "verdict": "KEEP"
+    },
+    "delta1_v4": {
+      "exists": {
+        "oof": true
+      },
+      "verdict": "KEEP"
+    },
+    "l7_s2026_5f": {
+      "exists": {
+        "oof": true
+      },
+      "verdict": "KEEP",
+      "note": "builder mentions goodpjw seed7 path as optional compare; our s2026 preds/ckpts are self-trained",
+      "builder_ban_substr": []
+    },
+    "gpt2_med_4ep": {
+      "exists": {
+        "oof": true
+      },
+      "verdict": "KEEP"
+    },
+    "P_super_v4p_hc": {
+      "exists": {
+        "oof": true
+      },
+      "verdict": "KEEP"
+    },
+    "oof_xgb_clean": {
+      "exists": {
+        "oof": true
+      },
+      "verdict": "KEEP"
+    },
+    "SCAN_P_super_v6": {
+      "found": [
+        "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/preds/P_super_v6_grandmaster_oof.npy",
+        "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/preds/P_super_v6_grandmaster_test.npy",
+        "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/preds/P_super_v6_campaign_oof.npy",
+        "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/preds/P_super_v6_campaign_test.npy",
+        "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/preds/P_super_v6_oof.npy",
+        "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/preds/P_super_v6_test.npy",
+        "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/preds/P_super_v6_clean_oof.npy",
+        "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/preds/P_super_v6_clean_test.npy"
+      ],
+      "verdict": "EXCLUDED_FROM_V1"
+    },
+    "SCAN_soft_diff": {
+      "found": [],
+      "verdict": "EXCLUDED_FROM_V1"
+    }
+  },
+  "checkpoints": {
+    "l7_s2026_5f": [
+      "fold_0.pt",
+      "fold_latest.pt",
+      "replica.pt"
+    ],
+    "l7_has_full_5fold_weights": false,
+    "gpt2_med_4ep": [
+      "fold_0.pt",
+
+exec
+/bin/bash -lc "sed -n '200,365p' scripts/validation_stage3_baselines.py
+rg -n 'fold|oof.*save|eval_set' scripts/build_v7_sovereign_cpu.py | tail -30
+rg -n 'oof_xgb_clean' scripts | head -15
+cat logs/v47/conditional_f0_tabular_splines.json" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 5404ms:
+        }
+        fold_recs.append(rec)
+        print(
+            f"  fold {f}: valid_auc={va_m['roc_auc']:.6f} gap={gap:.6f} "
+            f"pr={va_m['pr_auc']:.6f} trees={best_iter} ({time.time() - t0:.0f}s)",
+            flush=True,
+        )
+
+    oof_m = metrics(y, oof)
+    folds_auc = [r["valid_roc_auc"] for r in fold_recs]
+    summary = {
+        "name": name,
+        "kind": kind,
+        "params": {k: v for k, v in model_params.items() if k not in ("verbose",)},
+        "oof_roc_auc": oof_m["roc_auc"],
+        "oof_pr_auc": oof_m["pr_auc"],
+        "oof_brier": oof_m["brier"],
+        "fold_valid_roc_auc_mean": float(np.mean(folds_auc)),
+        "fold_valid_roc_auc_std": float(np.std(folds_auc, ddof=1)),
+        "train_valid_gap_mean": float(np.mean([r["train_valid_gap"] for r in fold_recs])),
+        "folds": fold_recs,
+        "elapsed_sec": float(time.time() - t0),
+    }
+    print(
+        f"==> {name}: OOF AUC={summary['oof_roc_auc']:.6f} "
+        f"({summary['fold_valid_roc_auc_mean']:.6f}±{summary['fold_valid_roc_auc_std']:.6f}) "
+        f"gap={summary['train_valid_gap_mean']:.6f}",
+        flush=True,
+    )
+    np.save(os.path.join(PRED, f"{name}_oof.npy"), oof.astype(np.float32))
+    return summary
+
+
+def main() -> None:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--data-dir", default=DATA)
+    ap.add_argument("--out", default=os.path.join(LOGS, "stage3_baselines_result.json"))
+    ap.add_argument("--smoke", action="store_true")
+    ap.add_argument("--arms", default="all", help="comma list or all")
+    args = ap.parse_args()
+    os.makedirs(PRED, exist_ok=True)
+    os.makedirs(os.path.dirname(args.out) or ".", exist_ok=True)
+
+    train = pd.read_csv(os.path.join(args.data_dir, "train.csv"))
+    test = pd.read_csv(os.path.join(args.data_dir, "test.csv"))
+    if args.smoke:
+        # stratified sample for dry-run
+        pos = train[train[TARGET] == 1]
+        neg = train[train[TARGET] == 0].sample(n=min(20000, len(train)), random_state=SEED)
+        train = pd.concat([pos.sample(n=min(2000, len(pos)), random_state=SEED), neg]).sample(
+            frac=1, random_state=SEED
+        )
+        test = test.iloc[:5000].copy()
+
+    y = train[TARGET].astype(int).to_numpy()
+    for c in CATS:
+        cats = sorted(pd.concat([train[c].astype(str), test[c].astype(str)]).unique())
+        train[c] = pd.Categorical(train[c].astype(str), categories=cats)
+
+    folds = locked_folds(y)
+    print(
+        f"train={len(train):,} fraud={y.mean():.4%} | "
+        f"CV=StratifiedKFold({N_SPLITS}, shuffle=True, rs={SEED}) | cpus={N_JOBS}",
+        flush=True,
+    )
+
+    # --- feature views ---
+    raw_cols = NUMS + FLAGS + CATS
+    dig = digit_frame(train)
+    dig_num_cols = [
+        c
+        for c in dig.columns
+        if pd.api.types.is_numeric_dtype(dig[c])
+    ]
+    dig_cat_cols = [c for c in dig.columns if c not in dig_num_cols]
+    for c in dig_cat_cols:
+        dig[c] = pd.Categorical(dig[c].astype(str))
+
+    # codes for TE: cats + digit string keys
+    te_source = pd.concat([train[CATS].astype(str), dig[dig_cat_cols].astype(str)], axis=1)
+    te_names = list(te_source.columns)
+    codes = np.column_stack(
+        [pd.factorize(te_source[c], sort=True)[0].astype(np.int32) for c in te_names]
+    )
+
+    LGB_SHALLOW = dict(
+        learning_rate=0.03,
+        num_leaves=4,
+        max_depth=4,
+        min_child_samples=100,
+        subsample=0.8,
+        subsample_freq=1,
+        colsample_bytree=0.5,
+        reg_lambda=1.0,
+        n_jobs=N_JOBS,
+        verbose=-1,
+    )
+    XGB_SHALLOW = dict(
+        learning_rate=0.03,
+        max_depth=2,
+        min_child_weight=5,
+        subsample=0.8,
+        colsample_bytree=0.5,
+        reg_lambda=1.0,
+        tree_method="hist",
+        eval_metric="auc",
+        n_jobs=N_JOBS,
+        enable_categorical=True,
+        max_cat_to_onehot=1,
+    )
+
+    def xy_raw(tr_idx, va_idx):
+        cols = raw_cols
+        return train.iloc[tr_idx][cols], train.iloc[va_idx][cols]
+
+    def xy_digit(tr_idx, va_idx):
+        base_tr = train.iloc[tr_idx][raw_cols].reset_index(drop=True)
+        base_va = train.iloc[va_idx][raw_cols].reset_index(drop=True)
+        d_tr = dig.iloc[tr_idx].reset_index(drop=True)
+        d_va = dig.iloc[va_idx].reset_index(drop=True)
+        return pd.concat([base_tr, d_tr], axis=1), pd.concat([base_va, d_va], axis=1)
+
+    def xy_te(tr_idx, va_idx):
+        # numeric + flags + OOF TE of cats/digit-keys
+        te_tr, te_va = oof_target_encode(codes, y, tr_idx, va_idx, smooth=20.0, seed=SEED)
+        te_cols = [f"te_{c}" for c in te_names]
+        num_tr = train.iloc[tr_idx][NUMS + FLAGS].reset_index(drop=True)
+        num_va = train.iloc[va_idx][NUMS + FLAGS].reset_index(drop=True)
+        # add numeric digit crumbs only
+        dnum_tr = dig.iloc[tr_idx][dig_num_cols].reset_index(drop=True)
+        dnum_va = dig.iloc[va_idx][dig_num_cols].reset_index(drop=True)
+        X_tr = pd.concat(
+            [num_tr, dnum_tr, pd.DataFrame(te_tr, columns=te_cols)], axis=1
+        )
+        X_va = pd.concat(
+            [num_va, dnum_va, pd.DataFrame(te_va, columns=te_cols)], axis=1
+        )
+        return X_tr, X_va
+
+    arm_specs = {
+        "raw_lgbm": ("lgb", xy_raw, LGB_SHALLOW),
+        "digit_lgbm": ("lgb", xy_digit, LGB_SHALLOW),
+        "te_lgbm": ("lgb", xy_te, LGB_SHALLOW),
+        "raw_xgb": ("xgb", xy_raw, XGB_SHALLOW),
+        "digit_xgb": ("xgb", xy_digit, XGB_SHALLOW),
+        "te_xgb": ("xgb", xy_te, XGB_SHALLOW),
+    }
+    want = (
+        list(arm_specs.keys())
+        if args.arms.strip() == "all"
+        else [a.strip() for a in args.arms.split(",") if a.strip()]
+    )
+
+    results = []
+    for name in want:
+        kind, builder, params = arm_specs[name]
+        results.append(
+            run_arm(name, kind, folds, y, builder, model_params=dict(params))
+        )
+
+    # control table sorted by OOF AUC
+    ranked = sorted(results, key=lambda r: r["oof_roc_auc"], reverse=True)
+    control = {
+        "best_arm": ranked[0]["name"] if ranked else None,
+        "best_oof_roc_auc": ranked[0]["oof_roc_auc"] if ranked else None,
+        "arms_ranked": [
+141:    # Out-of-fold coordinate ascent with L1 pruning (only keep bases that strictly improve 5-fold CV)
+144:    fold_weights = []
+145:    fold_deltas = []
+160:        fold_weights.append(w)
+161:        fold_deltas.append(d_f)
+164:    mean_w = np.mean(fold_weights, axis=0)
+167:    print(f"==> P_super_v7_cpu Nested OOF AUC = {v7_nested_auc:.7f} (Δ vs wide_stack = {v7_nested_auc - base_auc:+.3e}, folds = {sum(d>0 for d in fold_deltas)}/5)", flush=True)
+183:    # - delta_z_test = our 5/5-fold-verified orthogonal GPU + L4-regime residual!
+217:        "fold_deltas": fold_deltas,
+218:        "folds_won": int(sum(d > 0 for d in fold_deltas)),
+scripts/verify_assumptions_slot3_gm.py:108:    z_xgbf_cln_o = zrk(np.load(HARV / "oof_xgb_clean.npy").ravel())
+scripts/v47_sovereign/step2_provenance_and_z_v1.py:109:            assets["oof_xgb_clean"] = {"oof": p}
+scripts/de_corrupt_and_boost_5f.py:289:    clean_oof_path = HARV / "oof_xgb_clean.npy"
+scripts/de_corrupt_and_boost_5f.py:324:    oof_xgb_clean = np.zeros(ntr, dtype=np.float64)
+scripts/de_corrupt_and_boost_5f.py:358:        oof_xgb_clean[b] = pred_b
+scripts/de_corrupt_and_boost_5f.py:366:    np.save(clean_oof_path, oof_xgb_clean)
+scripts/de_corrupt_and_boost_5f.py:372:    z_xgbf_cln_o = zrk(oof_xgb_clean)
+scripts/submit_slot4_internal_lm_upgrade_f0123.py:215:    z_xgbf_cln_o = zrk(np.load(HARV / "oof_xgb_clean.npy").ravel())
+scripts/verify_slot4_gm_f012.py:134:    z_xgbf_cln_o = zrk(np.load(HARV / "oof_xgb_clean.npy").ravel())
+scripts/verify_slot4_gm_f0123.py:214:    z_xgbf_cln_o = zrk(np.load(HARV / "oof_xgb_clean.npy").ravel())
+scripts/gm_inspect_v8_and_fix_f0f1_gbdt.py:204:    add("xgb_clean_decorrupt", HARV / "oof_xgb_clean.npy")
+scripts/gm_inspect_v8_and_fix_f0f1_gbdt.py:351:            "exists": (HARV / "oof_xgb_clean.npy").exists(),
+scripts/gm_inspect_v8_and_fix_f0f1_gbdt.py:352:            "path": str(HARV / "oof_xgb_clean.npy"),
+scripts/gm_inspect_v8_and_fix_f0f1_gbdt.py:514:        "`preds/fast_gpu_harvest/oof_xgb_clean.npy` from `de_corrupt_and_boost_5f.py` "
+scripts/gm_v21_base_pillar_replace_estimate.py:484:            ("harv:xgb_clean", "oof_xgb_clean.npy", "test_xgb_clean.npy"),
+{
+  "n": 139992,
+  "base_auc": 0.9512507991341679,
+  "candidate_auc": 0.9472101119386994,
+  "delta_e5": -404.0687195468462,
+  "positive_subfolds": 0,
+  "subfold_deltas_e5": [
+    -263.06786413575753,
+    -382.58348708387626,
+    -398.3440275268535,
+    -491.3985612636673,
+    -419.78763748276026
+  ],
+  "verdict": "NO-GO",
+  "NO_SUBMIT": true,
+  "SUBMIT_ARMED": false
+}
+
+exec
+/bin/bash -lc "PYTHONDONTWRITEBYTECODE=1 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python -u -c 'import numpy as np
+import pandas as pd
+from scipy.special import logit
+from scipy.stats import rankdata
+from lightgbm import LGBMClassifier
+from sklearn.metrics import roc_auc_score as auc
+from sklearn.model_selection import StratifiedKFold
+df = pd.read_csv(\"data/train.csv\")
+y = df.pop(\"is_fraud\").to_numpy()
+x = df.drop(columns=\"id\")
+for col in x.select_dtypes(include=[\"object\", \"str\"]):
+    x[col] = x[col].astype(\"category\")
+for col in [\"amount_usd\", \"account_balance_usd\", \"distance_from_home_km\", \"merchant_risk_score\", \"velocity_score\"]:
+    x[col + \"_cents\"] = (np.rint(100 * x[col]).astype(\"int64\") % 100).astype(\"category\")
+f = np.load(\"preds/v47_sovereign/folds_skf42.npy\") == 0
+tr, va = next(StratifiedKFold(5, shuffle=True, random_state=42).split(y,y))
+np.testing.assert_array_equal(np.flatnonzero(f), va)
+b = np.load(\"preds/v47_sovereign/z_sovereign_v0_oof.npy\").ravel()[va]
+y0 = y[va]
+base = auc(y0,b)
+assert abs(base - 0.9512507991341679) < 1e-12
+print(\"Training outer-fold digit anchor\", flush=True)
+m = LGBMClassifier(n_estimators=450, learning_rate=.045, num_leaves=31, min_child_samples=120, reg_lambda=5, n_jobs=4, verbosity=-1, random_state=42)
+m.fit(x.iloc[tr],y[tr])
+t = m.predict(x.iloc[va],raw_score=True)
+def z(s):
+    return logit((rankdata(s)-.5)/len(s))
+c = .95*z(b)+.05*z(t)
+score = auc(y0,c)
+d = [(auc(y0[i],c[i])-auc(y0[i],b[i]))*1e5 for _,i in StratifiedKFold(5,shuffle=True,random_state=7).split(b,y0)]
+print(dict(base=base, solo=auc(y0,t), cand=score, delta_e5=(score-base)*1e5, subfold=d, positive=sum(v>0 for v in d), verdict=\"GO\" if score-base>=8e-5 and sum(v>0 for v in d)>=4 else \"NO-GO\"))'" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+exec
+/bin/bash -lc "ls -d .venv/lib/python*/site-packages/catboost*
+tail -12 logs/v47/CODEX_DS_REVIEW_NEXT.md
+sed -n '150,196p' scripts/validation_stage3_baselines.py" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 1012ms:
+.venv/lib/python3.14/site-packages/catboost
+.venv/lib/python3.14/site-packages/catboost-1.2.10.dist-info
+
+The LightGBM learner used the 559,968 outer training rows and fixed boosting rounds. Its solo Fold-0 AUC was 0.943526723763. The combined model improved on the first candidate by +25.06374461e-5 and remained −405.61954457e-5 below the champion. Its subfold deltas × 10⁵ were −281.16711946, −368.57441510, −448.02133503, −489.74187323, and −375.12706136.
+
+**VERIFIED_LIFT=NO.** Both runs are NO-GO. The next spline check has low expected lift given the remaining gap.
+
+Artifacts are `scripts/v47_sovereign/conditional_f0.py`, `logs/v47/conditional_f0.json`, and `preds/v47_sovereign/conditional_f0_oof.npy`. The second run wrote `logs/v47/conditional_f0_tabular.json` and `preds/v47_sovereign/conditional_f0_tabular_oof.npy`. Both arrays are in canonical Fold-0 row order.
+
+NO_SUBMIT=True · SUBMIT_ARMED=False · RunPod $0 · cloud $0 · public competitor tip CSVs read 0.
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python scripts/v47_sovereign/conditional_f0.py --tabular --regime-splines
+```
+    *,
+    model_params: dict,
+    n_estimators: int = 4000,
+) -> dict:
+    oof = np.zeros(len(y), dtype=np.float64)
+    fold_recs = []
+    t0 = time.time()
+    print(f"\n=== Arm {name} ({kind}) ===", flush=True)
+
+    for f, (tr_idx, va_idx) in enumerate(folds):
+        X_tr, X_va = build_xy(tr_idx, va_idx)
+        y_tr, y_va = y[tr_idx], y[va_idx]
+
+        if kind == "lgb":
+            model = lgb.LGBMClassifier(
+                **model_params, n_estimators=n_estimators, random_state=SEED + f
+            )
+            model.fit(
+                X_tr,
+                y_tr,
+                eval_set=[(X_va, y_va)],
+                eval_metric="auc",
+                callbacks=[lgb.early_stopping(200, verbose=False)],
+            )
+            tr_p = model.predict_proba(X_tr)[:, 1]
+            va_p = model.predict_proba(X_va)[:, 1]
+            best_iter = int(model.best_iteration_ or n_estimators)
+        else:
+            model = xgb.XGBClassifier(
+                **model_params,
+                n_estimators=n_estimators,
+                random_state=SEED + f,
+                early_stopping_rounds=200,
+            )
+            model.fit(X_tr, y_tr, eval_set=[(X_va, y_va)], verbose=False)
+            tr_p = model.predict_proba(X_tr)[:, 1]
+            va_p = model.predict_proba(X_va)[:, 1]
+            best_iter = int(model.best_iteration + 1)
+
+        oof[va_idx] = va_p
+        tr_m, va_m = metrics(y_tr, tr_p), metrics(y_va, va_p)
+        gap = tr_m["roc_auc"] - va_m["roc_auc"]
+        rec = {
+            "fold": f,
+            "valid_roc_auc": va_m["roc_auc"],
+            "train_roc_auc": tr_m["roc_auc"],
+            "train_valid_gap": float(gap),
+
+ succeeded in 70799ms:
+Training outer-fold digit anchor
+OMP: Warning #179: Function Can't set size of /tmp file failed:
+{'base': 0.9512507991341679, 'solo': 0.9368051080303192, 'cand': 0.9511974636845753, 'delta_e5': -5.333544959262859, 'subfold': [9.212614094389338, -13.78399547736775, 4.145609033912034, -17.655783315162488, -8.96789346361837], 'positive': 2, 'verdict': 'NO-GO'}
+
+codex
+**VERIFIED_LIFT=NO.** I tested a fixed 95:5 rank-logit blend of `z_sovereign_v0` and a digit-feature LightGBM trained on the 559,968 rows outside Fold-0. The blend weight was fixed before scoring. No Fold-0 labels were used for training or early stopping.
+
+| Fold-0 experiment | Base AUC | Candidate AUC | ΔAUC × 10⁵ | Positive | Verdict |
+|---|---:|---:|---:|---:|---|
+| Round 2 splines | 0.9512507991341679 | 0.9472101119386994 | −404.0687195468462 | 0/5 | NO-GO |
+| Champion + 5% digit LightGBM | 0.9512507991341679 | 0.9511974636845753 | −5.333544959262859 | 2/5 | NO-GO |
+
+The digit learner scored 0.9368051080303192 solo. The blend’s subfold deltas were `+9.21261, −13.78400, +4.14561, −17.65578, −8.96789` in units of 10⁻⁵. The five subfolds measure consistency of the fixed blend. Any apparent pass against the saved champion would still inherit the champion’s upstream OOF provenance.
+
+**Remaining strategies, ranked**
+
+1. **Add categorical diversity to the champion.** Test a fresh CatBoost categorical stream at a fixed 5% weight. The digit LightGBM blend lost narrowly overall and improved two subfolds, so a different tabular learner is a more informative next test than tuning that LightGBM weight.
+2. **Audit unused self-owned `P_super_*` streams for incremental signal.** Trace the strongest candidate’s upstream fits and weight selection. Rebuild its Fold-0 slice if any supervised step used Fold-0 labels.
+3. **Fit a small regime-gated residual on a segregated anchor.** If a challenger shows repeatable wins in a predeclared regime, test a shrunk gate with nested fits. A monotone calibration of the champion alone preserves AUC, and the three replacement experiments make further L7/GPT-2 re-pooling low priority.
+
+The workspace is read-only in this session. The command below appends both measured results to [CODEX_DS_REVIEW_NEXT.md](/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/logs/v47/CODEX_DS_REVIEW_NEXT.md), then runs and logs the CatBoost test. All locks remain in force.
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python -u - <<'PY'
+from pathlib import Path
+
+report = Path("logs/v47/CODEX_DS_REVIEW_NEXT.md")
+update = """
+## Round 2 and champion-anchored digit LightGBM
+
+Both used the matched base AUC 0.9512507991341679.
+- Splines scored 0.9472101119386994, Δe-5 −404.0687195468462, 0/5, NO-GO. Subfold Δe-5 [−263.06786414, −382.58348708, −398.34402753, −491.39856126, −419.78763748].
+- Fixed 95:5 rank-logit digit LightGBM blend scored 0.9511974636845753, Δe-5 −5.333544959262859, 2/5, NO-GO. Subfold Δe-5 [+9.21261409, −13.78399548, +4.14560903, −17.65578332, −8.96789346].
+- VERIFIED_LIFT=NO. NO_SUBMIT=True, SUBMIT_ARMED=False, RunPod $0, cloud $0, public tip CSVs read 0.
+"""
+if "## Round 2 and champion-anchored digit LightGBM" not in report.read_text():
+    with report.open("a") as f:
+        f.write(update)
+
+import numpy as np
+import pandas as pd
+from catboost import CatBoostClassifier
+from scipy.special import logit
+from scipy.stats import rankdata
+from sklearn.metrics import roc_auc_score
+from sklearn.model_selection import StratifiedKFold
+
+x = pd.read_csv("data/train.csv")
+y = x.pop("is_fraud").to_numpy()
+x = x.drop(columns="id")
+cats = x.select_dtypes(include=["object", "str", "category"]).columns.tolist()
+for col in cats:
+    x[col] = x[col].fillna("__missing__").astype(str)
+train, valid = next(StratifiedKFold(5, shuffle=True, random_state=42).split(x, y))
+pred = Path("preds/v47_sovereign")
+np.testing.assert_array_equal(valid, np.flatnonzero(np.load(pred / "folds_skf42.npy") == 0))
+base = np.load(pred / "z_sovereign_v0_oof.npy").ravel()[valid]
+y0 = y[valid]
+base_auc = roc_auc_score(y0, base)
+assert abs(base_auc - 0.9512507991341679) < 1e-12
+
+model = CatBoostClassifier(
+    iterations=850, depth=6, learning_rate=0.05, l2_leaf_reg=10,
+    max_ctr_complexity=2, random_seed=42, thread_count=4,
+    verbose=False, allow_writing_files=False,
+)
+model.fit(x.iloc[train], y[train], cat_features=cats)
+cb = model.predict(x.iloc[valid], prediction_type="RawFormulaVal")
+
+def rank_logit(scores):
+    return logit((rankdata(scores) - 0.5) / len(scores))
+
+candidate = 0.95 * rank_logit(base) + 0.05 * rank_logit(cb)
+candidate_auc = roc_auc_score(y0, candidate)
+delta = candidate_auc - base_auc
+sub = [
+    (roc_auc_score(y0[i], candidate[i]) - roc_auc_score(y0[i], base[i])) * 1e5
+    for _, i in StratifiedKFold(5, shuffle=True, random_state=7).split(base, y0)
+]
+pos = sum(d > 0 for d in sub)
+verdict = "GO" if delta >= 8e-5 and pos >= 4 else "NO-GO"
+result = (
+    f"Fixed 95:5 rank-logit CatBoost blend — base {base_auc:.16f}, "
+    f"candidate {candidate_auc:.16f}, Δe-5 {delta * 1e5:+.12f}, "
+    f"{pos}/5, {verdict}. Solo {roc_auc_score(y0, cb):.16f}. "
+    f"Subfold Δe-5 {sub}."
+)
+print(result)
+with report.open("a") as f:
+    f.write("\n## Champion-anchored CatBoost\n\n" + result + "\n")
+PY
+```
+tokens used
+72,075
+**VERIFIED_LIFT=NO.** I tested a fixed 95:5 rank-logit blend of `z_sovereign_v0` and a digit-feature LightGBM trained on the 559,968 rows outside Fold-0. The blend weight was fixed before scoring. No Fold-0 labels were used for training or early stopping.
+
+| Fold-0 experiment | Base AUC | Candidate AUC | ΔAUC × 10⁵ | Positive | Verdict |
+|---|---:|---:|---:|---:|---|
+| Round 2 splines | 0.9512507991341679 | 0.9472101119386994 | −404.0687195468462 | 0/5 | NO-GO |
+| Champion + 5% digit LightGBM | 0.9512507991341679 | 0.9511974636845753 | −5.333544959262859 | 2/5 | NO-GO |
+
+The digit learner scored 0.9368051080303192 solo. The blend’s subfold deltas were `+9.21261, −13.78400, +4.14561, −17.65578, −8.96789` in units of 10⁻⁵. The five subfolds measure consistency of the fixed blend. Any apparent pass against the saved champion would still inherit the champion’s upstream OOF provenance.
+
+**Remaining strategies, ranked**
+
+1. **Add categorical diversity to the champion.** Test a fresh CatBoost categorical stream at a fixed 5% weight. The digit LightGBM blend lost narrowly overall and improved two subfolds, so a different tabular learner is a more informative next test than tuning that LightGBM weight.
+2. **Audit unused self-owned `P_super_*` streams for incremental signal.** Trace the strongest candidate’s upstream fits and weight selection. Rebuild its Fold-0 slice if any supervised step used Fold-0 labels.
+3. **Fit a small regime-gated residual on a segregated anchor.** If a challenger shows repeatable wins in a predeclared regime, test a shrunk gate with nested fits. A monotone calibration of the champion alone preserves AUC, and the three replacement experiments make further L7/GPT-2 re-pooling low priority.
+
+The workspace is read-only in this session. The command below appends both measured results to [CODEX_DS_REVIEW_NEXT.md](/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/logs/v47/CODEX_DS_REVIEW_NEXT.md), then runs and logs the CatBoost test. All locks remain in force.
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python -u - <<'PY'
+from pathlib import Path
+
+report = Path("logs/v47/CODEX_DS_REVIEW_NEXT.md")
+update = """
+## Round 2 and champion-anchored digit LightGBM
+
+Both used the matched base AUC 0.9512507991341679.
+- Splines scored 0.9472101119386994, Δe-5 −404.0687195468462, 0/5, NO-GO. Subfold Δe-5 [−263.06786414, −382.58348708, −398.34402753, −491.39856126, −419.78763748].
+- Fixed 95:5 rank-logit digit LightGBM blend scored 0.9511974636845753, Δe-5 −5.333544959262859, 2/5, NO-GO. Subfold Δe-5 [+9.21261409, −13.78399548, +4.14560903, −17.65578332, −8.96789346].
+- VERIFIED_LIFT=NO. NO_SUBMIT=True, SUBMIT_ARMED=False, RunPod $0, cloud $0, public tip CSVs read 0.
+"""
+if "## Round 2 and champion-anchored digit LightGBM" not in report.read_text():
+    with report.open("a") as f:
+        f.write(update)
+
+import numpy as np
+import pandas as pd
+from catboost import CatBoostClassifier
+from scipy.special import logit
+from scipy.stats import rankdata
+from sklearn.metrics import roc_auc_score
+from sklearn.model_selection import StratifiedKFold
+
+x = pd.read_csv("data/train.csv")
+y = x.pop("is_fraud").to_numpy()
+x = x.drop(columns="id")
+cats = x.select_dtypes(include=["object", "str", "category"]).columns.tolist()
+for col in cats:
+    x[col] = x[col].fillna("__missing__").astype(str)
+train, valid = next(StratifiedKFold(5, shuffle=True, random_state=42).split(x, y))
+pred = Path("preds/v47_sovereign")
+np.testing.assert_array_equal(valid, np.flatnonzero(np.load(pred / "folds_skf42.npy") == 0))
+base = np.load(pred / "z_sovereign_v0_oof.npy").ravel()[valid]
+y0 = y[valid]
+base_auc = roc_auc_score(y0, base)
+assert abs(base_auc - 0.9512507991341679) < 1e-12
+
+model = CatBoostClassifier(
+    iterations=850, depth=6, learning_rate=0.05, l2_leaf_reg=10,
+    max_ctr_complexity=2, random_seed=42, thread_count=4,
+    verbose=False, allow_writing_files=False,
+)
+model.fit(x.iloc[train], y[train], cat_features=cats)
+cb = model.predict(x.iloc[valid], prediction_type="RawFormulaVal")
+
+def rank_logit(scores):
+    return logit((rankdata(scores) - 0.5) / len(scores))
+
+candidate = 0.95 * rank_logit(base) + 0.05 * rank_logit(cb)
+candidate_auc = roc_auc_score(y0, candidate)
+delta = candidate_auc - base_auc
+sub = [
+    (roc_auc_score(y0[i], candidate[i]) - roc_auc_score(y0[i], base[i])) * 1e5
+    for _, i in StratifiedKFold(5, shuffle=True, random_state=7).split(base, y0)
+]
+pos = sum(d > 0 for d in sub)
+verdict = "GO" if delta >= 8e-5 and pos >= 4 else "NO-GO"
+result = (
+    f"Fixed 95:5 rank-logit CatBoost blend — base {base_auc:.16f}, "
+    f"candidate {candidate_auc:.16f}, Δe-5 {delta * 1e5:+.12f}, "
+    f"{pos}/5, {verdict}. Solo {roc_auc_score(y0, cb):.16f}. "
+    f"Subfold Δe-5 {sub}."
+)
+print(result)
+with report.open("a") as f:
+    f.write("\n## Champion-anchored CatBoost\n\n" + result + "\n")
+PY
+```

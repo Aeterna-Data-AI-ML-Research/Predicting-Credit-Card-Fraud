@@ -1,0 +1,275 @@
+OpenAI Codex v0.172.0
+--------
+workdir: /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+model: gpt-6.2-sol
+provider: openai
+approval: never
+sandbox: read-only
+reasoning effort: none
+reasoning summaries: none
+session id: 01a2180a-0cec-7810-bcbf-4a725485c87f
+--------
+user
+# Cursor → Codex Round12
+
+SEALED B transport diagnostic COMPLETE: **B_TRANSPORT_PASS**
+- Weighted within-fold Δe-5 **+39.06** · **4/4** positive · LOO all >0 · paired CI95 e-5 **[28.70, 48.53]**
+- Recipe: isolated 2-stream control vs 3-stream (+hist XGB) on SKF rs=2027 folds 1–4
+- Absolute candidate fold AUCs ≈ 0.9437–0.9470 — still far below public pin **0.95726**
+- Independent holdout (design A) still pending; NO_SUBMIT
+
+Next highest-EV measurable step to close the gap toward public >0.95726 under NO_SUBMIT/NO_GPU?
+ONE bash command after short verdict. No signed-CB. No public arrays.
+codex
+**Use the three-stream stack as the development control.** Sealed B supports keeping hist-XGB, and its absolute AUC leaves a substantial gap to the public target. The next CPU experiment adds a stream built from smoothed fraud rates for categorical and numeric feature pairs. Unlike step-grid features, these estimates test whether recurring combinations carry signal beyond the raw fields. Cross-fit the encodings inside each base-model training split, then compare the four-stream stack with the saved three-stream control on historical Fold-0. Sealed B stays closed to recipe development.
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python -u - <<'PY'
+from pathlib import Path
+
+source_path = Path("/tmp/s6e11_isol/p2_xgb_inner.py")
+runner, boundary, _ = source_path.read_text().partition("\ncontrol, _ = stack(2)")
+assert boundary, "Round 10 runner boundary changed"
+
+def replace_once(text, old, new):
+    assert text.count(old) == 1, f"Round 10 runner changed near {old!r}"
+    return text.replace(old, new, 1)
+
+runner = replace_once(runner, '"/tmp/s6e11_isol/data/train.csv"', '"data/train.csv"')
+runner = replace_once(runner, "(len(train), 3)", "(len(train), 4)")
+runner = replace_once(runner, "from xgboost import XGBClassifier", """from xgboost import XGBClassifier
+from sklearn.base import clone
+
+def pair_rate_features(fit_frame, fit_labels, score_frame):
+    categorical_pairs = [
+        ("merchant_category", "card_type"),
+        ("merchant_category", "auth_method"),
+        ("merchant_category", "is_new_merchant"),
+        ("auth_method", "channel"),
+        ("auth_method", "device_type"),
+        ("channel", "is_foreign_transaction"),
+        ("device_type", "ip_country_mismatch"),
+    ]
+    numeric_pairs = [
+        ("velocity_score", "merchant_risk_score"),
+        ("amount_usd", "account_balance_usd"),
+        ("hours_since_last_txn", "txn_count_last_24h"),
+        ("distance_from_home_km", "merchant_risk_score"),
+    ]
+    pairs = categorical_pairs + numeric_pairs
+
+    def encode(reference, observed, query):
+        prior = observed.mean()
+        edges = {
+            column: np.unique(reference[column].quantile(np.arange(1, 16) / 16).to_numpy())
+            for column in sorted({column for pair in numeric_pairs for column in pair})
+        }
+
+        def keys(features, left, right):
+            def values(column):
+                if column in edges:
+                    return pd.Series(
+                        np.searchsorted(edges[column], features[column].to_numpy(), side="right"),
+                        index=features.index,
+                    ).astype(str)
+                return features[column].astype("string").fillna("__missing__")
+            return values(left).str.cat(values(right), sep="|")
+
+        columns = []
+        for left, right in pairs:
+            reference_key = keys(reference, left, right)
+            table = pd.DataFrame(
+                {"key": reference_key.to_numpy(), "label": observed}
+            ).groupby("key")["label"].agg(["sum", "size"])
+            rate = (table["sum"] + 100 * prior) / (table["size"] + 100)
+            columns.append(keys(query, left, right).map(rate).fillna(prior).to_numpy(dtype=float))
+        return np.column_stack(columns)
+
+    train_rates = np.full((len(fit_frame), len(pairs)), np.nan)
+    for ref, held in StratifiedKFold(3, shuffle=True, random_state=2028).split(fit_frame, fit_labels):
+        train_rates[held] = encode(fit_frame.iloc[ref], fit_labels[ref], fit_frame.iloc[held])
+    score_rates = encode(fit_frame, fit_labels, score_frame)
+    assert np.isfinite(train_rates).all() and np.isfinite(score_rates).all()
+    names = [f"pair_rate__{left}__{right}" for left, right in pairs]
+    return (
+        fit_frame.assign(**dict(zip(names, train_rates.T))),
+        score_frame.assign(**dict(zip(names, score_rates.T))),
+    )
+""")
+runner = replace_once(runner, "    scores = np.column_stack(margins)", """    rate_fit, rate_score = pair_rate_features(tree_fit, fit_labels, tree_score)
+    rate_model = clone(xgb).set_params(device="cpu")
+    rate_model.fit(rate_fit, fit_labels)
+    margins.append(rate_model.predict(rate_score, output_margin=True))
+
+    scores = np.column_stack(margins)""")
+evaluation = """
+control, _ = stack(3)
+candidate, coefficients = stack(4)
+with np.load(pred / "p2_xgb_inner_oof_f0_dev.npz", allow_pickle=False) as saved:
+    np.testing.assert_array_equal(saved["row_indices"], valid)
+    np.testing.assert_array_equal(saved["ids"], ids[valid])
+    np.testing.assert_allclose(control, saved["candidate"], rtol=1e-8, atol=1e-8)
+observed = labels[valid]
+base_auc = roc_auc_score(observed, control)
+assert abs(base_auc - 0.9449195163309662) < 1e-12
+candidate_auc = roc_auc_score(observed, candidate)
+delta = candidate_auc - base_auc
+subfold_deltas = [
+    (roc_auc_score(observed[held], candidate[held])
+     - roc_auc_score(observed[held], control[held])) * 1e5
+    for _, held in StratifiedKFold(5, shuffle=True, random_state=7).split(control, observed)
+]
+positive = sum(change > 0 for change in subfold_deltas)
+verdict = "DEV_ADVANCE" if delta >= 8e-5 and positive >= 4 else "NO-GO"
+result = {
+    "scope": "historical_F0_DEV_ONLY",
+    "stream": "cross_fitted_pair_rate_hist_xgb",
+    "base_auc": base_auc, "candidate_auc": candidate_auc,
+    "delta_e5": delta * 1e5, "positive_subfolds": positive,
+    "subfold_deltas_e5": subfold_deltas, "meta_coefficients": coefficients,
+    "verdict": verdict, "NO_SUBMIT": True, "NO_GPU": True,
+}
+payload = json.dumps(result, indent=2)
+(logs / "P2_PAIR_RATE_INNER_OOF_F0_DEV.json").write_text(payload + "\\n")
+np.savez(pred / "p2_pair_rate_inner_oof_f0_dev.npz",
+         ids=ids[valid], row_indices=valid, control=control, candidate=candidate,
+         outer_stream_margins=np.stack(outer_scores))
+with Path("logs/v47/CODEX_DS_REVIEW_NEXT.md").open("a") as review:
+    review.write(
+        "\\n## P2 cross-fitted pair-rate XGB\\n\\n"
+        f"Historical Fold-0. Matched control {base_auc:.16f}, candidate {candidate_auc:.16f}, "
+        f"Δe-5 {delta * 1e5:+.8f}, {positive}/5 positive, {verdict}. "
+        f"Subfold Δe-5 {subfold_deltas}.\\n"
+    )
+print(payload)
+"""
+exec(compile(runner + "\n" + evaluation, str(source_path), "exec"), {"__name__": "__main__"})
+PY
+```
+tokens used
+190,702
+**Use the three-stream stack as the development control.** Sealed B supports keeping hist-XGB, and its absolute AUC leaves a substantial gap to the public target. The next CPU experiment adds a stream built from smoothed fraud rates for categorical and numeric feature pairs. Unlike step-grid features, these estimates test whether recurring combinations carry signal beyond the raw fields. Cross-fit the encodings inside each base-model training split, then compare the four-stream stack with the saved three-stream control on historical Fold-0. Sealed B stays closed to recipe development.
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python -u - <<'PY'
+from pathlib import Path
+
+source_path = Path("/tmp/s6e11_isol/p2_xgb_inner.py")
+runner, boundary, _ = source_path.read_text().partition("\ncontrol, _ = stack(2)")
+assert boundary, "Round 10 runner boundary changed"
+
+def replace_once(text, old, new):
+    assert text.count(old) == 1, f"Round 10 runner changed near {old!r}"
+    return text.replace(old, new, 1)
+
+runner = replace_once(runner, '"/tmp/s6e11_isol/data/train.csv"', '"data/train.csv"')
+runner = replace_once(runner, "(len(train), 3)", "(len(train), 4)")
+runner = replace_once(runner, "from xgboost import XGBClassifier", """from xgboost import XGBClassifier
+from sklearn.base import clone
+
+def pair_rate_features(fit_frame, fit_labels, score_frame):
+    categorical_pairs = [
+        ("merchant_category", "card_type"),
+        ("merchant_category", "auth_method"),
+        ("merchant_category", "is_new_merchant"),
+        ("auth_method", "channel"),
+        ("auth_method", "device_type"),
+        ("channel", "is_foreign_transaction"),
+        ("device_type", "ip_country_mismatch"),
+    ]
+    numeric_pairs = [
+        ("velocity_score", "merchant_risk_score"),
+        ("amount_usd", "account_balance_usd"),
+        ("hours_since_last_txn", "txn_count_last_24h"),
+        ("distance_from_home_km", "merchant_risk_score"),
+    ]
+    pairs = categorical_pairs + numeric_pairs
+
+    def encode(reference, observed, query):
+        prior = observed.mean()
+        edges = {
+            column: np.unique(reference[column].quantile(np.arange(1, 16) / 16).to_numpy())
+            for column in sorted({column for pair in numeric_pairs for column in pair})
+        }
+
+        def keys(features, left, right):
+            def values(column):
+                if column in edges:
+                    return pd.Series(
+                        np.searchsorted(edges[column], features[column].to_numpy(), side="right"),
+                        index=features.index,
+                    ).astype(str)
+                return features[column].astype("string").fillna("__missing__")
+            return values(left).str.cat(values(right), sep="|")
+
+        columns = []
+        for left, right in pairs:
+            reference_key = keys(reference, left, right)
+            table = pd.DataFrame(
+                {"key": reference_key.to_numpy(), "label": observed}
+            ).groupby("key")["label"].agg(["sum", "size"])
+            rate = (table["sum"] + 100 * prior) / (table["size"] + 100)
+            columns.append(keys(query, left, right).map(rate).fillna(prior).to_numpy(dtype=float))
+        return np.column_stack(columns)
+
+    train_rates = np.full((len(fit_frame), len(pairs)), np.nan)
+    for ref, held in StratifiedKFold(3, shuffle=True, random_state=2028).split(fit_frame, fit_labels):
+        train_rates[held] = encode(fit_frame.iloc[ref], fit_labels[ref], fit_frame.iloc[held])
+    score_rates = encode(fit_frame, fit_labels, score_frame)
+    assert np.isfinite(train_rates).all() and np.isfinite(score_rates).all()
+    names = [f"pair_rate__{left}__{right}" for left, right in pairs]
+    return (
+        fit_frame.assign(**dict(zip(names, train_rates.T))),
+        score_frame.assign(**dict(zip(names, score_rates.T))),
+    )
+""")
+runner = replace_once(runner, "    scores = np.column_stack(margins)", """    rate_fit, rate_score = pair_rate_features(tree_fit, fit_labels, tree_score)
+    rate_model = clone(xgb).set_params(device="cpu")
+    rate_model.fit(rate_fit, fit_labels)
+    margins.append(rate_model.predict(rate_score, output_margin=True))
+
+    scores = np.column_stack(margins)""")
+evaluation = """
+control, _ = stack(3)
+candidate, coefficients = stack(4)
+with np.load(pred / "p2_xgb_inner_oof_f0_dev.npz", allow_pickle=False) as saved:
+    np.testing.assert_array_equal(saved["row_indices"], valid)
+    np.testing.assert_array_equal(saved["ids"], ids[valid])
+    np.testing.assert_allclose(control, saved["candidate"], rtol=1e-8, atol=1e-8)
+observed = labels[valid]
+base_auc = roc_auc_score(observed, control)
+assert abs(base_auc - 0.9449195163309662) < 1e-12
+candidate_auc = roc_auc_score(observed, candidate)
+delta = candidate_auc - base_auc
+subfold_deltas = [
+    (roc_auc_score(observed[held], candidate[held])
+     - roc_auc_score(observed[held], control[held])) * 1e5
+    for _, held in StratifiedKFold(5, shuffle=True, random_state=7).split(control, observed)
+]
+positive = sum(change > 0 for change in subfold_deltas)
+verdict = "DEV_ADVANCE" if delta >= 8e-5 and positive >= 4 else "NO-GO"
+result = {
+    "scope": "historical_F0_DEV_ONLY",
+    "stream": "cross_fitted_pair_rate_hist_xgb",
+    "base_auc": base_auc, "candidate_auc": candidate_auc,
+    "delta_e5": delta * 1e5, "positive_subfolds": positive,
+    "subfold_deltas_e5": subfold_deltas, "meta_coefficients": coefficients,
+    "verdict": verdict, "NO_SUBMIT": True, "NO_GPU": True,
+}
+payload = json.dumps(result, indent=2)
+(logs / "P2_PAIR_RATE_INNER_OOF_F0_DEV.json").write_text(payload + "\\n")
+np.savez(pred / "p2_pair_rate_inner_oof_f0_dev.npz",
+         ids=ids[valid], row_indices=valid, control=control, candidate=candidate,
+         outer_stream_margins=np.stack(outer_scores))
+with Path("logs/v47/CODEX_DS_REVIEW_NEXT.md").open("a") as review:
+    review.write(
+        "\\n## P2 cross-fitted pair-rate XGB\\n\\n"
+        f"Historical Fold-0. Matched control {base_auc:.16f}, candidate {candidate_auc:.16f}, "
+        f"Δe-5 {delta * 1e5:+.8f}, {positive}/5 positive, {verdict}. "
+        f"Subfold Δe-5 {subfold_deltas}.\\n"
+    )
+print(payload)
+"""
+exec(compile(runner + "\n" + evaluation, str(source_path), "exec"), {"__name__": "__main__"})
+PY
+```

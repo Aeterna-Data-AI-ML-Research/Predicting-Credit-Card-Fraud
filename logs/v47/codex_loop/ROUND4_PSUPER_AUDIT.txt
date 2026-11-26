@@ -1,0 +1,18 @@
+Audited 30 unused OOF streams; base=0.9512507991341679
+TOP 15 by Δe-5 of fixed 95:5 blend:
+  P_wide_v5_rect: solo=0.951971 ρ=0.9966 Δe-5=+5.1343 pos=5/5 NO-GO
+  P_super_v8_part12_rect: solo=0.951870 ρ=0.9959 Δe-5=+5.0426 pos=5/5 NO-GO
+  P_super_v6_grandmaster: solo=0.951937 ρ=0.9970 Δe-5=+4.7056 pos=5/5 NO-GO
+  P_super_v7_cpu: solo=0.951937 ρ=0.9970 Δe-5=+4.7056 pos=5/5 NO-GO
+  P_super_v9_frontier_rect: solo=0.951838 ρ=0.9963 Δe-5=+4.6301 pos=5/5 NO-GO
+  P_restack_own: solo=0.951738 ρ=0.9960 Δe-5=+4.4899 pos=5/5 NO-GO
+  P_restack_pub: solo=0.951598 ρ=0.9957 Δe-5=+3.7249 pos=5/5 NO-GO
+  P_super_v7_regime_only: solo=0.951425 ρ=0.9960 Δe-5=+2.9151 pos=5/5 NO-GO
+  P_super_v7: solo=0.951496 ρ=0.9969 Δe-5=+2.8067 pos=5/5 NO-GO
+  P_super_v5p5_rect: solo=0.951580 ρ=0.9982 Δe-5=+2.3040 pos=5/5 NO-GO
+  P_super_v5_rect: solo=0.951578 ρ=0.9981 Δe-5=+2.2636 pos=5/5 NO-GO
+  P_super_v5p5_clean: solo=0.951513 ρ=0.9983 Δe-5=+1.8688 pos=5/5 NO-GO
+  P_super_v7_master: solo=0.951452 ρ=0.9984 Δe-5=+1.7495 pos=5/5 NO-GO
+  P_super_v6: solo=0.951434 ρ=0.9985 Δe-5=+1.5878 pos=5/5 NO-GO
+  P_super_v7_clean_reg: solo=0.951360 ρ=0.9981 Δe-5=+1.5412 pos=5/5 NO-GO
+BEST P_wide_v5_rect VERIFIED_LIFT False

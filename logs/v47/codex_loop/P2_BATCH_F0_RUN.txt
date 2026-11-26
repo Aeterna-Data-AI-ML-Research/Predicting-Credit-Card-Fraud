@@ -1,0 +1,46 @@
+loading /tmp/s6e11_isol/data/train.csv
+Exp2: interaction LR
+NO-GO -31.638509120923697 0
+Exp3: histogram XGB
+DEV_ADVANCE 20.975771086673145 5
+{
+  "anchor_auc": 0.9446644275289812,
+  "experiments": [
+    {
+      "base_auc": 0.9446644275289812,
+      "solo_auc": 0.9405163047461014,
+      "candidate_auc": 0.9443480424377719,
+      "delta_e5": -31.638509120923697,
+      "positive_subfolds": 0,
+      "subfold_deltas_e5": [
+        -28.165607875763055,
+        -27.925008855600453,
+        -39.48828717668107,
+        -43.501672282675315,
+        -15.711313787059034
+      ],
+      "fixed_weight": 0.15,
+      "verdict": "NO-GO",
+      "experiment": "interaction_lr_fixed15"
+    },
+    {
+      "base_auc": 0.9446644275289812,
+      "solo_auc": 0.9448430754846596,
+      "candidate_auc": 0.9448741852398479,
+      "delta_e5": 20.975771086673145,
+      "positive_subfolds": 5,
+      "subfold_deltas_e5": [
+        11.991144714251778,
+        31.06831863505244,
+        38.98272509937905,
+        11.122365700744208,
+        16.372433426625754
+      ],
+      "fixed_weight": 0.15,
+      "verdict": "DEV_ADVANCE",
+      "experiment": "hist_xgb_fixed15"
+    }
+  ],
+  "NO_SUBMIT": true,
+  "milestone": "LOCAL_GATE_PASS"
+}

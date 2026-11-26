@@ -1,0 +1,3 @@
+# Snapshot before any V47 create — NEVER delete these
+# ts=2026-11-26T local
+u4ky2oq4pohcyt  EXITED  NVIDIA A40  $0.59/hr  name=v43-f0-qwen-field24  CA-MTL-1

@@ -1,0 +1,24 @@
+{
+  "scope": "historical_F0_DEV_ONLY",
+  "stream": "P4_L4.3_stepgrid_hist_xgb",
+  "base_auc": 0.9449195163309662,
+  "candidate_auc": 0.9449231812391763,
+  "delta_e5": 0.3664908210132545,
+  "positive_subfolds": 3,
+  "subfold_deltas_e5": [
+    -2.8716657244576282,
+    3.469282645474081,
+    14.101293017776406,
+    -22.36917745128686,
+    10.819028454356339
+  ],
+  "meta_coefficients": [
+    0.5527683606991021,
+    0.6203363514845487,
+    0.6044021027434359,
+    0.596628551828008
+  ],
+  "verdict": "NO-GO",
+  "NO_SUBMIT": true,
+  "NO_GPU": true
+}

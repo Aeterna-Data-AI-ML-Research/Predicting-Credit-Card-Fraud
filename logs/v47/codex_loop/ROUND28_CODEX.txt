@@ -1,0 +1,293 @@
+OpenAI Codex v0.172.0
+--------
+workdir: /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+model: gpt-6.2-sol
+provider: openai
+approval: never
+sandbox: read-only
+reasoning effort: none
+reasoning summaries: none
+session id: 01a2180a-0cec-7810-bcbf-4a725485c87f
+--------
+user
+# Cursor → Codex Round28
+
+Champion 14-stream hard-negative pairwise (half uniform + half near-rank window 1%, mining SKF3 rs=2036):
+- control vs z0 exact
+- folds1–4 weighted Δe-5 **+7.362** · pos **4/4** · LOO all >0 → **NO-GO** vs gate ≥+8 (miss by 0.638e-5)
+- vs uniform pairwise: weighted +2.82e-5 on folds1-4
+- overall 0.952251 → 0.952346
+- fold deltas vs z0: [+14.28, +8.25, +0.79, +7.23, +13.18]
+Artifact: CHAMP_HARD_NEGATIVE_PAIRWISE_DIAGNOSTIC.json
+
+Closest champion-compatible result so far. Do NOT retune on B2037. Do NOT recommend submit.
+Highest-EV next measurable step: a frozen variant that can clear +8 without adaptive reuse of folds1-4 evaluation (e.g. change only mining window / mix ratio chosen a priori, or complementary-error stream), OR declare hard-neg family exhausted and pick orthogonal next.
+
+ONE executable command after short verdict. NO_SUBMIT/NO_GPU/$0.
+codex
+I’ll check which runners can test the frozen sampler on a different split.
+exec
+/bin/bash -lc "ls /tmp/s6e11_isol
+ls scripts/v47_sovereign | rg 'hard|pairwise'
+ls artifacts/research_loop | rg '2039'" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ exited 1 in 417ms:
+champ_char15.sh
+champ_decimal15.sh
+champ_hardneg.sh
+char_ngram.sh
+context_mlp.sh
+data
+decimal_token.sh
+dependency_tree.sh
+logs
+magnitude.sh
+mlp_runner.sh
+p2_p4_stepgrid_runner.sh
+p2_spline.py
+p2_xgb_inner.py
+pair_rate.sh
+pairwise_b2037.sh
+pairwise_meta.sh
+preds
+run_isol.py
+sealed_b.sh
+sealed_b_decimal.sh
+xgb_capacity.sh
+champ_pairwise_head_diagnostic.py
+sealed_b_five_stream_pairwise_2037.py
+
+ERROR: Reconnecting... 2/5
+exec
+/bin/bash -lc "head -25 /tmp/s6e11_isol/champ_hardneg.sh
+rg -n 'def main|def pairwise|"'^evaluation|2027'"' /tmp/s6e11_isol/{champ_hardneg,sealed_b,pairwise_meta}.sh" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 2ms:
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python -u - <<'PY'
+from pathlib import Path
+
+path = Path("scripts/v47_sovereign/champ_pairwise_head_diagnostic.py").resolve()
+source = path.read_text()
+start = source.index("def pairwise_head(")
+end = source.index("def main()", start)
+source = source[:start] + '''def pairwise_head(Xtr, ytr, Xva, Xte):
+    mining_score = np.full(len(ytr), np.nan)
+    mining_cv = StratifiedKFold(3, shuffle=True, random_state=2036)
+    for fit, held in mining_cv.split(Xtr, ytr):
+        miner = LogisticRegression(C=C, solver="lbfgs", max_iter=2000)
+        miner.fit(Xtr[fit], ytr[fit])
+        assert miner.n_iter_.max() < miner.max_iter
+        mining_score[held] = miner.decision_function(Xtr[held])
+    assert np.isfinite(mining_score).all()
+
+    fraud = np.flatnonzero(ytr == 1)
+    legitimate = np.flatnonzero(ytr == 0)
+    ordered = legitimate[np.argsort(mining_score[legitimate], kind="stable")]
+    location = np.searchsorted(mining_score[ordered], mining_score[fraud])
+    radius = max(1, int(0.01 * len(ordered)))
+    lower = np.maximum(0, location - radius)
+    upper = np.minimum(len(ordered), location + radius + 1)
+
+/tmp/s6e11_isol/champ_hardneg.sh:6:start = source.index("def pairwise_head(")
+/tmp/s6e11_isol/champ_hardneg.sh:7:end = source.index("def main()", start)
+/tmp/s6e11_isol/champ_hardneg.sh:8:source = source[:start] + '''def pairwise_head(Xtr, ytr, Xva, Xte):
+/tmp/s6e11_isol/pairwise_meta.sh:15:evaluation = """
+/tmp/s6e11_isol/sealed_b.sh:37:    "outer_split": {"n_splits": 5, "shuffle": True, "seed": 2027, "evaluation_folds": [1, 2, 3, 4]},
+/tmp/s6e11_isol/sealed_b.sh:52:    "bootstrap": {"unit": "paired row within fold and class", "replicates": 1000, "seed": 2027},
+/tmp/s6e11_isol/sealed_b.sh:68:panels = list(StratifiedKFold(5, shuffle=True, random_state=2027).split(frame, labels))
+/tmp/s6e11_isol/sealed_b.sh:94:rng = np.random.default_rng(2027)
+/tmp/s6e11_isol/sealed_b.sh:128:        "Historical rows under SKF seed 2027. Independent holdout verification remains pending.\n"
+
+codex
+**Freeze the hard-negative sampler as-is and test its incremental value on SKF seed 2039.** The champion run is a **NO-GO at +7.362e-5**. Changing the window or mix after seeing folds 1–4 would turn those results into tuning feedback. The next run compares the exact **32 uniform + 32 near-rank** sampler against **64 uniform negatives**, on identical outer-isolated five-stream features. This isolates the sampling change without reusing the champion’s saved OOF matrix or B2037 scores. It is a transport diagnostic on previously examined rows. The champion compatibility verdict stays **NO-GO**.
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python -u - <<'PY'
+from pathlib import Path
+
+def python_body(path):
+    lines = path.read_text().splitlines(keepends=True)
+    assert lines[0].rstrip().endswith("<<'PY'") and lines[-1].strip() == "PY", path
+    return "".join(lines[1:-1])
+
+def replace_once(text, old, new):
+    assert text.count(old) == 1, f"Runner changed near {old!r}"
+    return text.replace(old, new, 1)
+
+scratch = Path("/tmp/s6e11_isol")
+lexical_path = scratch / "char_ngram.sh"
+decimal_path = scratch / "decimal_token.sh"
+hard_path = scratch / "champ_hardneg.sh"
+transport_path = scratch / "sealed_b.sh"
+uniform_path = Path("scripts/v47_sovereign/champ_pairwise_head_diagnostic.py")
+
+assembly, boundary, _ = python_body(lexical_path).partition('\nevaluation = """')
+assert boundary, "Five-stream runner boundary changed"
+namespace = {"__name__": "_assemble_hard_negative_transport"}
+exec(compile(assembly, str(lexical_path), "exec"), namespace)
+runner = namespace["runner"]
+data_start = runner.index("frame = pd.read_csv(")
+fit_start = runner.index("categories = frame.select_dtypes(")
+runner = runner[:data_start] + """train, valid = panel_train, panel_valid
+assert np.intersect1d(train, valid).size == 0
+""" + runner[fit_start:]
+assert runner.count('"/tmp/s6e11_isol/data/train.csv"') == 1 and 'device="cpu"' in runner
+
+uniform_source = uniform_path.read_text()
+uniform = uniform_source[uniform_source.index("def pairwise_head("):uniform_source.index("def main()")]
+hard_source = python_body(hard_path)
+hard_start = hard_source.index("'''def pairwise_head(Xtr, ytr, Xva, Xte):") + 3
+hard_end = hard_source.index("''' + source[end:]", hard_start)
+hard = hard_source[hard_start:hard_end]
+assert "0.01 * len(ordered)" in hard and "random_state=2036" in hard
+runner += """
+PAIR_SEED = 2035
+PAIRS_PER_FRAUD = 64
+C = 0.03
+""" + uniform.replace("def pairwise_head(", "def uniform_head(", 1)
+runner += "\n" + hard.replace("def pairwise_head(", "def hard_negative_head(", 1)
+runner += """
+scaler = StandardScaler().fit(inner_design)
+head_train = scaler.transform(inner_design)
+head_valid = np.mean([scaler.transform(part) for part in outer_designs], axis=0)
+control, _, _ = uniform_head(head_train, labels[train], head_valid, head_valid[:1])
+candidate, _, _ = hard_negative_head(head_train, labels[train], head_valid, head_valid[:1])
+"""
+compile(runner, str(hard_path), "exec")
+
+transport = python_body(transport_path)
+setup = transport.index("source = source_path.read_text()")
+hash_function = transport.index("\ndef sha256(path):", setup)
+transport = transport[:setup] + "runner = frozen_sampling_runner\n" + transport[hash_function:]
+for old, new in {
+    'Path("data/train.csv")': 'Path("/tmp/s6e11_isol/data/train.csv")',
+    "SEALED_LOCK.json": "SEALED_LOCK_FIVE_STREAM_HARD_NEGATIVE_B2039.json",
+    "SEALED_B_XGB_TRANSPORT.json": "SEALED_B_FIVE_STREAM_HARD_NEGATIVE_2039_TRANSPORT.json",
+    "sealed_b_xgb_transport.npz": "sealed_b_five_stream_hard_negative_2039_transport.npz",
+    '"B_transport_diagnostic_previously_examined_rows"': '"B_hard_negative_vs_uniform_previously_examined_rows"',
+    '"baseline": "Round 10 raw LR + LGBM"': '"baseline": "Frozen five streams + 64 uniform negatives per fraud"',
+    '"candidate": "Round 10 raw LR + LGBM + CPU hist-XGB",': (
+        '"candidate": "Same five streams + frozen Round28 hard-negative sampler",\n'
+        '    "sampling": {"seed": 2035, "uniform": 32, "near_rank": 32, "radius": 0.01, '
+        '"mining_folds": 3, "mining_seed": 2036, "C": 0.03},'
+    ),
+    '"source_sha256": sha256(source_path),': (
+        '"source_sha256": sha256(source_path),\n'
+        '    "decimal_source_sha256": sha256(decimal_path),\n'
+        '    "lexical_source_sha256": sha256(lexical_path),\n'
+        '    "uniform_head_source_sha256": sha256(uniform_path),\n'
+        '    "hard_negative_source_sha256": sha256(hard_path),\n'
+        '    "transport_template_sha256": sha256(transport_path),'
+    ),
+    "## Frozen B transport diagnostic": "## Frozen hard-negative versus uniform transport diagnostic",
+}.items():
+    transport = replace_once(transport, old, new)
+assert transport.count("2027") == 5, "Check seed and report substitutions"
+transport = transport.replace("2027", "2039")
+exec(compile(transport, str(transport_path), "exec"), {
+    "__name__": "__main__",
+    "frozen_sampling_runner": runner,
+    "decimal_path": decimal_path,
+    "lexical_path": lexical_path,
+    "uniform_path": uniform_path,
+    "hard_path": hard_path,
+    "transport_path": transport_path,
+})
+PY
+```
+tokens used
+280,317
+**Freeze the hard-negative sampler as-is and test its incremental value on SKF seed 2039.** The champion run is a **NO-GO at +7.362e-5**. Changing the window or mix after seeing folds 1–4 would turn those results into tuning feedback. The next run compares the exact **32 uniform + 32 near-rank** sampler against **64 uniform negatives**, on identical outer-isolated five-stream features. This isolates the sampling change without reusing the champion’s saved OOF matrix or B2037 scores. It is a transport diagnostic on previously examined rows. The champion compatibility verdict stays **NO-GO**.
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python -u - <<'PY'
+from pathlib import Path
+
+def python_body(path):
+    lines = path.read_text().splitlines(keepends=True)
+    assert lines[0].rstrip().endswith("<<'PY'") and lines[-1].strip() == "PY", path
+    return "".join(lines[1:-1])
+
+def replace_once(text, old, new):
+    assert text.count(old) == 1, f"Runner changed near {old!r}"
+    return text.replace(old, new, 1)
+
+scratch = Path("/tmp/s6e11_isol")
+lexical_path = scratch / "char_ngram.sh"
+decimal_path = scratch / "decimal_token.sh"
+hard_path = scratch / "champ_hardneg.sh"
+transport_path = scratch / "sealed_b.sh"
+uniform_path = Path("scripts/v47_sovereign/champ_pairwise_head_diagnostic.py")
+
+assembly, boundary, _ = python_body(lexical_path).partition('\nevaluation = """')
+assert boundary, "Five-stream runner boundary changed"
+namespace = {"__name__": "_assemble_hard_negative_transport"}
+exec(compile(assembly, str(lexical_path), "exec"), namespace)
+runner = namespace["runner"]
+data_start = runner.index("frame = pd.read_csv(")
+fit_start = runner.index("categories = frame.select_dtypes(")
+runner = runner[:data_start] + """train, valid = panel_train, panel_valid
+assert np.intersect1d(train, valid).size == 0
+""" + runner[fit_start:]
+assert runner.count('"/tmp/s6e11_isol/data/train.csv"') == 1 and 'device="cpu"' in runner
+
+uniform_source = uniform_path.read_text()
+uniform = uniform_source[uniform_source.index("def pairwise_head("):uniform_source.index("def main()")]
+hard_source = python_body(hard_path)
+hard_start = hard_source.index("'''def pairwise_head(Xtr, ytr, Xva, Xte):") + 3
+hard_end = hard_source.index("''' + source[end:]", hard_start)
+hard = hard_source[hard_start:hard_end]
+assert "0.01 * len(ordered)" in hard and "random_state=2036" in hard
+runner += """
+PAIR_SEED = 2035
+PAIRS_PER_FRAUD = 64
+C = 0.03
+""" + uniform.replace("def pairwise_head(", "def uniform_head(", 1)
+runner += "\n" + hard.replace("def pairwise_head(", "def hard_negative_head(", 1)
+runner += """
+scaler = StandardScaler().fit(inner_design)
+head_train = scaler.transform(inner_design)
+head_valid = np.mean([scaler.transform(part) for part in outer_designs], axis=0)
+control, _, _ = uniform_head(head_train, labels[train], head_valid, head_valid[:1])
+candidate, _, _ = hard_negative_head(head_train, labels[train], head_valid, head_valid[:1])
+"""
+compile(runner, str(hard_path), "exec")
+
+transport = python_body(transport_path)
+setup = transport.index("source = source_path.read_text()")
+hash_function = transport.index("\ndef sha256(path):", setup)
+transport = transport[:setup] + "runner = frozen_sampling_runner\n" + transport[hash_function:]
+for old, new in {
+    'Path("data/train.csv")': 'Path("/tmp/s6e11_isol/data/train.csv")',
+    "SEALED_LOCK.json": "SEALED_LOCK_FIVE_STREAM_HARD_NEGATIVE_B2039.json",
+    "SEALED_B_XGB_TRANSPORT.json": "SEALED_B_FIVE_STREAM_HARD_NEGATIVE_2039_TRANSPORT.json",
+    "sealed_b_xgb_transport.npz": "sealed_b_five_stream_hard_negative_2039_transport.npz",
+    '"B_transport_diagnostic_previously_examined_rows"': '"B_hard_negative_vs_uniform_previously_examined_rows"',
+    '"baseline": "Round 10 raw LR + LGBM"': '"baseline": "Frozen five streams + 64 uniform negatives per fraud"',
+    '"candidate": "Round 10 raw LR + LGBM + CPU hist-XGB",': (
+        '"candidate": "Same five streams + frozen Round28 hard-negative sampler",\n'
+        '    "sampling": {"seed": 2035, "uniform": 32, "near_rank": 32, "radius": 0.01, '
+        '"mining_folds": 3, "mining_seed": 2036, "C": 0.03},'
+    ),
+    '"source_sha256": sha256(source_path),': (
+        '"source_sha256": sha256(source_path),\n'
+        '    "decimal_source_sha256": sha256(decimal_path),\n'
+        '    "lexical_source_sha256": sha256(lexical_path),\n'
+        '    "uniform_head_source_sha256": sha256(uniform_path),\n'
+        '    "hard_negative_source_sha256": sha256(hard_path),\n'
+        '    "transport_template_sha256": sha256(transport_path),'
+    ),
+    "## Frozen B transport diagnostic": "## Frozen hard-negative versus uniform transport diagnostic",
+}.items():
+    transport = replace_once(transport, old, new)
+assert transport.count("2027") == 5, "Check seed and report substitutions"
+transport = transport.replace("2027", "2039")
+exec(compile(transport, str(transport_path), "exec"), {
+    "__name__": "__main__",
+    "frozen_sampling_runner": runner,
+    "decimal_path": decimal_path,
+    "lexical_path": lexical_path,
+    "uniform_path": uniform_path,
+    "hard_path": hard_path,
+    "transport_path": transport_path,
+})
+PY
+```

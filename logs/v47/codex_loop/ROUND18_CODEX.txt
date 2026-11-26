@@ -1,0 +1,233 @@
+OpenAI Codex v0.172.0
+--------
+workdir: /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+model: gpt-6.2-sol
+provider: openai
+approval: never
+sandbox: read-only
+reasoning effort: none
+reasoning summaries: none
+session id: 01a2180a-0cec-7810-bcbf-4a725485c87f
+--------
+user
+# Cursor → Codex Round18
+
+Char n-gram LR 5th stream vs matched decimal 4-stream control (historical F0):
+- control 0.9461443510359124 → cand 0.9468323528460475
+- Δe-5 +68.80 · pos 5/5 · DEV_ADVANCE
+- lexical solo only 0.82298 but stack helps
+- Artifact: P2_DECIMAL_CHAR_NGRAM_F0_DEV.json
+
+Absolute isolated ~0.94683 still << public 0.95726.
+Highest-EV next: sealed-B transport for this 5-stream recipe (new seed, new lock), OR another stream.
+ONE bash command after short verdict. No signed-CB. No public arrays.
+codex
+I’ll confirm the lexical runner and transport template paths.
+exec
+/bin/bash -lc "ls /tmp/s6e11_isol
+ls artifacts/research_loop
+rg -n '0.822|candidate_auc' logs/v47/codex_loop/P2_DECIMAL_CHAR_NGRAM_F0_DEV.json" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 0ms:
+char_ngram.sh
+data
+decimal_token.sh
+logs
+mlp_runner.sh
+p2_p4_stepgrid_runner.sh
+p2_spline.py
+p2_xgb_inner.py
+pair_rate.sh
+preds
+run_isol.py
+sealed_b.sh
+sealed_b_decimal.sh
+xgb_capacity.sh
+CURRENT_RESEARCH.json
+SEALED_EVAL_PROTOCOL_DRAFT.md
+SEALED_LOCK.json
+SEALED_LOCK_DECIMAL_TOKEN_B2031.json
+5:  "candidate_auc": 0.9468323528460475,
+6:  "lexical_solo_auc": 0.8229832175646649,
+
+exec
+/bin/bash -lc "head -29 /tmp/s6e11_isol/char_ngram.sh
+rg -n 'evaluation =|exec\\(' /tmp/s6e11_isol/char_ngram.sh
+rg -n '2027|source_sha|baseline|candidate\":' /tmp/s6e11_isol/sealed_b.sh" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 0ms:
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python -u - <<'PY'
+from pathlib import Path
+
+decimal_path = Path("/tmp/s6e11_isol/decimal_token.sh")
+lines = decimal_path.read_text().splitlines(keepends=True)
+assert lines[0].rstrip().endswith("<<'PY'") and lines[-1].strip() == "PY"
+assembly, boundary, _ = "".join(lines[1:-1]).partition('\nevaluation = """')
+assert boundary, "Decimal runner assembly boundary changed"
+namespace = {"__name__": "_assemble_decimal_runner"}
+exec(compile(assembly, str(decimal_path), "exec"), namespace)
+runner = namespace["runner"]
+
+def replace_once(text, old, new):
+    assert text.count(old) == 1, f"Decimal runner changed near {old!r}"
+    return text.replace(old, new, 1)
+
+runner = replace_once(runner, "(len(train), 4)", "(len(train), 5)")
+assert runner.count('"/tmp/s6e11_isol/data/train.csv"') == 2
+runner = runner.replace('"/tmp/s6e11_isol/data/train.csv"', '"/tmp/s6e11_isol/data/train.csv"')
+assert 'device="cpu"' in runner
+runner = replace_once(runner, "del raw_strings", """from scipy.sparse import hstack
+from sklearn.feature_extraction.text import HashingVectorizer
+
+lexical = {
+    column: "^" + raw_strings[column].fillna("<missing>") + "$"
+    for column in decimal_fields
+}
+del raw_strings
+hasher = HashingVectorizer(
+7:assembly, boundary, _ = "".join(lines[1:-1]).partition('\nevaluation = """')
+10:exec(compile(assembly, str(decimal_path), "exec"), namespace)
+49:evaluation = """
+92:exec(compile(runner + "\n" + evaluation, str(decimal_path), "exec"), {"__name__": "__main__"})
+37:    "outer_split": {"n_splits": 5, "shuffle": True, "seed": 2027, "evaluation_folds": [1, 2, 3, 4]},
+39:    "baseline": "Round 10 raw LR + LGBM",
+40:    "candidate": "Round 10 raw LR + LGBM + CPU hist-XGB",
+42:    "source_sha256": sha256(source_path),
+52:    "bootstrap": {"unit": "paired row within fold and class", "replicates": 1000, "seed": 2027},
+68:panels = list(StratifiedKFold(5, shuffle=True, random_state=2027).split(frame, labels))
+94:rng = np.random.default_rng(2027)
+128:        "Historical rows under SKF seed 2027. Independent holdout verification remains pending.\n"
+
+codex
+**Freeze the five-stream recipe for transport on SKF seed 2033.** The character n-gram stream added **+68.80e-5 with 5/5 positive** on historical Fold-0 despite weak solo AUC. Test whether that complementarity survives a new split before adding another stream. Use a new lock and the existing transport gate. The result will measure split sensitivity on examined rows. Independent holdout verification and the **0.95726** public target remain open.
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python -u - <<'PY'
+from pathlib import Path
+
+def python_body(path):
+    lines = path.read_text().splitlines(keepends=True)
+    assert lines[0].rstrip().endswith("<<'PY'") and lines[-1].strip() == "PY", path
+    return "".join(lines[1:-1])
+
+def replace_once(text, old, new):
+    assert text.count(old) == 1, f"Runner changed near {old!r}"
+    return text.replace(old, new, 1)
+
+scratch = Path("/tmp/s6e11_isol")
+lexical_path = scratch / "char_ngram.sh"
+decimal_path = scratch / "decimal_token.sh"
+transport_path = scratch / "sealed_b.sh"
+assembly, boundary, _ = python_body(lexical_path).partition('\nevaluation = """')
+assert boundary, "Lexical runner assembly boundary changed"
+namespace = {"__name__": "_assemble_lexical_transport"}
+exec(compile(assembly, str(lexical_path), "exec"), namespace)
+runner = namespace["runner"]
+
+data_start = runner.index("frame = pd.read_csv(")
+fit_start = runner.index("categories = frame.select_dtypes(")
+runner = runner[:data_start] + """train, valid = panel_train, panel_valid
+assert np.intersect1d(train, valid).size == 0
+""" + runner[fit_start:]
+runner = replace_once(runner, '"/tmp/s6e11_isol/data/train.csv"', '"data/train.csv"')
+assert 'device="cpu"' in runner and "decimal_model.fit(" in runner and "lexical_model.fit(" in runner
+runner += "\ncontrol, _ = stack(4)\ncandidate, coefficients = stack(5)\n"
+compile(runner, str(lexical_path), "exec")
+
+transport = python_body(transport_path)
+setup = transport.index("source = source_path.read_text()")
+hash_function = transport.index("\ndef sha256(path):", setup)
+transport = transport[:setup] + "runner = frozen_lexical_runner\n" + transport[hash_function:]
+for old, new in {
+    "SEALED_LOCK.json": "SEALED_LOCK_DECIMAL_CHAR_NGRAM_B2033.json",
+    "SEALED_B_XGB_TRANSPORT.json": "SEALED_B_DECIMAL_CHAR_NGRAM_2033_TRANSPORT.json",
+    "sealed_b_xgb_transport.npz": "sealed_b_decimal_char_ngram_2033_transport.npz",
+    '"B_transport_diagnostic_previously_examined_rows"': '"B_decimal_char_ngram_transport_previously_examined_rows"',
+    '"baseline": "Round 10 raw LR + LGBM"': '"baseline": "Frozen four-stream control including decimal-token hist-XGB"',
+    '"candidate": "Round 10 raw LR + LGBM + CPU hist-XGB"': '"candidate": "Frozen four-stream control + Round18 field-specific character n-gram LR"',
+    '"source_sha256": sha256(source_path),': (
+        '"source_sha256": sha256(source_path),\n'
+        '    "decimal_source_sha256": sha256(decimal_path),\n'
+        '    "lexical_source_sha256": sha256(lexical_path),\n'
+        '    "transport_template_sha256": sha256(transport_path),'
+    ),
+    "## Frozen B transport diagnostic": "## Frozen character n-gram B transport diagnostic",
+}.items():
+    transport = replace_once(transport, old, new)
+assert transport.count("2027") == 5, "Check seed and report substitutions"
+transport = transport.replace("2027", "2033")
+exec(compile(transport, str(transport_path), "exec"), {
+    "__name__": "__main__",
+    "frozen_lexical_runner": runner,
+    "decimal_path": decimal_path,
+    "lexical_path": lexical_path,
+    "transport_path": transport_path,
+})
+PY
+```
+tokens used
+220,402
+**Freeze the five-stream recipe for transport on SKF seed 2033.** The character n-gram stream added **+68.80e-5 with 5/5 positive** on historical Fold-0 despite weak solo AUC. Test whether that complementarity survives a new split before adding another stream. Use a new lock and the existing transport gate. The result will measure split sensitivity on examined rows. Independent holdout verification and the **0.95726** public target remain open.
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python -u - <<'PY'
+from pathlib import Path
+
+def python_body(path):
+    lines = path.read_text().splitlines(keepends=True)
+    assert lines[0].rstrip().endswith("<<'PY'") and lines[-1].strip() == "PY", path
+    return "".join(lines[1:-1])
+
+def replace_once(text, old, new):
+    assert text.count(old) == 1, f"Runner changed near {old!r}"
+    return text.replace(old, new, 1)
+
+scratch = Path("/tmp/s6e11_isol")
+lexical_path = scratch / "char_ngram.sh"
+decimal_path = scratch / "decimal_token.sh"
+transport_path = scratch / "sealed_b.sh"
+assembly, boundary, _ = python_body(lexical_path).partition('\nevaluation = """')
+assert boundary, "Lexical runner assembly boundary changed"
+namespace = {"__name__": "_assemble_lexical_transport"}
+exec(compile(assembly, str(lexical_path), "exec"), namespace)
+runner = namespace["runner"]
+
+data_start = runner.index("frame = pd.read_csv(")
+fit_start = runner.index("categories = frame.select_dtypes(")
+runner = runner[:data_start] + """train, valid = panel_train, panel_valid
+assert np.intersect1d(train, valid).size == 0
+""" + runner[fit_start:]
+runner = replace_once(runner, '"/tmp/s6e11_isol/data/train.csv"', '"data/train.csv"')
+assert 'device="cpu"' in runner and "decimal_model.fit(" in runner and "lexical_model.fit(" in runner
+runner += "\ncontrol, _ = stack(4)\ncandidate, coefficients = stack(5)\n"
+compile(runner, str(lexical_path), "exec")
+
+transport = python_body(transport_path)
+setup = transport.index("source = source_path.read_text()")
+hash_function = transport.index("\ndef sha256(path):", setup)
+transport = transport[:setup] + "runner = frozen_lexical_runner\n" + transport[hash_function:]
+for old, new in {
+    "SEALED_LOCK.json": "SEALED_LOCK_DECIMAL_CHAR_NGRAM_B2033.json",
+    "SEALED_B_XGB_TRANSPORT.json": "SEALED_B_DECIMAL_CHAR_NGRAM_2033_TRANSPORT.json",
+    "sealed_b_xgb_transport.npz": "sealed_b_decimal_char_ngram_2033_transport.npz",
+    '"B_transport_diagnostic_previously_examined_rows"': '"B_decimal_char_ngram_transport_previously_examined_rows"',
+    '"baseline": "Round 10 raw LR + LGBM"': '"baseline": "Frozen four-stream control including decimal-token hist-XGB"',
+    '"candidate": "Round 10 raw LR + LGBM + CPU hist-XGB"': '"candidate": "Frozen four-stream control + Round18 field-specific character n-gram LR"',
+    '"source_sha256": sha256(source_path),': (
+        '"source_sha256": sha256(source_path),\n'
+        '    "decimal_source_sha256": sha256(decimal_path),\n'
+        '    "lexical_source_sha256": sha256(lexical_path),\n'
+        '    "transport_template_sha256": sha256(transport_path),'
+    ),
+    "## Frozen B transport diagnostic": "## Frozen character n-gram B transport diagnostic",
+}.items():
+    transport = replace_once(transport, old, new)
+assert transport.count("2027") == 5, "Check seed and report substitutions"
+transport = transport.replace("2027", "2033")
+exec(compile(transport, str(transport_path), "exec"), {
+    "__name__": "__main__",
+    "frozen_lexical_runner": runner,
+    "decimal_path": decimal_path,
+    "lexical_path": lexical_path,
+    "transport_path": transport_path,
+})
+PY
+```

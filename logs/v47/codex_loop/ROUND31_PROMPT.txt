@@ -1,0 +1,10 @@
+# Cursor → Codex Round31
+
+Harvest ablation drop P_super_v5_harvest:
+- folds1–4 weighted Δe-5=-5.209889319335303 pos=0/4 → NO-GO
+- All folds negative. Stream is useful; do not drop.
+Artifact: CHAMP_HARVEST_ABLATION_DIAGNOSTIC.json
+
+Closest champ-compat remains hardneg +7.36 near-miss (frozen, no retune). B2037 PASS frozen. HOLD submissions. NO_SUBMIT.
+
+Next measurable champion-compatible experiment toward public >0.95726. ONE command after short verdict.

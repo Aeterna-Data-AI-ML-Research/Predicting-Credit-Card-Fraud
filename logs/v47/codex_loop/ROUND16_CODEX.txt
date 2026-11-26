@@ -1,0 +1,303 @@
+OpenAI Codex v0.172.0
+--------
+workdir: /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+model: gpt-6.2-sol
+provider: openai
+approval: never
+sandbox: read-only
+reasoning effort: none
+reasoning summaries: none
+session id: 01a2180a-0cec-7810-bcbf-4a725485c87f
+--------
+user
+# Cursor → Codex Round16
+
+Decimal-token likelihood hist-XGB 4th stream — DEV_ADVANCE on historical F0:
+- control 0.9449195163309662 → cand 0.9461443510359124
+- Δe-5 +122.48 · pos 5/5
+- decimal solo 0.9463649791318605 (strong; meta coef ~1.21)
+- Artifact: P2_DECIMAL_TOKEN_INNER_OOF_F0_DEV.json
+
+Best isolated absolute AUC now ~0.94614 (still << public 0.95726).
+Highest-EV next measurable step under NO_SUBMIT/NO_GPU?
+Prefer: freeze NEW sealed-B transport for this 4-stream recipe (do not reuse old B lock for 3-stream), OR one more complementary stream before sealing.
+ONE bash command after short verdict. No signed-CB. No public arrays.
+codex
+I’ll locate the decimal runner and check what the next transport test can freeze.
+exec
+/bin/bash -lc "ls /tmp/s6e11_isol
+ls artifacts/research_loop
+rg --files scripts/v47_sovereign | rg 'decimal|transport'
+head -25 logs/v47/codex_loop/P2_DECIMAL_TOKEN_INNER_OOF_F0_DEV.json" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 0ms:
+data
+decimal_token.sh
+logs
+mlp_runner.sh
+p2_p4_stepgrid_runner.sh
+p2_spline.py
+p2_xgb_inner.py
+pair_rate.sh
+preds
+run_isol.py
+sealed_b.sh
+xgb_capacity.sh
+CURRENT_RESEARCH.json
+SEALED_EVAL_PROTOCOL_DRAFT.md
+SEALED_LOCK.json
+{
+  "scope": "historical_F0_DEV_ONLY",
+  "experiment": "cross_fitted_pooled_decimal_token_hist_xgb",
+  "base_auc": 0.9449195163309662,
+  "candidate_auc": 0.9461443510359124,
+  "decimal_solo_auc": 0.9463649791318605,
+  "delta_e5": 122.4834704946276,
+  "positive_subfolds": 5,
+  "subfold_deltas_e5": [
+    80.86455454876517,
+    155.54338590190176,
+    178.5334141921502,
+    78.75101588810108,
+    115.21370847906721
+  ],
+  "meta_coefficients": [
+    0.3285070014887189,
+    0.46017886970202365,
+    0.42321721445123045,
+    1.2083582398271286
+  ],
+  "verdict": "DEV_ADVANCE",
+  "NO_SUBMIT": true,
+  "NO_GPU": true
+}
+
+exec
+/bin/bash -lc "head -25 /tmp/s6e11_isol/decimal_token.sh
+tail -6 /tmp/s6e11_isol/decimal_token.sh
+head -32 /tmp/s6e11_isol/sealed_b.sh
+rg -n 'data/train|device=' /tmp/s6e11_isol/p2_xgb_inner.py" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 0ms:
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python -u - <<'PY'
+from pathlib import Path
+
+source_path = Path("/tmp/s6e11_isol/p2_xgb_inner.py")
+runner, boundary, _ = source_path.read_text().partition("\ncontrol, _ = stack(2)")
+assert boundary and 'device="cpu"' in runner
+
+def replace_once(text, old, new):
+    assert text.count(old) == 1, f"Round 10 runner changed near {old!r}"
+    return text.replace(old, new, 1)
+
+print("keeping tmp train", flush=True)
+runner = replace_once(runner, "(len(train), 3)", "(len(train), 4)")
+runner = replace_once(
+    runner, "from xgboost import XGBClassifier",
+    "from xgboost import XGBClassifier\nfrom sklearn.base import clone",
+)
+runner = replace_once(runner, "outer_scores = []", """outer_scores = []
+decimal_groups = [
+    ["amount_usd", "hours_since_last_txn", "distance_from_home_km", "account_balance_usd"],
+    ["velocity_score", "merchant_risk_score"],
+]
+decimal_fields = [column for group in decimal_groups for column in group]
+raw_strings = pd.read_csv(
+    "/tmp/s6e11_isol/data/train.csv", usecols=["id", *decimal_fields],
+        f"{positive}/5 positive, {verdict}. Subfold Δe-5 {subfold_deltas}.\\n"
+    )
+print(payload)
+"""
+exec(compile(runner + "\n" + evaluation, str(source_path), "exec"), {"__name__": "__main__"})
+PY
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python -u - <<'PY'
+import hashlib
+import importlib.metadata
+import json
+import platform
+import sys
+from pathlib import Path
+
+source_path = Path("/tmp/s6e11_isol/p2_xgb_inner.py")
+protocol_path = Path("artifacts/research_loop/SEALED_EVAL_PROTOCOL_DRAFT.md")
+lock_path = Path("artifacts/research_loop/SEALED_LOCK.json")
+report_path = Path("logs/v47/codex_loop/SEALED_B_XGB_TRANSPORT.json")
+scores_path = Path("preds/v47_sovereign/sealed_b_xgb_transport.npz")
+assert not report_path.exists() and not scores_path.exists(), "B has already produced artifacts"
+
+source = source_path.read_text()
+runner, marker, _ = source.partition("\ncontrol, _ = stack(2)")
+assert marker, "Round 10 runner boundary changed"
+data_start = runner.index('frame = pd.read_csv(')
+fit_start = runner.index('categories = frame.select_dtypes(')
+runner = runner[:data_start] + """train, valid = panel_train, panel_valid
+assert np.intersect1d(train, valid).size == 0
+""" + runner[fit_start:]
+assert 'device="cpu"' in runner, "Confirm Round 10 XGB device before freezing"
+runner += "\ncontrol, _ = stack(2)\ncandidate, coefficients = stack(3)\n"
+
+def sha256(path):
+    checksum = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1 << 20), b""):
+            checksum.update(chunk)
+    return checksum.hexdigest()
+19:frame = pd.read_csv("/tmp/s6e11_isol/data/train.csv", low_memory=False)
+73:        enable_categorical=True, device="cpu", n_jobs=4, random_state=42, eval_metric="auc",
+
+exec
+/bin/bash -lc "rg -n '2027|stack\\(|train_path|source_sha|candidate|scope|Frozen B|##' /tmp/s6e11_isol/sealed_b.sh
+rg -n '"'^evaluation =|''^exec'"\\(' /tmp/s6e11_isol/decimal_token.sh" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 0ms:
+17:runner, marker, _ = source.partition("\ncontrol, _ = stack(2)")
+25:runner += "\ncontrol, _ = stack(2)\ncandidate, coefficients = stack(3)\n"
+34:train_path = Path("data/train.csv")
+36:    "scope": "B_transport_diagnostic_previously_examined_rows",
+37:    "outer_split": {"n_splits": 5, "shuffle": True, "seed": 2027, "evaluation_folds": [1, 2, 3, 4]},
+40:    "candidate": "Round 10 raw LR + LGBM + CPU hist-XGB",
+42:    "source_sha256": sha256(source_path),
+43:    "data_sha256": sha256(train_path),
+52:    "bootstrap": {"unit": "paired row within fold and class", "replicates": 1000, "seed": 2027},
+65:frame = pd.read_csv(train_path, low_memory=False)
+68:panels = list(StratifiedKFold(5, shuffle=True, random_state=2027).split(frame, labels))
+72:    print(f"Frozen B fold {fold}/4", flush=True)
+77:    control, candidate = namespace["control"], namespace["candidate"]
+79:    assert np.isfinite(control).all() and np.isfinite(candidate).all()
+81:    cand_auc = roc_auc_score(observed, candidate)
+83:                    "candidate_auc": cand_auc, "delta_e5": (cand_auc - base_auc) * 1e5})
+84:    paired.append((valid, observed, control, candidate))
+94:rng = np.random.default_rng(2027)
+96:for weight, (_, observed, control, candidate) in zip(weights / weights.sum(), paired):
+101:            roc_auc_score(observed[sample], candidate[sample])
+108:    "scope": study["scope"], "lock_sha256": sha256(lock_path), "per_fold": results,
+119:    candidate=np.concatenate([part[3] for part in paired]),
+125:        "\n## Frozen B transport diagnostic\n\n"
+128:        "Historical rows under SKF seed 2027. Independent holdout verification remains pending.\n"
+81:evaluation = """
+124:exec(compile(runner + "\n" + evaluation, str(source_path), "exec"), {"__name__": "__main__"})
+
+codex
+**Freeze and run the four-stream transport test now.** The decimal stream gained **+122.48e-5**, improved **5/5** subfolds, and beat the previous stack on its own. That earns a direct test against the frozen three-stream control before adding another learner. Use **SKF seed 2031** with a separate lock and the same gate as the first B test. This measures split sensitivity on previously examined rows. Independent holdout verification remains pending.
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python -u - <<'PY'
+from pathlib import Path
+
+def python_body(path):
+    lines = path.read_text().splitlines(keepends=True)
+    assert lines[0].rstrip().endswith("<<'PY'") and lines[-1].strip() == "PY", path
+    return "".join(lines[1:-1])
+
+def replace_once(text, old, new):
+    assert text.count(old) == 1, f"Runner changed near {old!r}"
+    return text.replace(old, new, 1)
+
+decimal_path = Path("/tmp/s6e11_isol/decimal_token.sh")
+transport_path = Path("/tmp/s6e11_isol/sealed_b.sh")
+decimal_source, boundary, _ = python_body(decimal_path).partition('\nevaluation = """')
+assert boundary, "Decimal runner assembly boundary changed"
+
+namespace = {"__name__": "_assemble_decimal_transport"}
+exec(compile(decimal_source, str(decimal_path), "exec"), namespace)
+runner = namespace["runner"]
+data_start = runner.index("frame = pd.read_csv(")
+fit_start = runner.index("categories = frame.select_dtypes(")
+runner = runner[:data_start] + """train, valid = panel_train, panel_valid
+assert np.intersect1d(train, valid).size == 0
+""" + runner[fit_start:]
+runner = replace_once(runner, '"/tmp/s6e11_isol/data/train.csv"', '"data/train.csv"')
+assert 'device="cpu"' in runner and "decimal_model.fit(" in runner
+runner += "\ncontrol, _ = stack(3)\ncandidate, coefficients = stack(4)\n"
+compile(runner, str(decimal_path), "exec")
+
+transport = python_body(transport_path)
+setup = transport.index("source = source_path.read_text()")
+hash_function = transport.index("\ndef sha256(path):", setup)
+transport = transport[:setup] + "runner = frozen_decimal_runner\n" + transport[hash_function:]
+for old, new in {
+    "SEALED_LOCK.json": "SEALED_LOCK_DECIMAL_TOKEN_B2031.json",
+    "SEALED_B_XGB_TRANSPORT.json": "SEALED_B_DECIMAL_TOKEN_2031_TRANSPORT.json",
+    "sealed_b_xgb_transport.npz": "sealed_b_decimal_token_2031_transport.npz",
+    '"B_transport_diagnostic_previously_examined_rows"': '"B_decimal_token_transport_previously_examined_rows"',
+    '"baseline": "Round 10 raw LR + LGBM"': '"baseline": "Frozen LR + LGBM + CPU hist-XGB"',
+    '"candidate": "Round 10 raw LR + LGBM + CPU hist-XGB"': '"candidate": "Frozen three-stream control + Round16 decimal-token CPU hist-XGB"',
+    '"source_sha256": sha256(source_path),': (
+        '"source_sha256": sha256(source_path),\n'
+        '    "decimal_source_sha256": sha256(decimal_path),\n'
+        '    "transport_template_sha256": sha256(transport_path),'
+    ),
+    "## Frozen B transport diagnostic": "## Frozen decimal-token B transport diagnostic",
+}.items():
+    transport = replace_once(transport, old, new)
+assert transport.count("2027") == 5, "Check seed and report substitutions"
+transport = transport.replace("2027", "2031")
+exec(compile(transport, str(transport_path), "exec"), {
+    "__name__": "__main__",
+    "frozen_decimal_runner": runner,
+    "decimal_path": decimal_path,
+    "transport_path": transport_path,
+})
+PY
+```
+tokens used
+212,000
+**Freeze and run the four-stream transport test now.** The decimal stream gained **+122.48e-5**, improved **5/5** subfolds, and beat the previous stack on its own. That earns a direct test against the frozen three-stream control before adding another learner. Use **SKF seed 2031** with a separate lock and the same gate as the first B test. This measures split sensitivity on previously examined rows. Independent holdout verification remains pending.
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python -u - <<'PY'
+from pathlib import Path
+
+def python_body(path):
+    lines = path.read_text().splitlines(keepends=True)
+    assert lines[0].rstrip().endswith("<<'PY'") and lines[-1].strip() == "PY", path
+    return "".join(lines[1:-1])
+
+def replace_once(text, old, new):
+    assert text.count(old) == 1, f"Runner changed near {old!r}"
+    return text.replace(old, new, 1)
+
+decimal_path = Path("/tmp/s6e11_isol/decimal_token.sh")
+transport_path = Path("/tmp/s6e11_isol/sealed_b.sh")
+decimal_source, boundary, _ = python_body(decimal_path).partition('\nevaluation = """')
+assert boundary, "Decimal runner assembly boundary changed"
+
+namespace = {"__name__": "_assemble_decimal_transport"}
+exec(compile(decimal_source, str(decimal_path), "exec"), namespace)
+runner = namespace["runner"]
+data_start = runner.index("frame = pd.read_csv(")
+fit_start = runner.index("categories = frame.select_dtypes(")
+runner = runner[:data_start] + """train, valid = panel_train, panel_valid
+assert np.intersect1d(train, valid).size == 0
+""" + runner[fit_start:]
+runner = replace_once(runner, '"/tmp/s6e11_isol/data/train.csv"', '"data/train.csv"')
+assert 'device="cpu"' in runner and "decimal_model.fit(" in runner
+runner += "\ncontrol, _ = stack(3)\ncandidate, coefficients = stack(4)\n"
+compile(runner, str(decimal_path), "exec")
+
+transport = python_body(transport_path)
+setup = transport.index("source = source_path.read_text()")
+hash_function = transport.index("\ndef sha256(path):", setup)
+transport = transport[:setup] + "runner = frozen_decimal_runner\n" + transport[hash_function:]
+for old, new in {
+    "SEALED_LOCK.json": "SEALED_LOCK_DECIMAL_TOKEN_B2031.json",
+    "SEALED_B_XGB_TRANSPORT.json": "SEALED_B_DECIMAL_TOKEN_2031_TRANSPORT.json",
+    "sealed_b_xgb_transport.npz": "sealed_b_decimal_token_2031_transport.npz",
+    '"B_transport_diagnostic_previously_examined_rows"': '"B_decimal_token_transport_previously_examined_rows"',
+    '"baseline": "Round 10 raw LR + LGBM"': '"baseline": "Frozen LR + LGBM + CPU hist-XGB"',
+    '"candidate": "Round 10 raw LR + LGBM + CPU hist-XGB"': '"candidate": "Frozen three-stream control + Round16 decimal-token CPU hist-XGB"',
+    '"source_sha256": sha256(source_path),': (
+        '"source_sha256": sha256(source_path),\n'
+        '    "decimal_source_sha256": sha256(decimal_path),\n'
+        '    "transport_template_sha256": sha256(transport_path),'
+    ),
+    "## Frozen B transport diagnostic": "## Frozen decimal-token B transport diagnostic",
+}.items():
+    transport = replace_once(transport, old, new)
+assert transport.count("2027") == 5, "Check seed and report substitutions"
+transport = transport.replace("2027", "2031")
+exec(compile(transport, str(transport_path), "exec"), {
+    "__name__": "__main__",
+    "frozen_decimal_runner": runner,
+    "decimal_path": decimal_path,
+    "transport_path": transport_path,
+})
+PY
+```

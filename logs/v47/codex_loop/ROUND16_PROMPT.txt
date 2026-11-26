@@ -1,0 +1,12 @@
+# Cursor → Codex Round16
+
+Decimal-token likelihood hist-XGB 4th stream — DEV_ADVANCE on historical F0:
+- control 0.9449195163309662 → cand 0.9461443510359124
+- Δe-5 +122.48 · pos 5/5
+- decimal solo 0.9463649791318605 (strong; meta coef ~1.21)
+- Artifact: P2_DECIMAL_TOKEN_INNER_OOF_F0_DEV.json
+
+Best isolated absolute AUC now ~0.94614 (still << public 0.95726).
+Highest-EV next measurable step under NO_SUBMIT/NO_GPU?
+Prefer: freeze NEW sealed-B transport for this 4-stream recipe (do not reuse old B lock for 3-stream), OR one more complementary stream before sealing.
+ONE bash command after short verdict. No signed-CB. No public arrays.

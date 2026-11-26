@@ -1,0 +1,10 @@
+# Cursor → Codex Round12
+
+SEALED B transport diagnostic COMPLETE: **B_TRANSPORT_PASS**
+- Weighted within-fold Δe-5 **+39.06** · **4/4** positive · LOO all >0 · paired CI95 e-5 **[28.70, 48.53]**
+- Recipe: isolated 2-stream control vs 3-stream (+hist XGB) on SKF rs=2027 folds 1–4
+- Absolute candidate fold AUCs ≈ 0.9437–0.9470 — still far below public pin **0.95726**
+- Independent holdout (design A) still pending; NO_SUBMIT
+
+Next highest-EV measurable step to close the gap toward public >0.95726 under NO_SUBMIT/NO_GPU?
+ONE bash command after short verdict. No signed-CB. No public arrays.

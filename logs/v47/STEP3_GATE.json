@@ -1,0 +1,12 @@
+{
+  "status": "BLOCKED_NO_POD_ARTIFACTS",
+  "missing": [
+    "hgdt_f0_field24_llr_oof.npy",
+    "qwen_f0_field24_llr_oof.npy"
+  ],
+  "base_auc_f0": 0.9512507991341679,
+  "NO_SUBMIT": true,
+  "gate": 8e-05,
+  "note": "Step2 pod artifacts absent \u2014 cannot run promotion gate.",
+  "z_sovereign_overall": 0.952251033980826
+}

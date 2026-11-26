@@ -1,0 +1,293 @@
+OpenAI Codex v0.172.0
+--------
+workdir: /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+model: gpt-6.2-sol
+provider: openai
+approval: never
+sandbox: read-only
+reasoning effort: none
+reasoning summaries: none
+session id: 01a2180a-0cec-7810-bcbf-4a725485c87f
+--------
+user
+# Cursor → Codex Round21
+
+Decimal character-position + raw-context CPU MLP as 6th stream vs matched 5-stream control (F0 DEV):
+- base_auc 0.9468323528460475 (assert OK)
+- candidate_auc 0.94669289671625
+- stream_solo_auc 0.92236
+- Δe-5 −13.95 · pos 0/5 · NO-GO
+- meta MLP coef ~0.063 (near dead)
+- Artifact: P2_DECIMAL_CONTEXT_MLP_F0_DEV.json / P2_DECIMAL_CONTEXT_MLP_RUN.txt
+
+Magnitude path exhausted earlier (+0.85e-5 2/5 NO-GO). Best verified isolated recipe remains 5-stream with B_TRANSPORT_PASS (decimal 2031 + char-ngram 2033), absolute fold AUCs up to ~0.95012, public pin 0.95726 still ~0.007 ahead. Milestone=LOCAL_GATE_PASS. Signed-CB retired. NO_SUBMIT/NO_GPU/$0.
+
+Highest-EV next measurable step to close absolute gap toward CROSS_FOLD or a complementary non-MLP/non-magnitude stream?
+ONE bash command after short verdict. Keep /tmp/s6e11_isol/data/train.csv. No signed-CB. No public arrays. Do not retune context-MLP or magnitude on same F0.
+codex
+**Test a class-conditional dependency tree as the sixth stream.** The context MLP lost **13.95e-5** and improved **0/5** subfolds. The next experiment tests whether fraud changes *which decimal tokens and categorical states occur together across fields*. A CPU Chow–Liu-style model estimates that signal directly, with smoothing for rare combinations. It leaves the five-stream recipe intact, scores historical Fold-0 only, and requires **≥+8e-5 and ≥4/5 positive** to advance.
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python -u - <<'PY'
+from pathlib import Path
+
+source_path = Path("/tmp/s6e11_isol/char_ngram.sh")
+lines = source_path.read_text().splitlines(keepends=True)
+assert lines[0].rstrip().endswith("<<'PY'") and lines[-1].strip() == "PY"
+assembly, boundary, _ = "".join(lines[1:-1]).partition('\nevaluation = """')
+assert boundary, "Character runner assembly boundary changed"
+namespace = {"__name__": "_assemble_char_runner"}
+exec(compile(assembly, str(source_path), "exec"), namespace)
+runner = namespace["runner"]
+
+def replace_once(text, old, new):
+    assert text.count(old) == 1, f"Runner changed near {old!r}"
+    return text.replace(old, new, 1)
+
+assert runner.count('"/tmp/s6e11_isol/data/train.csv"') == 2 and 'device="cpu"' in runner
+runner = replace_once(runner, "(len(train), 5)", "(len(train), 6)")
+runner = replace_once(runner, "    scores = np.column_stack(margins)", """    from sklearn.metrics import mutual_info_score
+
+    state_columns = {
+        f"fraction_prefix__{column}": suffix[column].str[:3]
+        for column in decimal_fields
+    }
+    state_columns.update({column: frame[column] for column in categories + [
+        "is_foreign_transaction", "is_new_merchant", "used_vpn",
+        "ip_country_mismatch", "billing_shipping_mismatch", "is_ai_generated_scam_attempt",
+    ]})
+    fit_codes, score_codes, cardinalities = [], [], []
+    for values in state_columns.values():
+        values = values.astype("string").fillna("<missing>")
+        training_values = values.iloc[fit_rows]
+        known = training_values.value_counts().head(63).index
+        mapping = {value: index + 1 for index, value in enumerate(known)}
+        fit_codes.append(training_values.map(mapping).fillna(0).to_numpy(dtype=np.int64))
+        score_codes.append(values.loc[score_frame.index].map(mapping).fillna(0).to_numpy(dtype=np.int64))
+        cardinalities.append(len(known) + 1)
+
+    class_masks = [fit_labels == label for label in (0, 1)]
+    width = len(fit_codes)
+    edge_weight = np.zeros((width, width))
+    for left in range(width):
+        for right in range(left + 1, width):
+            edge_weight[left, right] = edge_weight[right, left] = 0.5 * sum(
+                mutual_info_score(fit_codes[left][mask], fit_codes[right][mask])
+                for mask in class_masks
+            )
+    root = 0
+    connected = [root]
+    remaining = list(range(1, width))
+    edges = []
+    while remaining:
+        parent, child = max(
+            ((parent, child) for parent in connected for child in remaining),
+            key=lambda pair: edge_weight[pair],
+        )
+        edges.append((parent, child))
+        connected.append(child)
+        remaining.remove(child)
+
+    log_likelihoods = []
+    for mask in class_masks:
+        marginals = []
+        for codes, size in zip(fit_codes, cardinalities):
+            pooled = (np.bincount(codes, minlength=size) + 1) / (len(codes) + size)
+            observed_counts = np.bincount(codes[mask], minlength=size)
+            marginals.append((observed_counts + 50 * pooled) / (int(mask.sum()) + 50))
+        likelihood = np.log(marginals[root][score_codes[root]])
+        for parent, child in edges:
+            size_parent, size_child = cardinalities[parent], cardinalities[child]
+            flat = fit_codes[parent][mask] * size_child + fit_codes[child][mask]
+            counts = np.bincount(flat, minlength=size_parent * size_child).reshape(size_parent, size_child)
+            probabilities = (counts + 100 * marginals[child][None, :]) / (
+                counts.sum(axis=1, keepdims=True) + 100
+            )
+            likelihood += np.log(probabilities[score_codes[parent], score_codes[child]])
+        log_likelihoods.append(likelihood)
+    margins.append(log_likelihoods[1] - log_likelihoods[0])
+
+    scores = np.column_stack(margins)""")
+
+evaluation = """
+control, _ = stack(5)
+candidate, coefficients = stack(6)
+with np.load(pred / "p2_decimal_char_ngram_f0_dev.npz", allow_pickle=False) as saved:
+    np.testing.assert_array_equal(saved["row_indices"], valid)
+    np.testing.assert_array_equal(saved["ids"], ids[valid])
+    np.testing.assert_allclose(control, saved["candidate"], rtol=1e-8, atol=1e-8)
+
+observed = labels[valid]
+base_auc = roc_auc_score(observed, control)
+assert abs(base_auc - 0.9468323528460475) < 1e-12
+candidate_auc = roc_auc_score(observed, candidate)
+delta = candidate_auc - base_auc
+subfold_deltas = [
+    (roc_auc_score(observed[held], candidate[held])
+     - roc_auc_score(observed[held], control[held])) * 1e5
+    for _, held in StratifiedKFold(5, shuffle=True, random_state=7).split(control, observed)
+]
+positive = sum(change > 0 for change in subfold_deltas)
+verdict = "DEV_ADVANCE" if delta >= 8e-5 and positive >= 4 else "NO-GO"
+solo = roc_auc_score(observed, np.mean([design[:, 5] for design in outer_designs], axis=0))
+result = {
+    "scope": "historical_F0_DEV_ONLY",
+    "experiment": "class_conditional_decimal_and_categorical_dependency_tree",
+    "base_auc": base_auc, "candidate_auc": candidate_auc, "stream_solo_auc": solo,
+    "delta_e5": delta * 1e5, "positive_subfolds": positive,
+    "subfold_deltas_e5": subfold_deltas, "meta_coefficients": coefficients,
+    "verdict": verdict, "NO_SUBMIT": True, "NO_GPU": True,
+}
+payload = json.dumps(result, indent=2)
+(logs / "P2_DECIMAL_DEPENDENCY_TREE_F0_DEV.json").write_text(payload + "\\n")
+np.savez(
+    pred / "p2_decimal_dependency_tree_f0_dev.npz",
+    ids=ids[valid], row_indices=valid, control=control, candidate=candidate,
+    outer_stream_margins=np.stack(outer_scores),
+)
+with Path("logs/v47/CODEX_DS_REVIEW_NEXT.md").open("a") as review:
+    review.write(
+        "\\n## P2 decimal dependency tree\\n\\n"
+        f"Historical Fold-0. Control {base_auc:.16f}, candidate {candidate_auc:.16f}, "
+        f"solo {solo:.16f}, Δe-5 {delta * 1e5:+.8f}, "
+        f"{positive}/5 positive, {verdict}. Subfold Δe-5 {subfold_deltas}.\\n"
+    )
+print(payload)
+"""
+exec(compile(runner + "\n" + evaluation, str(source_path), "exec"), {"__name__": "__main__"})
+PY
+```
+tokens used
+232,718
+**Test a class-conditional dependency tree as the sixth stream.** The context MLP lost **13.95e-5** and improved **0/5** subfolds. The next experiment tests whether fraud changes *which decimal tokens and categorical states occur together across fields*. A CPU Chow–Liu-style model estimates that signal directly, with smoothing for rare combinations. It leaves the five-stream recipe intact, scores historical Fold-0 only, and requires **≥+8e-5 and ≥4/5 positive** to advance.
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python -u - <<'PY'
+from pathlib import Path
+
+source_path = Path("/tmp/s6e11_isol/char_ngram.sh")
+lines = source_path.read_text().splitlines(keepends=True)
+assert lines[0].rstrip().endswith("<<'PY'") and lines[-1].strip() == "PY"
+assembly, boundary, _ = "".join(lines[1:-1]).partition('\nevaluation = """')
+assert boundary, "Character runner assembly boundary changed"
+namespace = {"__name__": "_assemble_char_runner"}
+exec(compile(assembly, str(source_path), "exec"), namespace)
+runner = namespace["runner"]
+
+def replace_once(text, old, new):
+    assert text.count(old) == 1, f"Runner changed near {old!r}"
+    return text.replace(old, new, 1)
+
+assert runner.count('"/tmp/s6e11_isol/data/train.csv"') == 2 and 'device="cpu"' in runner
+runner = replace_once(runner, "(len(train), 5)", "(len(train), 6)")
+runner = replace_once(runner, "    scores = np.column_stack(margins)", """    from sklearn.metrics import mutual_info_score
+
+    state_columns = {
+        f"fraction_prefix__{column}": suffix[column].str[:3]
+        for column in decimal_fields
+    }
+    state_columns.update({column: frame[column] for column in categories + [
+        "is_foreign_transaction", "is_new_merchant", "used_vpn",
+        "ip_country_mismatch", "billing_shipping_mismatch", "is_ai_generated_scam_attempt",
+    ]})
+    fit_codes, score_codes, cardinalities = [], [], []
+    for values in state_columns.values():
+        values = values.astype("string").fillna("<missing>")
+        training_values = values.iloc[fit_rows]
+        known = training_values.value_counts().head(63).index
+        mapping = {value: index + 1 for index, value in enumerate(known)}
+        fit_codes.append(training_values.map(mapping).fillna(0).to_numpy(dtype=np.int64))
+        score_codes.append(values.loc[score_frame.index].map(mapping).fillna(0).to_numpy(dtype=np.int64))
+        cardinalities.append(len(known) + 1)
+
+    class_masks = [fit_labels == label for label in (0, 1)]
+    width = len(fit_codes)
+    edge_weight = np.zeros((width, width))
+    for left in range(width):
+        for right in range(left + 1, width):
+            edge_weight[left, right] = edge_weight[right, left] = 0.5 * sum(
+                mutual_info_score(fit_codes[left][mask], fit_codes[right][mask])
+                for mask in class_masks
+            )
+    root = 0
+    connected = [root]
+    remaining = list(range(1, width))
+    edges = []
+    while remaining:
+        parent, child = max(
+            ((parent, child) for parent in connected for child in remaining),
+            key=lambda pair: edge_weight[pair],
+        )
+        edges.append((parent, child))
+        connected.append(child)
+        remaining.remove(child)
+
+    log_likelihoods = []
+    for mask in class_masks:
+        marginals = []
+        for codes, size in zip(fit_codes, cardinalities):
+            pooled = (np.bincount(codes, minlength=size) + 1) / (len(codes) + size)
+            observed_counts = np.bincount(codes[mask], minlength=size)
+            marginals.append((observed_counts + 50 * pooled) / (int(mask.sum()) + 50))
+        likelihood = np.log(marginals[root][score_codes[root]])
+        for parent, child in edges:
+            size_parent, size_child = cardinalities[parent], cardinalities[child]
+            flat = fit_codes[parent][mask] * size_child + fit_codes[child][mask]
+            counts = np.bincount(flat, minlength=size_parent * size_child).reshape(size_parent, size_child)
+            probabilities = (counts + 100 * marginals[child][None, :]) / (
+                counts.sum(axis=1, keepdims=True) + 100
+            )
+            likelihood += np.log(probabilities[score_codes[parent], score_codes[child]])
+        log_likelihoods.append(likelihood)
+    margins.append(log_likelihoods[1] - log_likelihoods[0])
+
+    scores = np.column_stack(margins)""")
+
+evaluation = """
+control, _ = stack(5)
+candidate, coefficients = stack(6)
+with np.load(pred / "p2_decimal_char_ngram_f0_dev.npz", allow_pickle=False) as saved:
+    np.testing.assert_array_equal(saved["row_indices"], valid)
+    np.testing.assert_array_equal(saved["ids"], ids[valid])
+    np.testing.assert_allclose(control, saved["candidate"], rtol=1e-8, atol=1e-8)
+
+observed = labels[valid]
+base_auc = roc_auc_score(observed, control)
+assert abs(base_auc - 0.9468323528460475) < 1e-12
+candidate_auc = roc_auc_score(observed, candidate)
+delta = candidate_auc - base_auc
+subfold_deltas = [
+    (roc_auc_score(observed[held], candidate[held])
+     - roc_auc_score(observed[held], control[held])) * 1e5
+    for _, held in StratifiedKFold(5, shuffle=True, random_state=7).split(control, observed)
+]
+positive = sum(change > 0 for change in subfold_deltas)
+verdict = "DEV_ADVANCE" if delta >= 8e-5 and positive >= 4 else "NO-GO"
+solo = roc_auc_score(observed, np.mean([design[:, 5] for design in outer_designs], axis=0))
+result = {
+    "scope": "historical_F0_DEV_ONLY",
+    "experiment": "class_conditional_decimal_and_categorical_dependency_tree",
+    "base_auc": base_auc, "candidate_auc": candidate_auc, "stream_solo_auc": solo,
+    "delta_e5": delta * 1e5, "positive_subfolds": positive,
+    "subfold_deltas_e5": subfold_deltas, "meta_coefficients": coefficients,
+    "verdict": verdict, "NO_SUBMIT": True, "NO_GPU": True,
+}
+payload = json.dumps(result, indent=2)
+(logs / "P2_DECIMAL_DEPENDENCY_TREE_F0_DEV.json").write_text(payload + "\\n")
+np.savez(
+    pred / "p2_decimal_dependency_tree_f0_dev.npz",
+    ids=ids[valid], row_indices=valid, control=control, candidate=candidate,
+    outer_stream_margins=np.stack(outer_scores),
+)
+with Path("logs/v47/CODEX_DS_REVIEW_NEXT.md").open("a") as review:
+    review.write(
+        "\\n## P2 decimal dependency tree\\n\\n"
+        f"Historical Fold-0. Control {base_auc:.16f}, candidate {candidate_auc:.16f}, "
+        f"solo {solo:.16f}, Δe-5 {delta * 1e5:+.8f}, "
+        f"{positive}/5 positive, {verdict}. Subfold Δe-5 {subfold_deltas}.\\n"
+    )
+print(payload)
+"""
+exec(compile(runner + "\n" + evaluation, str(source_path), "exec"), {"__name__": "__main__"})
+PY
+```

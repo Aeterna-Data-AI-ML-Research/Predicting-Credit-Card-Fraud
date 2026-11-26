@@ -1,0 +1,27 @@
+Inner fit 1/3
+Inner fit 2/3
+Inner fit 3/3
+{
+  "scope": "historical_F0_DEV_ONLY",
+  "saved_anchor_auc": 0.9446644275289812,
+  "matched_control_auc": 0.9446644275289812,
+  "control_reproduced": true,
+  "candidate_auc": 0.9449195163309662,
+  "delta_e5": 25.508880198499284,
+  "subfold_deltas_e5": [
+    16.72551253024679,
+    38.76748728006696,
+    65.80084883095472,
+    -0.015555756216478756,
+    11.036809041509166
+  ],
+  "positive_subfolds": 4,
+  "meta_coefficients_lr_lgbm_xgb": [
+    0.7207895953184429,
+    0.8290798059331913,
+    0.8255056137312979
+  ],
+  "verdict": "DEV_ADVANCE",
+  "NO_SUBMIT": true,
+  "NO_GPU": true
+}

@@ -1,0 +1,2808 @@
+Reading additional input from stdin...
+OpenAI Codex v0.172.0
+--------
+workdir: /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+model: gpt-6.2-sol
+provider: openai
+approval: on-request
+sandbox: workspace-write [workdir, /tmp, $TMPDIR]
+reasoning effort: none
+reasoning summaries: none
+session id: 01a2180a-0cec-7810-bcbf-4a725485c87f
+--------
+user
+You are the independent grandmaster DS reviewer for Kaggle Playground S6E11 credit-card fraud (maximize AUC).
+
+PROJECT ISOLATION: This session is ONLY for Predicting-Credit-Card-Fraud. Do not reference Name-That-LLM / kaggle-identify.
+
+LOCKS: NO_SUBMIT=True · SUBMIT_ARMED=False · $0 RunPod · 0 public competitor tip CSVs · cloud $0.
+
+CHAMPION (matched baseline):
+- z_sovereign_v0: overall AUC 0.952251 · Fold-0 0.951251 (n=139992, SKF rs=42)
+- 14 self-owned streams Deotte logit+std nested LR C=0.03
+- streams: B_xgb_llr, P4_L4.2/4.3/4.5_pure5f, P_super_v4p_hc, P_super_v5_harvest, delta1_v4, gpt2_med_4ep_{mean,shrink}, l7_{R5,U5_gini10,curv,mean10}, zone_honest
+- Gate for promotion: ΔAUC_f0 ≥ +8e-5 AND ≥4/5 nested subfolds positive vs z_sovereign_v0 Fold-0
+
+FAILED / EXHAUSTED (do not repeat without new evidence):
+1. Symmetric peer zero-echo residual — hygiene PASS, pos 0/5, all Δ negative
+2. z_sovereign_v1 + inner_hgb_sov — overall 0.952249 / F0 0.951247 (no lift)
+3. Private Kaggle T4 HGDT-v2 Fold-0 — solo 0.9046, field24+std LR 0.9342; vs z0 F0 Δe-5 −4665/−583/−634 · 0/5 → FAIL; do not scale to 5-fold
+
+RESOURCES: ~1568 local .npy preds; many P_super_v* stacks; private Kaggle GPU OK if CPU path saturated; RunPod FORBIDDEN (negative balance).
+
+GOAL: genuine verified Fold-0 OOF lift meeting the gate (VERIFIED_LIFT). Completing a report alone is failure.
+
+TASK NOW:
+1. Rank ≤5 highest-EV hypotheses for score lift under locks (CPU-first).
+2. EXECUTE the #1 feasible experiment yourself in this repo (read/stack/reweight/calibrate existing self-owned arrays; write scripts under scripts/v47_sovereign/ if needed).
+3. Report exact metrics vs z_sovereign_v0 Fold-0: base, cand, Δe-5, pos/5, GO/NO-GO.
+4. Write verdict to logs/v47/CODEX_DS_REVIEW_NEXT.md
+5. End with either VERIFIED_LIFT=YES <numbers> or the single next bash command for Cursor to run.
+
+Do not submit. Do not create RunPod pods. Do not load public tip CSVs.
+codex
+I’ll check the champion’s Fold-0 evaluation and inventory the local prediction arrays, then run the strongest CPU-feasible experiment against the same gate.
+exec
+/bin/bash -lc 'pwd; ls -a; ls scripts/v47_sovereign; ls logs/v47; rg --files -g AGENTS.md' in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ exited 1 in 460ms:
+/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+.
+..
+._.cache
+._.gitignore
+._.pytest_cache
+._.venv
+._README.md
+._areeb_95547
+._asterios_board
+._backups
+._cache_compact.npz
+._catboost_info
+._ckpt
+._docker
+._external
+._goodpjw_95546
+._out
+._submissions
+._tmp
+.cache
+.git
+.gitignore
+.pytest_cache
+.venv
+.venv_forensics
+LICENSE
+README.md
+areeb_95547
+artifacts
+artifacts_extra
+asterios_board
+backups
+cache
+cache_compact.npz
+catboost_info
+checkpoints
+ckpt
+data
+docker
+docs
+external
+external_bank
+goodpjw_95546
+logs
+notebooks
+original
+out
+preds
+scripts
+stack_all_public.py
+stack_hillclimb.py
+submissions
+tests
+tmp
+train_ensemble.py
+__pycache__
+hgdt_v2_mps_fold0.py
+kaggle_hgdt_f0
+launch_f0_pod.py
+pod_f0
+step1_schema_and_z_sovereign.py
+step2_provenance_and_z_v1.py
+step3_f0_gate.py
+step4_f0_gate_report.py
+v47_3_f0_gate.py
+CODEX_EXEC_SESSION.log
+HGDT_V2_RUN.log
+LAUNCH_F0_CONTRACT.json
+PRE_EXISTING_PODS.txt
+PRE_EXISTING_PODS_RAW.txt
+STEP1_POD_TEARDOWN.md
+STEP1_RUN.log
+STEP1_SCHEMA_SCAN.json
+STEP1_SCHEMA_SCAN.md
+STEP1_Z_SOVEREIGN.json
+STEP1_Z_SOVEREIGN.md
+STEP2_BILLING_GATE.json
+STEP2_PROVENANCE.json
+STEP2_PROVENANCE.md
+STEP2_RUN.log
+STEP2_Z_SOVEREIGN_V1.json
+STEP2_Z_SOVEREIGN_V1.md
+STEP3_GATE.json
+STEP4_GATE.json
+STEP4_RUN.log
+V47_2_HARDENED_SOVEREIGN_REPORT.md
+V47_3_GATE.json
+V47_3_GATE_RUN.log
+V47_3_KAGGLE_OUTPUT.log
+V47_3_KAGGLE_POLL.log
+V47_3_KAGGLE_PRIVATE_HGDT_F0_REPORT.md
+V47_SOVEREIGN_F0_REPORT.md
+codex_loop
+
+exec
+/bin/bash -lc 'cat scripts/v47_sovereign/v47_3_f0_gate.py; cat logs/v47/STEP1_Z_SOVEREIGN.json; ls logs/v47/codex_loop; ls preds | head -35' in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 33ms:
+#!/usr/bin/env python3
+"""V47.3 Fold-0 gate for private Kaggle HGDT-v2 outputs vs z_sovereign_v0.
+
+NO_SUBMIT=True · $0 RunPod · HGDT-only (no Qwen required).
+"""
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import time
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+from scipy import stats
+from scipy.special import expit, logit
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import r2_score, roc_auc_score
+from sklearn.model_selection import StratifiedKFold
+
+NO_SUBMIT = True
+assert NO_SUBMIT
+REPO = Path(__file__).resolve().parents[2]
+T0 = time.time()
+
+
+def log(m: str) -> None:
+    print(f"[{time.time()-T0:6.1f}s][v473] {m}", flush=True)
+
+
+def sha256(p: Path) -> str:
+    h = hashlib.sha256()
+    with open(p, "rb") as f:
+        for c in iter(lambda: f.read(1 << 20), b""):
+            h.update(c)
+    return h.hexdigest()
+
+
+def hygiene(o, t):
+    o, t = np.asarray(o, float).ravel(), np.asarray(t, float).ravel()
+    return float((t.std() + 1e-12) / (o.std() + 1e-12)), float(stats.ks_2samp(o, t).statistic)
+
+
+def nested_lr(X, y, C=0.05):
+    oof = np.zeros(len(y), np.float64)
+    subs = []
+    for tr, va in StratifiedKFold(5, shuffle=True, random_state=42).split(X, y):
+        clf = LogisticRegression(C=C, solver="newton-cholesky", max_iter=500)
+        clf.fit(X[tr], y[tr])
+        oof[va] = clf.predict_proba(X[va])[:, 1]
+        subs.append(float(roc_auc_score(y[va], oof[va])))
+    return oof, float(roc_auc_score(y, oof)), subs
+
+
+def gate_metrics(z_base, z_cand, y):
+    d = []
+    for _, va in StratifiedKFold(5, shuffle=True, random_state=7).split(z_base, y):
+        d.append(roc_auc_score(y[va], z_cand[va]) - roc_auc_score(y[va], z_base[va]))
+    d = np.asarray(d)
+    return {
+        "auc_base": float(roc_auc_score(y, z_base)),
+        "auc_cand": float(roc_auc_score(y, z_cand)),
+        "delta_auc": float(roc_auc_score(y, z_cand) - roc_auc_score(y, z_base)),
+        "delta_e5": float((roc_auc_score(y, z_cand) - roc_auc_score(y, z_base)) * 1e5),
+        "pos_subfolds": int((d > 0).sum()),
+        "subfold_deltas": d.tolist(),
+        "t_stat": float(d.mean() / (d.std(ddof=1) / np.sqrt(len(d)) + 1e-12)),
+        "disp": float(d.std()),
+        "KS": float(stats.ks_2samp(z_base, z_cand).statistic),
+        "R2": float(r2_score(z_base, z_cand)),
+    }
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--kaggle-dir", type=Path, default=REPO / "preds/v47_kaggle_f0")
+    ap.add_argument("--data", type=Path, default=None)
+    ap.add_argument("--out", type=Path, default=REPO / "logs/v47")
+    args = ap.parse_args()
+    args.out.mkdir(parents=True, exist_ok=True)
+
+    data = args.data
+    if data is None:
+        for p in (Path("/tmp/s6e11_v39_ssd/data"), REPO / "data"):
+            if (p / "train.csv").exists():
+                data = p
+                break
+    y = pd.read_csv(data / "train.csv", usecols=["is_fraud"])["is_fraud"].to_numpy(int)
+    folds = np.load(REPO / "preds/v47_sovereign/folds_skf42.npy")
+    va = folds == 0
+    y_va = y[va]
+    assert len(y_va) == 139992
+
+    z = np.load(REPO / "preds/v47_sovereign/z_sovereign_v0_oof.npy").ravel()
+    z_va = z[va]
+    base = float(roc_auc_score(y_va, z_va))
+    log(f"z_sovereign_v0 F0 AUC={base:.6f}")
+
+    req = [
+        "hgdt_v2_f0_seq_llr_oof.npy",
+        "hgdt_v2_f0_seq_llr_test.npy",
+        "hgdt_v2_f0_field24_llr_oof.npy",
+        "hgdt_v2_f0_field24_llr_test.npy",
+        "hgdt_v2_f0_field24_std_oof.npy",
+        "hgdt_v2_f0_field24_std_test.npy",
+        "hgdt_v2_f0_meta.json",
+    ]
+    missing = [n for n in req if not (args.kaggle_dir / n).exists()]
+    if missing:
+        report = {"status": "MISSING_ARTIFACTS", "missing": missing, "NO_SUBMIT": True, "base_auc_f0": base}
+        (args.out / "V47_3_KAGGLE_PRIVATE_HGDT_F0_REPORT.md").write_text(
+            f"# V47.3 REPORT — BLOCKED\n\nmissing `{missing}`\nNO_SUBMIT=True\n"
+        )
+        (args.out / "V47_3_GATE.json").write_text(json.dumps(report, indent=2))
+        log(f"missing {missing}")
+        return
+
+    checks = {}
+    for n in req:
+        if n.endswith(".npy"):
+            a = np.load(args.kaggle_dir / n)
+            checks[n] = {
+                "shape": list(a.shape),
+                "finite": bool(np.isfinite(a).all()),
+                "sha256": sha256(args.kaggle_dir / n),
+            }
+            assert checks[n]["finite"], n
+    log(f"artifact checks ok: { {k: v['shape'] for k,v in checks.items()} }")
+
+    seq = np.load(args.kaggle_dir / "hgdt_v2_f0_seq_llr_oof.npy")
+    f24 = np.load(args.kaggle_dir / "hgdt_v2_f0_field24_llr_oof.npy").astype(np.float64)
+    s24 = np.load(args.kaggle_dir / "hgdt_v2_f0_field24_std_oof.npy").astype(np.float64)
+    f24t = np.load(args.kaggle_dir / "hgdt_v2_f0_field24_llr_test.npy").astype(np.float64)
+    assert seq.shape[0] in (139992, len(y))
+    if seq.shape[0] == len(y):
+        seq, f24, s24 = seq[va], f24[va], s24[va]
+    assert f24.shape == (139992, 24), f24.shape
+
+    seq_llr = seq[:, :, 1] - seq[:, :, 0]
+    mean_seq = seq_llr.mean(1)
+    sum_f = f24.sum(1)
+    auc_seq = float(roc_auc_score(y_va, mean_seq))
+    auc_sum = float(roc_auc_score(y_va, sum_f))
+
+    X = np.hstack([f24, s24])
+    oof_lr, auc_lr, sub_lr = nested_lr(X, y_va, C=0.05)
+    log(f"solo seq={auc_seq:.6f} sum={auc_sum:.6f} lr={auc_lr:.6f}")
+
+    # Cross-modal: P4 + field24 shallow LGB/XGB
+    p4 = []
+    for tag in ("P4_L4.2_pure5f", "P4_L4.3_pure5f", "P4_L4.5_pure5f"):
+        p = REPO / "preds/matrix_v2" / f"{tag}_oof.npy"
+        if p.exists():
+            p4.append(np.load(p).ravel()[va, None])
+    Xc = np.hstack(p4 + [f24]) if p4 else f24.copy()
+    oof_cm = np.zeros(len(y_va))
+    try:
+        import lightgbm as lgb
+        for tr_i, va_i in StratifiedKFold(5, shuffle=True, random_state=42).split(Xc, y_va):
+            dtr = lgb.Dataset(Xc[tr_i], label=y_va[tr_i], init_score=(0.25 * z_va[tr_i]))
+            bst = lgb.train(
+                dict(objective="binary", max_depth=3, learning_rate=0.05,
+                     min_child_samples=200, verbosity=-1),
+                dtr, num_boost_round=150,
+            )
+            oof_cm[va_i] = bst.predict(Xc[va_i])
+    except Exception:
+        try:
+            import xgboost as xgb
+            for tr_i, va_i in StratifiedKFold(5, shuffle=True, random_state=42).split(Xc, y_va):
+                dtr = xgb.DMatrix(Xc[tr_i], label=y_va[tr_i], base_margin=0.25 * z_va[tr_i])
+                dva = xgb.DMatrix(Xc[va_i], base_margin=0.25 * z_va[va_i])
+                bst = xgb.train(
+                    {"max_depth": 3, "eta": 0.05, "objective": "binary:logistic",
+                     "eval_metric": "auc", "colsample_bytree": 0.4},
+                    dtr, num_boost_round=150,
+                )
+                oof_cm[va_i] = bst.predict(dva)
+        except Exception as e:
+            log(f"tree skip: {e}")
+            oof_cm = oof_lr
+
+    def fuse(p):
+        return logit(np.clip(0.75 * expit(z_va) + 0.25 * np.clip(p, 1e-6, 1 - 1e-6), 1e-6, 1 - 1e-6))
+
+    g_seq = gate_metrics(z_va, mean_seq, y_va)
+    g_lr = gate_metrics(z_va, fuse(oof_lr), y_va)
+    g_cm = gate_metrics(z_va, fuse(oof_cm), y_va)
+    disp, ks = hygiene(f24.sum(1), f24t.sum(1))
+
+    meta = {}
+    mp = args.kaggle_dir / "hgdt_v2_f0_meta.json"
+    if mp.exists():
+        meta = json.loads(mp.read_text())
+
+    report = {
+        "status": "DONE",
+        "NO_SUBMIT": True,
+        "spend_usd": 0.0,
+        "base_auc_f0_z_sovereign_v0": base,
+        "solo": {"auc_seq": auc_seq, "auc_sum_field": auc_sum, "auc_lr_24std": auc_lr, "subfold_lr": sub_lr},
+        "gate_seq_vs_z0": g_seq,
+        "gate_lr_fuse_vs_z0": g_lr,
+        "gate_cross_modal_vs_z0": g_cm,
+        "hygiene_sum_field": {"disp_raw": disp, "KS_raw": ks},
+        "R2_seq_vs_z0": float(r2_score(z_va, mean_seq)),
+        "artifacts": checks,
+        "kaggle_meta": meta,
+    }
+    (args.out / "V47_3_GATE.json").write_text(json.dumps(report, indent=2, default=float))
+
+    md = f"""# V47.3 — Private Kaggle HGDT-LM v2 Fold-0 Report
+
+**NO_SUBMIT=True · $0.00 RunPod · 0 submissions · private kernel only**
+
+## Artifacts
+- dir: `{args.kaggle_dir}`
+- shapes/SHA verified · 0 NaN/Inf
+
+## Solo competence (Fold-0 va0 n=139992)
+- equal-weight mean `seq_llr` AUC = **{auc_seq:.6f}**
+- equal-weight `sum(field24_llr)` AUC = **{auc_sum:.6f}**
+- newton-cholesky LR on 24+std AUC = **{auc_lr:.6f}**
+
+## vs `z_sovereign_v0` F0 ({base:.6f})
+| stream | ΔAUC (e-5) | pos/5 | t | KS | R² |
+|---|---:|---:|---:|---:|---:|
+| seq | {g_seq['delta_e5']:.2f} | {g_seq['pos_subfolds']} | {g_seq['t_stat']:.2f} | {g_seq['KS']:.4f} | {g_seq['R2']:.4f} |
+| LR fuse | {g_lr['delta_e5']:.2f} | {g_lr['pos_subfolds']} | {g_lr['t_stat']:.2f} | {g_lr['KS']:.4f} | {g_lr['R2']:.4f} |
+| cross-modal | {g_cm['delta_e5']:.2f} | {g_cm['pos_subfolds']} | {g_cm['t_stat']:.2f} | {g_cm['KS']:.4f} | {g_cm['R2']:.4f} |
+
+## Hygiene (sum field24 oof vs test)
+- `disp_raw` = {disp:.4f} · `KS_raw` = {ks:.4f}
+
+## HARD STOP
+- **NO_SUBMIT=True** · **$0.00 spent** · **0 Kaggle competition submissions**
+"""
+    (args.out / "V47_3_KAGGLE_PRIVATE_HGDT_F0_REPORT.md").write_text(md)
+    log("DONE gate report written")
+
+
+if __name__ == "__main__":
+    main()
+{
+  "names": [
+    "B_xgb_llr",
+    "P4_L4.2_pure5f",
+    "P4_L4.3_pure5f",
+    "P4_L4.5_pure5f",
+    "P_super_v4p_hc",
+    "P_super_v5_harvest",
+    "delta1_v4",
+    "gpt2_med_4ep_mean",
+    "gpt2_med_4ep_shrink",
+    "l7_R5",
+    "l7_U5_gini10",
+    "l7_curv",
+    "l7_mean10",
+    "zone_honest"
+  ],
+  "overall_auc": 0.952251033980826,
+  "fold_aucs": [
+    0.9512507991341679,
+    0.9524377475204286,
+    0.9570745047372902,
+    0.9526470472830909,
+    0.9479874584947322
+  ],
+  "fold0_auc": 0.9512507991341679,
+  "n_streams": 14,
+  "NO_SUBMIT": true,
+  "sovereignty": "100% self-trained paths; banlist enforced",
+  "n_va0": 139992
+}ROUND1_EXEC.txt
+P_champ_oof.npy
+P_champ_test.npy
+P_restack_own_oof.npy
+P_restack_own_test.npy
+P_restack_pub_oof.npy
+P_restack_pub_test.npy
+P_super_champ_oof.npy
+P_super_champ_test.npy
+P_super_v3_oof.npy
+P_super_v3_test.npy
+P_super_v4_master_oof.npy
+P_super_v4_master_test.npy
+P_super_v4_oof.npy
+P_super_v4_test.npy
+P_super_v4p_7hc_oof.npy
+P_super_v4p_7hc_test.npy
+P_super_v4p_hc_master_oof.npy
+P_super_v4p_hc_master_test.npy
+P_super_v4p_hc_oof.npy
+P_super_v4p_hc_test.npy
+P_super_v4p_oof.npy
+P_super_v4p_test.npy
+P_super_v5_full_oof.npy
+P_super_v5_full_test.npy
+P_super_v5_harvest_oof.npy
+P_super_v5_harvest_test.npy
+P_super_v5_pure_oof.npy
+P_super_v5_pure_test.npy
+P_super_v5_rect_oof.npy
+P_super_v5_rect_test.npy
+P_super_v5p5_clean_oof.npy
+P_super_v5p5_clean_test.npy
+P_super_v5p5_rect_oof.npy
+P_super_v5p5_rect_test.npy
+P_super_v6_campaign_oof.npy
+
+exec
+/bin/bash -lc 'cat scripts/v47_sovereign/step1_schema_and_z_sovereign.py | tail -255
+ls scripts
+ls -lh data
+ls -l .venv/bin/python*
+cat logs/v47/codex_loop/ROUND1_EXEC.txt | tail -55' in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 323ms:
+
+def write_schema_md(hits: dict) -> None:
+    md = ["# V47 STEP1 — Schema Sister-Dataset Scan\n\n"]
+    md.append("**Goal:** Explain rumor scores like `0.96153` and map schema sisters.\n\n")
+    md.append(f"## Verdict\n\n{hits['explain_096153']}\n\n")
+    md.append("## Local orig20k\n\n")
+    lo = hits["local_orig20k"]
+    md.append(f"- path: `{lo['path']}`\n- rows: **{lo['rows']}** · cols: **{lo['n_cols']}**\n")
+    md.append(f"- overlap with train: **{lo['n_overlap']}** → `{lo['overlap_with_train']}`\n")
+    md.append(f"- `is_ai_generated_scam_attempt`: {lo['has_is_ai_generated_scam_attempt']}\n")
+    md.append(f"- `cvv_retry_count`: {lo['has_cvv_retry_count']}\n")
+    md.append(f"- frauds: {lo['fraud_count']}\n\n")
+    md.append("## HuggingFace hits (top)\n\n")
+    for h in hits["huggingface"][:15]:
+        md.append(f"- `{h.get('id')}` (q={h.get('query')}, dl={h.get('downloads')})\n")
+    md.append("\n## OpenML hits\n\n")
+    for h in hits["openml"][:15]:
+        md.append(f"- did={h.get('did')} `{h.get('name')}` (q={h.get('query')})\n")
+    if not hits["openml"]:
+        md.append("- (none / API miss)\n")
+    md.append("\n## Kaggle dataset list excerpts\n\n")
+    for h in hits["kaggle"]:
+        md.append(f"### query `{h['query']}`\n\n```\n{h['raw'][:1200]}\n```\n\n")
+    if hits["notes"]:
+        md.append("## Notes / errors\n\n")
+        for n in hits["notes"]:
+            md.append(f"- {n}\n")
+    (LOGD / "STEP1_SCHEMA_SCAN.md").write_text("".join(md))
+    (LOGD / "STEP1_SCHEMA_SCAN.json").write_text(json.dumps(hits, indent=2, default=str))
+
+
+# ── Sovereign streams ────────────────────────────────────────
+def load_gpt2_5f():
+    oof = np.zeros(699960, np.float64)
+    te = np.zeros(299984, np.float64)
+    disp_o = np.zeros(699960, np.float64)
+    for k in range(5):
+        a = load_npy(PRED / "gpt2_med_4ep" / f"oof_{k}.npy")  # (n, 8, 2)
+        b = load_npy(PRED / "gpt2_med_4ep" / f"test_{k}.npy")
+        # LLR mean across orders
+        llr = a[:, :, 1] - a[:, :, 0]
+        oof_part = llr.mean(1)
+        # fold index sizes
+        # assemble by fold membership later — here files are fold-va sized
+        # We'll fill by concatenating in fold order using known sizes
+    # Better: use StratifiedKFold to place
+    return None  # filled in assemble()
+
+
+def l7_features(oof_raw, test_raw, folds):
+    """oof_raw (N,10,2); test_raw (5,Nte,10,2) → dict of streams."""
+    # LLR per order
+    llr = oof_raw[:, :, 1] - oof_raw[:, :, 0]  # (N,10)
+    mean10 = llr.mean(1)
+    # Bayesian LSE curvature proxy: logsumexp-ish spread
+    # soft: max - mean across orders
+    curv = llr.max(1) - llr.mean(1)
+    # R5 antithetic: assume orders 0..4 vs 5..9 are antithetic pairs if present
+    if llr.shape[1] >= 10:
+        r5 = llr[:, :5].mean(1) - llr[:, 5:10].mean(1)
+    else:
+        r5 = llr[:, 0] - llr[:, -1]
+    # U5 gini10 epistemic: mu / sqrt(1 + (pi/8)*k*var) with k=10
+    mu = llr.mean(1)
+    var = llr.var(1)
+    k = llr.shape[1]
+    u5 = mu / np.sqrt(1.0 + (np.pi / 8.0) * k * var + 1e-12)
+    # test: average over 5 fold models
+    t_llr = test_raw[:, :, :, 1] - test_raw[:, :, :, 0]  # (5,Nte,10)
+    t_mean = t_llr.mean((0, 2))
+    t_curv = (t_llr.max(2) - t_llr.mean(2)).mean(0)
+    if t_llr.shape[2] >= 10:
+        t_r5 = (t_llr[:, :, :5].mean(2) - t_llr[:, :, 5:10].mean(2)).mean(0)
+    else:
+        t_r5 = (t_llr[:, :, 0] - t_llr[:, :, -1]).mean(0)
+    t_mu = t_llr.mean(2)
+    t_var = t_llr.var(2)
+    t_u5 = (t_mu / np.sqrt(1.0 + (np.pi / 8.0) * k * t_var + 1e-12)).mean(0)
+    return {
+        "l7_mean10": (mean10, t_mean),
+        "l7_curv": (curv, t_curv),
+        "l7_R5": (r5, t_r5),
+        "l7_U5_gini10": (u5, t_u5),
+    }
+
+
+def fold_honest_zone_indicator(tr: pd.DataFrame, y: np.ndarray, folds: np.ndarray):
+    """Zero-fraud boundary fitted ONLY on each 4-fold train split; apply to va+test."""
+    FLAGS = [
+        "is_foreign_transaction", "is_new_merchant", "used_vpn",
+        "ip_country_mismatch", "billing_shipping_mismatch", "is_ai_generated_scam_attempt",
+    ]
+    oof = np.zeros(len(y), np.float64)
+    # For test we average fold indicators
+    te = pd.read_csv(DATA / "test.csv")
+    te_acc = np.zeros(len(te), np.float64)
+
+    def zone_from_thresholds(df, thr):
+        clean = (df["cvv_retry_count"].to_numpy() == 0) & (df["prior_disputes"].to_numpy() == 0)
+        for f in FLAGS:
+            clean &= df[f].to_numpy().astype(int) == 0
+        risk, vel = df["merchant_risk_score"].to_numpy(), df["velocity_score"].to_numpy()
+        z1 = risk < thr["r1"]
+        z2 = (vel <= thr["v2"]) & (risk <= thr["r2"])
+        z34 = clean & (((vel <= thr["v3"]) & (risk <= thr["r3"])) | ((vel <= thr["v4"]) & (risk <= thr["r4"])))
+        return (z1 | z2 | z34).astype(np.float64)
+
+    # Search mild thresholds on train fold that keep 0 frauds
+    for k in range(5):
+        trm, va = folds != k, folds == k
+        # start from public recipe and verify 0 fraud on train fold; if frauds, tighten
+        thr = {"r1": 13.1, "v2": 4.1, "r2": 20.0, "v3": 4.1, "r3": 33.8, "v4": 6.0, "r4": 25.0}
+        ztr = zone_from_thresholds(tr.loc[trm], thr)
+        # if any fraud in zone on train, shrink risk caps
+        for _ in range(8):
+            if y[trm][ztr.astype(bool)].sum() == 0:
+                break
+            thr["r1"] *= 0.95
+            thr["r2"] *= 0.95
+            thr["r3"] *= 0.95
+            thr["r4"] *= 0.95
+            ztr = zone_from_thresholds(tr.loc[trm], thr)
+        oof[va] = zone_from_thresholds(tr.loc[va], thr)
+        te_acc += zone_from_thresholds(te, thr) / 5
+        log(f"  zone fold{k}: train_zone_n={int(ztr.sum())} train_zone_fraud={int(y[trm][ztr.astype(bool)].sum())} thr_r1={thr['r1']:.3f}")
+    return oof, te_acc
+
+
+def assemble_streams(tr, y, folds):
+    streams = {}  # name -> (oof, test)
+
+    def add(name, o, t):
+        assert len(o) == 699960 and len(t) == 299984, (name, o.shape, t.shape)
+        streams[name] = (np.asarray(o, np.float64).ravel(), np.asarray(t, np.float64).ravel())
+        log(f"  + {name}")
+
+    add("P_super_v4p_hc", load_npy(PRED / "P_super_v4p_hc_oof.npy"), load_npy(PRED / "P_super_v4p_hc_test.npy"))
+    add("P_super_v5_harvest", load_npy(PRED / "P_super_v5_harvest_oof.npy"), load_npy(PRED / "P_super_v5_harvest_test.npy"))
+    add("P4_L4.2_pure5f", load_npy(PRED / "matrix_v2/P4_L4.2_pure5f_oof.npy"), load_npy(PRED / "matrix_v2/P4_L4.2_pure5f_test.npy"))
+    add("P4_L4.3_pure5f", load_npy(PRED / "matrix_v2/P4_L4.3_pure5f_oof.npy"), load_npy(PRED / "matrix_v2/P4_L4.3_pure5f_test.npy"))
+    add("P4_L4.5_pure5f", load_npy(PRED / "matrix_v2/P4_L4.5_pure5f_oof.npy"), load_npy(PRED / "matrix_v2/P4_L4.5_pure5f_test.npy"))
+    add("B_xgb_llr", load_npy(PRED / "paradigm_B/xgb_llr_oof.npy"), load_npy(PRED / "paradigm_B/xgb_llr_test.npy"))
+    add("delta1_v4", load_npy(PRED / "gm_v4_polish/d1_v4_oof.npy"), load_npy(PRED / "gm_v4_polish/d1_v4_test.npy"))
+
+    # l7
+    l7o = load_npy(PRED / "l7_s2026_5f/l7_s2026_oof_5fold_raw.npy")
+    l7t = load_npy(PRED / "l7_s2026_5f/l7_s2026_test_5fold_raw.npy")
+    for n, (o, t) in l7_features(l7o, l7t, folds).items():
+        add(n, o, t)
+
+    # gpt2 med 4ep — assemble OOF by fold files
+    gpt_o = np.zeros(699960, np.float64)
+    gpt_d = np.zeros(699960, np.float64)  # dispersion
+    gpt_t_folds = []
+    gpt_td = []
+    for k in range(5):
+        a = load_npy(PRED / "gpt2_med_4ep" / f"oof_{k}.npy")
+        b = load_npy(PRED / "gpt2_med_4ep" / f"test_{k}.npy")
+        llr = a[:, :, 1] - a[:, :, 0]
+        gpt_o[folds == k] = llr.mean(1)
+        gpt_d[folds == k] = llr.std(1)
+        tllr = b[:, :, 1] - b[:, :, 0]
+        gpt_t_folds.append(tllr.mean(1))
+        gpt_td.append(tllr.std(1))
+    gpt_t = np.mean(gpt_t_folds, 0)
+    # 8-order dispersion shrinkage
+    kord = 8
+    gpt_shrink_o = gpt_o / np.sqrt(1.0 + (np.pi / 8.0) * kord * (gpt_d ** 2) + 1e-12)
+    gpt_shrink_t = gpt_t / np.sqrt(1.0 + (np.pi / 8.0) * kord * (np.mean(gpt_td, 0) ** 2) + 1e-12)
+    add("gpt2_med_4ep_mean", gpt_o, gpt_t)
+    add("gpt2_med_4ep_shrink", gpt_shrink_o, gpt_shrink_t)
+
+    # honest zone
+    zo, zt = fold_honest_zone_indicator(tr, y, folds)
+    add("zone_honest", zo, zt)
+    return streams
+
+
+def stack_deotte(streams, y, folds):
+    """Chris Deotte S6E10-style: logit-calibrate each stream, standardize fold-train, nest LR C=0.03."""
+    names = sorted(streams.keys())
+    log(f"stacking {len(names)} sovereign streams: {names}")
+    # Build OOF design
+    oof_z = np.zeros((len(y), len(names)), np.float64)
+    te_z = np.zeros((299984, len(names)), np.float64)
+    for j, n in enumerate(names):
+        o, t = streams[n]
+        # convert to calibrated log-odds via rank-logit (no y leakage)
+        oof_z[:, j] = to_logit_cal(o)
+        te_z[:, j] = to_logit_cal(t)
+
+    oof_pred = np.zeros(len(y), np.float64)
+    te_pred = np.zeros(299984, np.float64)
+    fold_aucs = []
+    for k in range(5):
+        trm, va = folds != k, folds == k
+        mu = oof_z[trm].mean(0)
+        sd = oof_z[trm].std(0) + 1e-8
+        Xtr = (oof_z[trm] - mu) / sd
+        Xva = (oof_z[va] - mu) / sd
+        Xte = (te_z - mu) / sd
+        lr = LogisticRegression(C=0.03, solver="lbfgs", max_iter=2000)
+        lr.fit(Xtr, y[trm])
+        oof_pred[va] = lr.predict_proba(Xva)[:, 1]
+        te_pred += lr.predict_proba(Xte)[:, 1] / 5
+        fa = float(roc_auc_score(y[va], oof_pred[va]))
+        fold_aucs.append(fa)
+        log(f"  stack fold{k} AUC={fa:.6f}")
+    overall = float(roc_auc_score(y, oof_pred))
+    f0 = fold_aucs[0]
+    return oof_pred, te_pred, {"names": names, "overall_auc": overall, "fold_aucs": fold_aucs, "fold0_auc": f0, "n_streams": len(names)}
+
+
+def main():
+    log("=== V47 STEP1 SOVEREIGN | NO_SUBMIT | 0 public preds ===")
+    # Schema scan
+    log("schema sister-dataset scan…")
+    hits = schema_scan()
+    write_schema_md(hits)
+    log("wrote STEP1_SCHEMA_SCAN.md")
+
+    tr = pd.read_csv(DATA / "train.csv")
+    y = tr["is_fraud"].to_numpy(int)
+    folds = np.zeros(len(y), int)
+    for k, (_, va) in enumerate(StratifiedKFold(5, shuffle=True, random_state=42).split(y, y)):
+        folds[va] = k
+    assert int((folds == 0).sum()) == 139992
+
+    log("assemble sovereign streams…")
+    streams = assemble_streams(tr, y, folds)
+    log("Deotte-style nested LR stack…")
+    oof, te, meta = stack_deotte(streams, y, folds)
+    np.save(OUT / "z_sovereign_v0_oof.npy", oof.astype(np.float64))
+    np.save(OUT / "z_sovereign_v0_test.npy", te.astype(np.float64))
+    np.save(OUT / "folds_skf42.npy", folds)
+    meta["NO_SUBMIT"] = True
+    meta["sovereignty"] = "100% self-trained paths; banlist enforced"
+    meta["n_va0"] = 139992
+    (LOGD / "STEP1_Z_SOVEREIGN.json").write_text(json.dumps(meta, indent=2))
+    md = [
+        "# V47 STEP1 — z_sovereign_v0\n\n",
+        f"- streams ({meta['n_streams']}): `{meta['names']}`\n",
+        f"- **AUC_sovereign_v0 overall = {meta['overall_auc']:.6f}**\n",
+        f"- **Fold-0 va0 AUC = {meta['fold0_auc']:.6f}** (n=139992)\n",
+        f"- fold AUCs: `{[round(a,6) for a in meta['fold_aucs']]}`\n",
+        "- saved: `preds/v47_sovereign/z_sovereign_v0_{oof,test}.npy`\n",
+        "- **NO_SUBMIT=True** · zero public competitor files loaded\n",
+    ]
+    (LOGD / "STEP1_Z_SOVEREIGN.md").write_text("".join(md))
+    log(f"DONE AUC={meta['overall_auc']:.6f} F0={meta['fold0_auc']:.6f}")
+    print(json.dumps({"overall": meta["overall_auc"], "fold0": meta["fold0_auc"], "n_streams": meta["n_streams"]}, indent=2))
+
+
+if __name__ == "__main__":
+    main()
+__pycache__
+_gm_v11_shared.py
+audit_pass1_leak.py
+audit_v5p5_clean_blend.py
+build_max_leap_sub.py
+build_psuper_v4p_bank.py
+build_qwen_on_athv2_submit.py
+build_v6_grandmaster_fusion.py
+build_v7_sovereign_cpu.py
+build_v8_part12_rect_slot2.py
+build_v8_zref_clean_upgrade.py
+build_v9_frontier_slot3.py
+build_v9_full_5fold.py
+campaign_backup_sync.sh
+campaign_chat_status.py
+campaign_progress_loop.sh
+campaign_watchdog_5min.sh
+cpu_campaign_pass340.py
+de_corrupt_and_boost_5f.py
+deep_research_part10.py
+deploy_gated_on_new_pod.sh
+diglead_features.py
+diglead_matrix_cache.py
+ds_first_principles_auc_research.py
+ds_slot1_ks_rect_submit.py
+export_meta_bank.py
+fix_gpt2_members.py
+forensic_audit_3min.py
+gate_1420_watcher.sh
+gate_fold0_qwen_zca.py
+gate_va_hard_1420.py
+gboost.py
+gboost_gpu_families.py
+gm_architect_nextgen_cascade_v9.py
+gm_att1_lock_f02_pos5.py
+gm_att2_lb_gradient_ascent.py
+gm_att3_continue_from_095315.py
+gm_audit_matapanino_09501_and_upstream.py
+gm_clean_l46c_epistatic_expansion_and_stage.py
+gm_day2_retake_maxleap.py
+gm_day2_strike10_orth_leap.py
+gm_day2_strike10b_softfamily_boost.py
+gm_deep_tech_095360_research_engine.py
+gm_ds_breakout_ladder_095348.py
+gm_forensic_cov_fix_and_st9p5_orth.py
+gm_inspect_v8_and_fix_f0f1_gbdt.py
+gm_l7_5f_phase0_preflight.py
+gm_leap_095369_phaseD.py
+gm_leap_095369_phaseDE.py
+gm_leap_095369_phaseE_fast.py
+gm_leap_095369_phaseF_close.py
+gm_leap_095369_research.py
+gm_macro_jump_v11_super_refeed.py
+gm_master_final_3slots_095348.py
+gm_max_jump_research_v3.py
+gm_nullspace_strike_orth_v3.py
+gm_overnight_8hr_super_factory.py
+gm_pull_and_audit_095347_v2.py
+gm_recon_095369_blocker.py
+gm_recon_and_new_signal_discovery.py
+gm_st9p5_exact_oof_and_5f_chain_upgrade.py
+gm_stage2_hardened_5f.py
+gm_stoploss_and_f0_k4_to_2seed_k10_audit.py
+gm_submit_slot7_verified_s7A.py
+gm_top1_strike4_6_7_8_repro.py
+gm_top1_strike9_final_max.py
+gm_top3_strike1.py
+gm_top3_strike2_honest_orth.py
+gm_top3_strike3_expanded7f.py
+gm_top3_strike5_12model_orth.py
+gm_track2_amanatar_q17_audit.py
+gm_v10_1_anchor_on_S7ours_audit.py
+gm_v10_2_hardened_audit_and_s7_twoseed.py
+gm_v10_hardened_095369_breaker.py
+gm_v11_095370_macro_leap.py
+gm_v11_1_nonlinear_stageB_wilcoxon_and_g26_denoiser.py
+gm_v11_teamlead_modular_macro_leap.py
+gm_v12_1_forensic_q17_knightfork_and_f0_subfold.py
+gm_v12_2_hardened_095385_recon_and_anchor_inversion.py
+gm_v13_2_overnight_check_and_stageB_v14.py
+gm_v13_3_hardened_nov13_forensic_and_doublecount_gate.py
+gm_v13_4_1_hardened_d1_v15_forensic_audit.py
+gm_v13_4_2_clean_lgb_xgb_contrasts_stageB.py
+gm_v13_4_calibrated_init_tabular_stageB.py
+gm_v13_research_beyond_095371.py
+gm_v13_research_beyond_095371_fast.py
+gm_v14_1_verify_watchdog_and_prep_step5.py
+gm_v14_2_fix_watchdog_sync_and_f1_audit.py
+gm_v14_complete_hardened_pipeline.py
+gm_v15_ultimate_8hr_autonomous_ladder.py
+gm_v16_0_lb_breakthrough_and_nov14_recon.py
+gm_v16_1_submit_famE_and_audit_digits_daoviet.py
+gm_v16_2_bracket_famE_and_4leaf_digits.py
+gm_v16_3_slot2_famE_0p50e4_and_true_ath_screen.py
+gm_v16_4_verify_oof_indexing_and_sameer_d1.py
+gm_v16_5_audit_full_gpu_l7_value.py
+gm_v16_5_submit_slot3_d1_polish.py
+gm_v16_7_fix_megayak_lm_test_basis.py
+gm_v16_8_frozen_beta_orth_and_fix_famE_drift.py
+gm_v16_9_gpu_order_dispersion_family_audit.py
+gm_v17_0_fold0_debias_and_g26_audit.py
+gm_v17_2_g26_blueprint_audit.py
+gm_v17_3_cross_pillar_gating_moe_audit.py
+gm_v17_4_clean_g1_bpe_qlm_asym.py
+gm_v17_5_verify_g1e_invariance_and_stage.py
+gm_v17_6_verify_g26_lm_risk_gated.py
+gm_v17_7_dual_baseline_invariance_audit.py
+gm_v17_8_residual_target_encoding_and_newton_step.py
+gm_v17_9_submit_r2_and_clean_r12.py
+gm_v18_0_slot5_base_r1_orth_and_r2_v2.py
+gm_v18_1_submit_slot6_r1_pure_bo10.py
+gm_v18_2_upgrade_r2_newton_ensemble_on_slot3.py
+gm_v18_3_pure_subbin_cents_and_logfreq_r2.py
+gm_v18_4_peer_homophily_and_cohort_rank_residual.py
+gm_v18_5_clean_peer_homophily_no_self_z.py
+gm_v18_6_strict_fold_isolated_peer_check.py
+gm_v18_7_strict_peer_upgrade_and_ortho_combo.py
+gm_v18_8_zero_echo_fullgraph_surrogate_and_v186_blend.py
+gm_v18_9_zero_r1_zero_logcnt_peer_and_teacher_distill.py
+gm_v19_0_break_loop_synthesis_and_slot7_submit.py
+gm_v19_11_cross_space_cohort_order_cat_on_slot8.py
+gm_v19_12_strict_tab45_x_u567_tensor_and_slot9.py
+gm_v19_13_label_free_999k_peer_reconstruction_and_slot9.py
+gm_v19_1_r2_prime_structural_upgrade_and_slot8.py
+gm_v19_2_additive_oblivious_cat_and_intrabin_on_slot5.py
+gm_v19_3_remaining_slots_lever_hunt.py
+gm_v19_4_cat_u5_diversity_and_distance.py
+gm_v19_5_slot9_hunt_vs_slot8_ath.py
+gm_v19_6_newton_residual_on_slot8.py
+gm_v19_7_alt_winners_and_external_streams.py
+gm_v19_8_new_dispersion_families_on_slot8.py
+gm_v20_0_wilcoxon_auc_gradient_and_p4_super_on_slot8.py
+gm_v20_1_forgotten_heavyweights_and_zca_whitened_orth_slot9.py
+gm_v20_autonomous_event_driven_factory.py
+gm_v20_overnight_cpu_grandmaster_factory.py
+gm_v20_overnight_cpu_monitor.sh
+gm_v21_base_pillar_replace_estimate.py
+gm_v21_local_only_4leverage_upgrade.py
+gm_v22_1_sriram_goodpjw_synthesis_and_live_leap.py
+gm_v22_2_fullbank_whitened_sriram_leap_and_mps_canary.py
+gm_v22_2_hardened_unbundled_sriram_leap.py
+gm_v22_3_ride_095425_ridge_and_replica_probe.py
+gm_v22_4_complete_incremental_pivot_from_095426.py
+gm_v22_5_crest_plus_signed_orthogonal_five_from_095426.py
+gm_v22_6_unattended_5slot_number1_ladder.py
+gm_v22_mps_full_gpt2_replica.sh
+gm_v22_mps_monitor.sh
+gm_v22_mps_new_base_research.py
+gm_v22_mps_watchdog.sh
+gm_v23_0_final_5slot_ab_engine.py
+gm_v23_1_execute_all_research.py
+gm_v23_1_gpw_orth_and_antik2.py
+gm_v23_p0_cross_family_blend.py
+gm_v23_p0b_r2_alex_90_10.py
+gm_v23_ray1_crest_and_neg_twilight.py
+gm_v24_1_professor_lever_study.py
+gm_v24_2_native_rf_gbm.py
+gm_v24_2b_fix_lgb_and_gate.py
+gm_v24_3_native_knn_mlp.py
+gm_v24_new_levers_sri95440_gpw95432.py
+gm_v25_new_score_channels.py
+gm_v28_own_levers_vs_ath511.py
+gm_v2_five_slot_ladder.py
+gm_v31_0_autopsy_095534_and_rebuild_oof.py
+gm_v31_1_step_o_095536_proprietary_5flm_leap.py
+gm_v31_2_hardened_step_p_audit_and_strike.py
+gm_v31_3_gm_step_p_and_09615_simulation.py
+gm_v32_0_leaderboard_096153_and_deep_leak_hunt.py
+gm_v32_1_dissect_0575_id_and_graph_unlock.py
+gm_v33_0_runpod_4090_nonbank_breakthrough.py
+gm_v33_1_hardened_forensics.py
+gm_v34_1_first_principles_breakthrough.py
+gm_v34_3_principal_ds_breakthrough.py
+gm_v34_4_local_bugfix_and_recon.py
+gm_v36_0_first_place_12h_unattended.py
+gm_v36_1_true_9h_overnight.py
+gm_v37_1_max_leap_single_submit.py
+gm_v38_1_fisher_cube_and_platt_fusion.py
+gm_v38_2_zca_fix_and_single_verify.py
+gm_v4_1_cache_and_orthonormal_lock.py
+gm_v4_surgical_polish.py
+gm_v5p2_hierarchical_s5_upgrade.py
+gm_v7_1_extract_true_tree_delta_and_concave_lock.py
+gm_v7_1_resume_slots_and_monitor.py
+gm_v7_2_dedup_and_stage_tomorrow.py
+gm_v8_real_l7_stageB_and_095365_leap.py
+gm_v9_1_hardened_regime_and_rayA_lock.py
+gm_v9_2_concave_adaptive_submit.py
+gm_verify_unbundled_s7_max_jump.py
+gpu_autonomous_orchestrator_v2.py
+gpu_matrix_v2_core.py
+gpu_matrix_v2_runner.py
+grandmaster_5playbook_tournament.py
+harvest_v5_finalize.py
+high_ev_paradigm_loop.py
+hotpatch_after_t01_fold0.sh
+kaggle_doh.py
+l7_pod_watchdog.sh
+launch_fold_n.sh
+lb_lift_alex_blend.py
+lm_medium_member.py
+materialize_self_test_preds.py
+monitor_gpu_tick.sh
+nov04_local_audit_and_subs.py
+nov06_ladder_0953.py
+nov07_kaggle_cli_submit.py
+nov07_local_research_submit.py
+nov07_submit_ladder.py
+nov07_wave2_research_submit.py
+oof_bank_loader.py
+orch_gpu_campaign.sh
+orchestrate_gated_score.sh
+overnight_pull_checkpoints.sh
+own_generator_research.py
+p4_pure_5fold.py
+paradigm_abc_cuda_campaign.py
+paradigm_stack_delta_eval.py
+paradigm_stack_delta_sidecar.py
+part10_upgrade_psuper.py
+part11_common.py
+part11_grandmaster_auc_engine.py
+part11_lab1_idf_graph.py
+part11_lab2_interactions.py
+part11_lab3_transductive.py
+part11_lab4_nade.py
+part11_paradigm_shift.py
+part6_repro_and_expand.py
+part7_clean_superstack.py
+part8_orth_superstack.py
+part8_proprietary_scan.py
+part9_joint_boost_and_basis.py
+part9b_beat_p7gs.py
+pass340_tomorrow.sh
+phase1_slot1_v8_gpt2m_f2_orth.py
+phase2_5_local_meta_gate.py
+phase2_fast_gpu_harvest.py
+phase2_slot2_audit_submit.py
+phaseA_audit_bank.py
+phaseB_glm_boost.py
+phaseC_nested_combiner.py
+phaseC_pass12.py
+post_gpt2_3ep_campaign.py
+prebuild_diglead_cache.py
+prove_the_split.py
+rank_displacement_v10.py
+recon_and_forensic_audit.py
+research_progress_snapshot.py
+restack_wide_own.py
+run_10_tests_unattended.sh
+run_local_matrix_8x5.py
+run_overnight_part6.sh
+run_paradigm_ladder.py
+run_part6_master.sh
+run_unattended_10tests.py
+scan4_cohort_id_rank_residual.py
+score_public_tfm_dual_baseline.py
+score_qwen_f0_gated.py
+score_qwen_f0_only.py
+score_qwen_test_fast.py
+score_qwen_va_only.py
+stage10_diglead_superbase.py
+stage10_reinject_hillclimb.py
+stage11_gm_leap.py
+stage6_1_oof_audit.py
+stage6_2_gpu_neural.py
+stage6_3_additive_models.py
+stage6_3b_xgb_cuda_sweep.py
+stage7_1_gpu_solver.py
+stage7_1_nested_probit_logit.py
+stage7_2_gpu_gated_meta.py
+stage7_2_gpu_meta_stacker.py
+stage7_align_handoff.py
+stage8_1_raw_dual_realmlp.py
+stage8_2_gpu_residual_xgb.py
+stage8_3_gpu_pseudolabel.py
+stage9_1_full73_power_hillclimb.py
+stage9_2_orig20k_orthogonal_residual.py
+stageB_l7_5f_super_booster.py
+step2_lm_orth_and_v10_transductive.py
+step3_de_bias_v10_and_stage_strike10.py
+step3b_surgical_no_zanch_probe.py
+step4_non_distilled_audit_and_ctr_catboost.py
+stop_pod_when_campaign_done.sh
+submit_slot4_internal_lm_upgrade_f0123.py
+te_smooth50_features.py
+train_compact_lm_5f.py
+train_hires_compact_lm_5f.py
+train_l7_5f_s2026.py
+unattended_common.py
+v33_remote
+v36_1_lib.py
+v36_1_workers
+v36_2_morning_harvest_audit.py
+v36_lib.py
+v36_workers
+v37_gpu
+v37_local_audit_fixed.py
+v37_local_parallel_audit.py
+v39_tfm_only_fold0.py
+v40_public_orth_ladder.py
+v41_recon_fwd_secant_uid_audit.py
+v41_step1_frontier_harvest.py
+v41_step2_aa_frontier_geometry_audit.py
+v41_step3_rebase_uid_cb_on_AB.py
+v41_step4_kabartay_d27_audit.py
+v41_step5_dual_nested_stack.py
+v41_step5b_fix_nested_stack.py
+v41_step6_ds_hardened_manifest.py
+v41_step6b_purge_v10ridge_and_fix_pub_baseline.py
+v41_step6d_board_model_stepac_audit.py
+v41_step6e_2d_diagonal_stage.py
+v42_1_modern_bank_and_stageb.py
+v42_macro_leap_architect.py
+v43_2_local_parallel_4engines.py
+v43_f0_sequential_submit_ladder.py
+v43_f0_watch_then_submit.sh
+v43_max5_sequential_tip_ladder.py
+v43_pod_qwen_perfield_llr_and_tabicl
+v43_pub_prop_tipmix.py
+v43_stage1_recover_u5_order_tensor_eval.py
+v44_phase2_local_fwfm_ebm.py
+v44_step1_hardened_autopsy.py
+v44_step2_unpack_dir3_stage.py
+v45_day1_auc_decomp_llr_zones.py
+v45_day2_hpr_llr_copula.py
+v45_day3_subtype_domain_moe.py
+v47_sovereign
+validation_stage1_adversarial.py
+validation_stage2_handbook_cv.py
+validation_stage3_baselines.py
+validation_stage4_levers.py
+validation_stage5_diagnostics.py
+verify_assumptions_slot3_gm.py
+verify_control_variates_f0_f2.py
+verify_diglead_fold0.py
+verify_slot4_gm_f012.py
+verify_slot4_gm_f0123.py
+watch_sync_gpt2_med_pod.sh
+total 289536
+-rwx------  1 moranzavdi  staff   8.0M Aug 31 18:01 sample_submission.csv
+-rwx------  1 moranzavdi  staff    39M Aug 31 18:01 test.csv
+-rwx------  1 moranzavdi  staff    94M Aug 31 18:01 train.csv
+lrwx------@ 1 moranzavdi  staff  10 Nov 19 16:13 .venv/bin/python -> python3.14
+lrwx------@ 1 moranzavdi  staff  10 Nov 19 16:13 .venv/bin/python3 -> python3.14
+lrwx------@ 1 moranzavdi  staff  44 Nov 19 16:13 .venv/bin/python3.14 -> /opt/homebrew/opt/python@3.14/bin/python3.14
+  "fold_aucs": [
+    0.9512507991341679,
+    0.9524377475204286,
+    0.9570745047372902,
+    0.9526470472830909,
+    0.9479874584947322
+  ],
+  "fold0_auc": 0.9512507991341679,
+  "n_streams": 14,
+  "NO_SUBMIT": true,
+  "sovereignty": "100% self-trained paths; banlist enforced",
+  "n_va0": 139992
+}ROUND1_EXEC.txt
+P_champ_oof.npy
+P_champ_test.npy
+P_restack_own_oof.npy
+P_restack_own_test.npy
+P_restack_pub_oof.npy
+P_restack_pub_test.npy
+P_super_champ_oof.npy
+P_super_champ_test.npy
+P_super_v3_oof.npy
+P_super_v3_test.npy
+P_super_v4_master_oof.npy
+P_super_v4_master_test.npy
+P_super_v4_oof.npy
+P_super_v4_test.npy
+P_super_v4p_7hc_oof.npy
+P_super_v4p_7hc_test.npy
+P_super_v4p_hc_master_oof.npy
+P_super_v4p_hc_master_test.npy
+P_super_v4p_hc_oof.npy
+P_super_v4p_hc_test.npy
+P_super_v4p_oof.npy
+P_super_v4p_test.npy
+P_super_v5_full_oof.npy
+P_super_v5_full_test.npy
+P_super_v5_harvest_oof.npy
+P_super_v5_harvest_test.npy
+P_super_v5_pure_oof.npy
+P_super_v5_pure_test.npy
+P_super_v5_rect_oof.npy
+P_super_v5_rect_test.npy
+P_super_v5p5_clean_oof.npy
+P_super_v5p5_clean_test.npy
+P_super_v5p5_rect_oof.npy
+P_super_v5p5_rect_test.npy
+P_super_v6_campaign_oof.npy
+
+exec
+/bin/bash -lc 'cat scripts/v47_sovereign/step1_schema_and_z_sovereign.py | tail -255
+ls scripts
+ls -lh data
+ls -l .venv/bin/python*
+cat logs/v47/codex_loop/ROUND1_EXEC.txt | tail -55' in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+
+exec
+/bin/bash -lc "head -85 scripts/v47_sovereign/step1_schema_and_z_sovereign.py
+cat logs/v47/STEP2_PROVENANCE.md | head -100
+ls preds/v47_sovereign
+.venv/bin/python -c 'import numpy,pandas,sklearn;print(sklearn.__version__)'
+head -1 data/train.csv
+ls -l preds/{matrix_v2/P4_L4.2_pure5f_oof.npy,gm_v4_polish/d1_v4_oof.npy,l7_s2026_5f/l7_s2026_oof_5fold_raw.npy}" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+exec
+/bin/bash -lc "head -1 data/train.csv
+ls -lh preds/{matrix_v2/P4_L4.2_pure5f_oof.npy,gm_v4_polish/d1_v4_oof.npy,l7_s2026_5f/l7_s2026_oof_5fold_raw.npy}
+rg -n 'is_fraud|weight|fold' scripts/p4_pure_5fold.py | tail -22
+.venv/bin/python -c 'import numpy,pandas,sklearn,lightgbm;print(sklearn.__version__)'" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+exec
+/bin/bash -lc "sed -n '45,125p' scripts/p4_pure_5fold.py
+rg -n 'xgb_llr_oof|train.*fold' scripts/paradigm_abc_cuda_campaign.py | head -30
+head -90 scripts/v45_day3_subtype_domain_moe.py
+ls -la ../AGENTS.md AGENTS.md scripts/AGENTS.md scripts/v47_sovereign/AGENTS.md" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ exited 1 in 13ms:
+
+def rk(x):
+    x = np.asarray(x, dtype=np.float64).ravel()
+    return (rankdata(x, method="average") - 0.5) / max(len(x), 1)
+
+def align_fold_ecdf(sa, sb, ste):
+    """Map val/test quantiles onto fold-train empirical distribution sa so KS(val,test) ~ 0."""
+    sa_s = np.sort(np.asarray(sa, dtype=np.float64).ravel())
+    n = len(sa_s)
+    def _m(v):
+        r = rk(v)
+        q = np.clip(r * (n - 1), 0.0, n - 1.0)
+        lo = np.floor(q).astype(np.int64)
+        hi = np.minimum(lo + 1, n - 1)
+        w = q - lo
+        return (1.0 - w) * sa_s[lo] + w * sa_s[hi]
+    return _m(sb), _m(ste)
+
+def extract_single_lever_5fold(ctx: Ctx, key: str, v4p_o: np.ndarray, v4p_t: np.ndarray):
+    """
+    For a single lever (e.g. P4_L4.3), compute 3 clean 5-fold OOF/test tracks:
+      1) f_raw: ECDF-aligned mean of per-feature KS-filtered lever columns
+      2) ridge: Ridge(alpha=500) on calibrated residual (y - p_init)
+      3) xgb_direct: shallow depth=2 lever-only CUDA XGBoost residual
+    Pick the track that maximizes 5-fold OOF Test-1 ΔAUC vs v4p_hc!
+    """
+    t0 = time.time()
+    gen = LEVER_GENERATORS[key]
+    n = ctx.n
+    nt = len(v4p_t)
+    oof_fraw = np.zeros(n, dtype=np.float64)
+    oof_ridge = np.zeros(n, dtype=np.float64)
+    oof_xgb = np.zeros(n, dtype=np.float64)
+    te_fraw_folds, te_ridge_folds, te_xgb_folds = [], [], []
+
+    for fi, (a, b) in enumerate(ctx.folds):
+        Fa, Fb, Fte = gen(ctx, a, b)
+        Fa, Fb, Fte, _ = per_feature_ks_filter(Fa, Fb, Fte)
+        # Track 1: f_raw (standardize on fold_a, mean across cols, ECDF-align to fold_a)
+        sc = StandardScaler().fit(np.nan_to_num(Fa, 0.0))
+        Xa = sc.transform(np.nan_to_num(Fa, 0.0))
+        Xb = sc.transform(np.nan_to_num(Fb, 0.0))
+        Xte = sc.transform(np.nan_to_num(Fte, 0.0))
+        fa_m = Xa.mean(axis=1)
+        fb_m = Xb.mean(axis=1)
+        fte_m = Xte.mean(axis=1)
+        fb_al, fte_al = align_fold_ecdf(fa_m, fb_m, fte_m)
+        oof_fraw[b] = fb_al
+        te_fraw_folds.append(fte_al)
+
+        # Track 2 & 3: Ridge(500) + shallow depth=2 CUDA XGB via verified fit_lever_Direct_and_Ridge
+        init_a = residual_context_init_score(ctx.z_champ_o[a], ctx.z_glm_o[a])
+        init_b = residual_context_init_score(ctx.z_champ_o[b], ctx.z_glm_o[b])
+        init_te = residual_context_init_score(ctx.z_champ_t, ctx.z_glm_t)
+        d_r_b, d_r_te, d_x_b, d_x_te = fit_lever_Direct_and_Ridge(
+            Fa, ctx.y[a], Fb, ctx.y[b], Fte, init_a, init_b, init_te, seed=42 + fi
+        )
+        # Also evaluate Ridge predictions on fold_a for ECDF alignment
+        p_a = expit(init_a)
+        res_a = (ctx.y[a] - p_a).astype(np.float64)
+        ridge_m = Ridge(alpha=500.0).fit(Xa, res_a)
+        d_r_a = ridge_m.predict(Xa)
+        rb_al, rte_al = align_fold_ecdf(d_r_a, d_r_b, d_r_te)
+        oof_ridge[b] = rb_al
+        te_ridge_folds.append(rte_al)
+
+        xb_al, xte_al = align_fold_ecdf(d_r_a, d_x_b, d_x_te)
+        oof_xgb[b] = xb_al
+        te_xgb_folds.append(xte_al)
+
+    te_fraw = np.mean(te_fraw_folds, axis=0)
+    te_ridge = np.mean(te_ridge_folds, axis=0)
+    te_xgb = np.mean(te_xgb_folds, axis=0)
+
+    # Evaluate each track both as pure residual (z_champ + d) and standalone in Test-1 vs v4p_hc
+    z_base_o = to_z_ranklogit(v4p_o)
+    z_base_t = to_z_ranklogit(v4p_t)
+    tracks = {
+        "f_raw_resid": (oof_fraw, te_fraw),
+        "ridge_resid": (oof_ridge, te_ridge),
+        "xgb_resid": (oof_xgb, te_xgb),
+738:        np.save(out_dir / "xgb_llr_oof.npy", xgb_oof)
+966:    np.save(out_dir / "xgb_llr_oof.npy", xgb_oof)
+1270:        "B": ["stack_oof_corrected.npy", "xgb_llr_oof.npy", "combo_oof.npy"],
+#!/usr/bin/env python3
+"""V45 Day 3 — R3 subtype mixture + R4 orig20k domain prior + R6 conditional MoE.
+
+NO_SUBMIT unless KEEP (+5e-5, ≥4/5). Writes logs/v45/V45_DAY3_*.
+"""
+from __future__ import annotations
+
+import json
+import time
+import warnings
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+from scipy.special import expit, logit, logsumexp
+from scipy.stats import rankdata
+from sklearn.linear_model import LogisticRegression, Ridge
+from sklearn.metrics import roc_auc_score
+from sklearn.mixture import GaussianMixture
+from sklearn.model_selection import StratifiedKFold
+from sklearn.preprocessing import StandardScaler
+
+warnings.filterwarnings("ignore")
+
+ROOT = Path(__file__).resolve().parents[1]
+SSD = Path("/tmp/s6e11_v39_ssd")
+DATA = ROOT / "data" if (ROOT / "data/train.csv").exists() else SSD / "data"
+ORIG_CANDS = [
+    DATA / "orig20k.csv",
+    SSD / "data/orig20k.csv",
+    ROOT / "external/v37_twin_check/orig20k_uditjain.csv",
+]
+MOD = ROOT / "out/v42_1_modern"
+OUT2 = ROOT / "out/v45_day2"
+OUT = ROOT / "out/v45_day3"
+LOGD = ROOT / "logs/v45"
+OUT.mkdir(parents=True, exist_ok=True)
+LOGD.mkdir(parents=True, exist_ok=True)
+
+T0 = time.time()
+KEEP_E5, KEEP_POS = 5.0, 4
+FLAGS = [
+    "is_foreign_transaction", "is_new_merchant", "used_vpn",
+    "ip_country_mismatch", "billing_shipping_mismatch", "is_ai_generated_scam_attempt",
+]
+CONT = [
+    "amount_usd", "hours_since_last_txn", "distance_from_home_km",
+    "account_balance_usd", "velocity_score", "merchant_risk_score",
+]
+
+
+def log(m: str) -> None:
+    print(f"[{time.time()-T0:6.1f}s] {m}", flush=True)
+
+
+def U(v):
+    v = np.asarray(v, float).ravel()
+    return (rankdata(v, method="average") - 0.5) / len(v)
+
+
+def get_zones(df: pd.DataFrame) -> np.ndarray:
+    clean = (df["cvv_retry_count"].to_numpy() == 0) & (df["prior_disputes"].to_numpy() == 0)
+    for f in FLAGS:
+        clean &= df[f].to_numpy().astype(int) == 0
+    risk, vel = df["merchant_risk_score"].to_numpy(), df["velocity_score"].to_numpy()
+    return (
+        (risk < 13.1)
+        | ((vel <= 4.1) & (risk <= 20.0))
+        | (clean & (((vel <= 4.1) & (risk <= 33.8)) | ((vel <= 6.0) & (risk <= 25.0))))
+    )
+
+
+def Zr(scores, zones):
+    r = U(scores).copy()
+    r[zones] -= 2.0
+    return U(r)
+
+
+def unit(v):
+    v = np.asarray(v, float).ravel()
+    return (v - v.mean()) / (v.std() + 1e-12)
+
+
+def oof_delta(y, base, cand, folds):
+    d = []
+    for k in range(5):
+        m = folds == k
+        d.append((roc_auc_score(y[m], cand[m]) - roc_auc_score(y[m], base[m])) * 1e5)
+    d = np.asarray(d, float)
+    return {
+ls: ../AGENTS.md: No such file or directory
+ls: AGENTS.md: No such file or directory
+ls: scripts/AGENTS.md: No such file or directory
+ls: scripts/v47_sovereign/AGENTS.md: No such file or directory
+
+exec
+/bin/bash -lc "sed -n '905,975p' scripts/paradigm_abc_cuda_campaign.py
+ls -lh preds/paradigm_B
+rg -n 'fold|oof' scripts/train_l7_5f_s2026.py | tail -20
+rg -n 'L4.[235]|f_raw' logs/*/*p4* 2>/dev/null | head" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 3442ms:
+            llr_oof[b] = lb
+            h64_te_folds.append(ht)
+            llr_te_folds.append(lt)
+        del model
+        torch.cuda.empty_cache()
+
+    # B2 order-conditioned causal — abbreviated shared causal net
+    st["stage"] = "B2_causal"
+    st["submodule"] = "B2"
+    st["status_line"] = "B2 order-conditioned causal"
+    save_state(st)
+    # Use B1 llm as primary; causal add-on = permutation-std already in llr
+    h64_te = np.mean(h64_te_folds, axis=0)
+    llr_te = np.mean(llr_te_folds, axis=0)
+    llm_te = np.mean(llm_te_folds, axis=0)
+    np.save(out_dir / "llr72_oof.npy", llr_oof)
+    np.save(out_dir / "llr72_test.npy", llr_te)
+    np.save(out_dir / "h64_oof.npy", h64_oof)
+    np.save(out_dir / "h64_test.npy", h64_te)
+    np.save(out_dir / "llm_solo_oof.npy", llm_oof)
+    np.save(out_dir / "llm_solo_test.npy", llm_te)
+
+    # Law 1: booster AFTER full OOF F_B (fast path: 3 seeds, depth=3, verbose)
+    st["status_line"] = "B CUDA XGB on OOF F_B"
+    save_state(st)
+    F_B_oof = np.hstack([llr_oof, h64_oof]).astype(np.float32)
+    F_B_te = np.hstack([llr_te, h64_te]).astype(np.float32)
+    print(f"[B] XGB start F_B={F_B_oof.shape}", flush=True)
+    xgb_oof = np.zeros(data.n)
+    xgb_te_folds = []
+    for fi, (a, b) in enumerate(data.folds):
+        t_fold = time.time()
+        preds, preds_t = [], []
+        bm_a = (0.85 * data.z_champ_o[a] + 0.15 * data.z_glm_o[a]).astype(np.float32)
+        bm_b = (0.85 * data.z_champ_o[b] + 0.15 * data.z_glm_o[b]).astype(np.float32)
+        bm_t = (0.85 * data.z_champ_t + 0.15 * data.z_glm_t).astype(np.float32)
+        for seed in (42, 7, 2024):
+            print(f"[B] XGB fold={fi} seed={seed}", flush=True)
+            params = dict(
+                objective="binary:logistic", eval_metric="auc", max_depth=3, eta=0.05,
+                subsample=0.8, colsample_bytree=0.7, tree_method="hist", device="cuda:0",
+                max_bin=256, seed=seed,
+            )
+            dtr = xgb.DMatrix(F_B_oof[a], label=data.y[a], base_margin=bm_a)
+            dva = xgb.DMatrix(F_B_oof[b], label=data.y[b], base_margin=bm_b)
+            dte = xgb.DMatrix(F_B_te, base_margin=bm_t)
+            bst = xgb.train(params, dtr, num_boost_round=150, evals=[(dva, "v")], verbose_eval=50)
+            pb, pt = bst.predict(dva), bst.predict(dte)
+            pb, pt = align_to_oof_reference_with_tail_extrap(pb, pt, data.z_glm_o[a])
+            preds.append(pb)
+            preds_t.append(pt)
+        xgb_oof[b] = np.mean(preds, 0)
+        xgb_te_folds.append(np.mean(preds_t, 0))
+        print(f"[B] XGB fold {fi} auc={roc_auc_score(data.y[b], xgb_oof[b]):.6f} t={time.time()-t_fold:.1f}s", flush=True)
+
+    xgb_te = np.mean(xgb_te_folds, 0)
+    stack_res = score_candidate_vs_v4p_hc(data.y, data.v4p_o, xgb_oof, data.folds)
+    stack_oof = stack_res.pop("stack_oof_scores")
+    stack_auc = float(stack_res["stack_oof_auc"])
+    delta = float(stack_res["delta_auc"])
+    dlt, lo, hi = paired_bootstrap_ci(data.y, data.v4p_o, stack_oof)
+    np.save(out_dir / "xgb_llr_oof.npy", xgb_oof)
+    np.save(out_dir / "xgb_llr_test.npy", xgb_te)
+    np.save(out_dir / "combo_oof.npy", stack_oof)
+    np.save(out_dir / "combo_test.npy", xgb_te)
+    metrics = {
+        "solo_llm_auc": float(roc_auc_score(data.y, llm_oof)),
+        "solo_xgb_auc": float(roc_auc_score(data.y, xgb_oof)),
+        "stack_oof_auc": stack_auc,
+        "delta_auc": delta,
+        "boot_ci_90": [lo, hi],
+total 15872
+-rwx------@ 1 moranzavdi  staff   5.3M Nov  7 16:50 xgb_llr_oof.npy
+-rwx------@ 1 moranzavdi  staff   2.3M Nov  7 16:50 xgb_llr_test.npy
+797:        # fake oof/test shapes via save_npy_verified dry-run arrays
+799:        oof_fake = np.zeros((len(b), 10, 2), np.float32)
+802:        op = OUT / f"_phase0_oof_{f}.npy"
+804:        save_npy_verified(op, oof_fake, (len(b), 10, 2))
+808:        report["checks"][f"fold{f}_oof_shape"] = [len(b), 10, 2]
+809:        report["checks"][f"fold{f}_test_shape"] = [nte, k_test, 2]
+810:        report["checks"][f"fold{f}_n_val"] = int(len(b))
+811:        log(f"phase0 fold{f}: oof={(len(b),10,2)} test={(nte,k_test,2)} fwd_ok")
+816:        L7_S7_DIR / "lm7_oof_f0.npy",
+817:        Path("external/nov12_095369_recon/datasets/goodpjw2008__s6e11-compact-lm-seed7/lm7_oof_f0.npy"),
+822:    assert s7 is not None and np.load(s7).shape == (folds[0][1].shape[0], 10, 2)
+839:    """Re-run 3-gate on synced oof_0.npy without GPU."""
+840:    oof = np.load(OUT / "oof_0.npy")
+841:    meta = json.loads((OUT / "fold_0_meta.json").read_text()) if (OUT / "fold_0_meta.json").exists() else {}
+846:    folds = list(StratifiedKFold(5, shuffle=True, random_state=42).split(np.zeros(ntr), y))
+847:    a, b = folds[0]
+850:    info = fold0_three_gates(y, b, oof, prior, wall)
+858:    ap.add_argument("--folds", default=os.environ.get("FOLDS", "0"))
+880:    which = [x for x in a.folds.split(",") if x != ""]
+882:    ok = run_folds(g, which, stop_after_f0_canary=stop)
+logs/overnight/p4_pure_5fold.log:2:[2026-11-07T18:01:21Z]   [P4_L4.3] track=f_raw_resid        Test1Δ=-1.740e-05 ᾱ=+0.0000 solo=0.546784 KS=0.0404 |Δρ|=0.00153
+logs/overnight/p4_pure_5fold.log:3:[2026-11-07T18:01:34Z]   [P4_L4.3] track=ridge_resid        Test1Δ=+1.553e-05 ᾱ=-0.0136 solo=0.472322 KS=0.0360 |Δρ|=0.02603
+logs/overnight/p4_pure_5fold.log:4:[2026-11-07T18:01:47Z]   [P4_L4.3] track=xgb_resid          Test1Δ=-8.001e-07 ᾱ=+0.0018 solo=0.514207 KS=0.0067 |Δρ|=0.03890
+logs/overnight/p4_pure_5fold.log:5:[2026-11-07T18:02:00Z]   [P4_L4.3] track=z_plus_0.03_fraw   Test1Δ=-4.566e-06 ᾱ=+0.0466 solo=0.952280 KS=0.0000 |Δρ|=0.00000
+logs/overnight/p4_pure_5fold.log:6:[2026-11-07T18:02:13Z]   [P4_L4.3] track=z_plus_0.03_ridge  Test1Δ=+2.234e-06 ᾱ=-0.0500 solo=0.952235 KS=0.0000 |Δρ|=0.00007
+logs/overnight/p4_pure_5fold.log:7:[2026-11-07T18:02:25Z]   [P4_L4.3] track=z_plus_0.03_xgb    Test1Δ=-1.046e-06 ᾱ=+0.0948 solo=0.952292 KS=0.0000 |Δρ|=0.00010
+logs/overnight/p4_pure_5fold.log:8:[2026-11-07T18:02:25Z] ==> [P4_L4.3] BEST track=ridge_resid 5-Fold Test1Δ=+1.553e-05 (t=37.8s)
+logs/overnight/p4_pure_5fold.log:9:[2026-11-07T18:02:55Z]   [P4_L4.2] track=f_raw_resid        Test1Δ=-3.957e-06 ᾱ=+0.0000 solo=0.535327 KS=0.0017 |Δρ|=0.00055
+logs/overnight/p4_pure_5fold.log:10:[2026-11-07T18:03:07Z]   [P4_L4.2] track=ridge_resid        Test1Δ=+1.508e-05 ᾱ=-0.0130 solo=0.499845 KS=0.0014 |Δρ|=0.01337
+logs/overnight/p4_pure_5fold.log:11:[2026-11-07T18:03:20Z]   [P4_L4.2] track=xgb_resid          Test1Δ=+3.474e-06 ᾱ=-0.0082 solo=0.459820 KS=0.0003 |Δρ|=0.00660
+
+codex
+Several champion streams have upstream stacking or model selection that used full OOF results. I’ll use the saved champion as the benchmark and fit the candidate on Fold-0 slices of the two self-trained LM tensors, with each scoring subfold held out of the combiner fit.
+exec
+/bin/bash -lc "cat > scripts/v47_sovereign/conditional_f0.py <<'PY'
+#"'!/usr/bin/env python3
+"""CPU-only conditional permutation pooling on sealed Fold-0 predictions."""
+import argparse
+import json
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+from scipy.special import logit
+from scipy.stats import rankdata
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import roc_auc_score
+from sklearn.model_selection import StratifiedKFold
+
+ROOT = Path(__file__).resolve().parents[2]
+NO_SUBMIT = True
+SUBMIT_ARMED = False
+FLAGS = [
+    '"'is_foreign_transaction', 'is_new_merchant', 'used_vpn',
+    'ip_country_mismatch', 'billing_shipping_mismatch', 'is_ai_generated_scam_attempt',
+]
+RAW = ['merchant_risk_score', 'velocity_score', 'cvv_retry_count', 'prior_disputes', *FLAGS]
+
+
+def design(parts, raw, train, residual):
+    columns = []
+    pooled = []
+    for orders in parts:
+        mean = orders.mean(axis=1)
+        std = orders.std(axis=1)
+        quantile = (rankdata(mean) - 0.5) / len(mean)
+        score = logit(quantile)
+        pooled.append(score)
+        contrasts = np.column_stack([
+            orders - mean[:, None], np.log1p(std), orders.max(axis=1) - mean,
+            mean / np.sqrt(1 + np.pi / 8 * orders.shape[1] * std**2),
+        ])
+        low, high = np.quantile(contrasts[train], [0.005, 0.995], axis=0)
+        contrasts = contrasts.clip(low, high)
+        columns.extend([
+            score[:, None], np.maximum(score[:, None] - [-3, -1, 1, 3], 0),
+            contrasts, contrasts * np.tanh(score[:, None] / 2),
+        ])
+    consensus = np.mean(pooled, axis=0)
+    risk, velocity = raw[:, :2].T
+    clean = (raw[:, 2:] == 0).all(axis=1)
+    channels = np.column_stack([clean, raw[:, 2:], risk, velocity, risk * velocity])
+    columns.extend([channels, channels * np.tanh(consensus[:, None] / 2)])
+    if residual:
+        columns.extend([
+            np.maximum(risk[:, None] - [13, 20, 27, 34, 45, 60], 0),
+            np.maximum(velocity[:, None] - [4, 6, 10, 20, 40], 0),
+            channels * np.tanh(consensus[:, None] / 2 - 1),
+        ])
+    x = np.column_stack(columns)
+    return (x - x[train].mean(axis=0)) / np.maximum(x[train].std(axis=0), 1e-8)
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--regime-splines', action='store_true')
+    args = parser.parse_args()
+    pred = ROOT / 'preds'
+    sovereign = pred / 'v47_sovereign'
+    frame = pd.read_csv(ROOT / 'data/train.csv', usecols=['is_fraud', *RAW])
+    y_full = frame['is_fraud'].to_numpy()
+    f0 = np.load(sovereign / 'folds_skf42.npy') == 0
+    expected = next(StratifiedKFold(5, shuffle=True, random_state=42).split(y_full, y_full))[1]
+    np.testing.assert_array_equal(np.flatnonzero(f0), expected)
+    assert f0.sum() == 139992
+    y = y_full[f0]
+    baseline = np.load(sovereign / 'z_sovereign_v0_oof.npy').ravel()[f0]
+    base_auc = roc_auc_score(y, baseline)
+    assert abs(base_auc - 0.9512507991341679) < 1e-12
+
+    l7 = np.load(pred / 'l7_s2026_5f/l7_s2026_oof_5fold_raw.npy', mmap_mode='r')[f0]
+    gpt2 = np.load(pred / 'gpt2_med_4ep/oof_0.npy')
+    assert l7.shape == (len(y), 10, 2) and gpt2.shape == (len(y), 8, 2)
+    parts = [tensor[:, :, 1].astype(float) - tensor[:, :, 0] for tensor in (l7, gpt2)]
+    raw = frame.loc[f0, RAW].to_numpy(dtype=float)
+    assert all(np.isfinite(array).all() for array in [raw, baseline, *parts])
+
+    oof = np.full(len(y), np.nan)
+    deltas = []
+    for fold, (train, valid) in enumerate(StratifiedKFold(5, shuffle=True, random_state=7).split(raw, y)):
+        x = design(parts, raw, train, args.regime_splines)
+        model = LogisticRegression(C=0.03, solver='lbfgs', max_iter=2000)
+        model.fit(x[train], y[train])
+        assert model.n_iter_[0] < model.max_iter
+        oof[valid] = model.decision_function(x[valid])
+        delta = roc_auc_score(y[valid], oof[valid]) - roc_auc_score(y[valid], baseline[valid])
+        deltas.append(delta)
+        print(f'Subfold {fold}: {delta * 1e5:+.8f} e-5', flush=True)
+    assert np.isfinite(oof).all()
+    auc = roc_auc_score(y, oof)
+    delta = auc - base_auc
+    positive = sum(d > 0 for d in deltas)
+    result = {
+        'n': len(y), 'base_auc': base_auc, 'candidate_auc': auc,
+        'delta_e5': delta * 1e5, 'positive_subfolds': positive,
+        'subfold_deltas_e5': [d * 1e5 for d in deltas],
+        'verdict': 'GO' if delta >= 8e-5 and positive >= 4 else 'NO-GO',
+        'NO_SUBMIT': NO_SUBMIT, 'SUBMIT_ARMED': SUBMIT_ARMED,
+    }
+    name = 'regime_splines_f0' if args.regime_splines else 'conditional_f0'
+    np.save(sovereign / f'{name}_oof.npy', oof)
+    payload = json.dumps(result, indent=2)
+    (ROOT / 'logs/v47' / f'{name}.json').write_text(payload + '\\n')
+    print(payload)
+
+
+if __name__ == '__main__':
+    main()
+PY
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python scripts/v47_sovereign/conditional_f0.py" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+exec
+/bin/bash -lc 'ls preds
+ls logs/v45
+ls preds/l7_s2026_5f
+ls preds/gpt2_med_4ep' in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 566ms:
+P_champ_oof.npy
+P_champ_test.npy
+P_restack_own_oof.npy
+P_restack_own_test.npy
+P_restack_pub_oof.npy
+P_restack_pub_test.npy
+P_super_champ_oof.npy
+P_super_champ_test.npy
+P_super_v3_oof.npy
+P_super_v3_test.npy
+P_super_v4_master_oof.npy
+P_super_v4_master_test.npy
+P_super_v4_oof.npy
+P_super_v4_test.npy
+P_super_v4p_7hc_oof.npy
+P_super_v4p_7hc_test.npy
+P_super_v4p_hc_master_oof.npy
+P_super_v4p_hc_master_test.npy
+P_super_v4p_hc_oof.npy
+P_super_v4p_hc_test.npy
+P_super_v4p_oof.npy
+P_super_v4p_test.npy
+P_super_v5_full_oof.npy
+P_super_v5_full_test.npy
+P_super_v5_harvest_oof.npy
+P_super_v5_harvest_test.npy
+P_super_v5_pure_oof.npy
+P_super_v5_pure_test.npy
+P_super_v5_rect_oof.npy
+P_super_v5_rect_test.npy
+P_super_v5p5_clean_oof.npy
+P_super_v5p5_clean_test.npy
+P_super_v5p5_rect_oof.npy
+P_super_v5p5_rect_test.npy
+P_super_v6_campaign_oof.npy
+P_super_v6_campaign_test.npy
+P_super_v6_clean_oof.npy
+P_super_v6_clean_test.npy
+P_super_v6_grandmaster_oof.npy
+P_super_v6_grandmaster_test.npy
+P_super_v6_oof.npy
+P_super_v6_test.npy
+P_super_v7_clean_oof.npy
+P_super_v7_clean_reg_oof.npy
+P_super_v7_clean_reg_test.npy
+P_super_v7_clean_test.npy
+P_super_v7_cpu_oof.npy
+P_super_v7_cpu_test.npy
+P_super_v7_master_oof.npy
+P_super_v7_master_test.npy
+P_super_v7_oof.npy
+P_super_v7_pure_master_oof.npy
+P_super_v7_pure_master_test.npy
+P_super_v7_pure_oof.npy
+P_super_v7_pure_test.npy
+P_super_v7_regime_only_oof.npy
+P_super_v7_regime_only_test.npy
+P_super_v7_test.npy
+P_super_v8_part12_rect_oof.npy
+P_super_v8_part12_rect_test.npy
+P_super_v9_frontier_rect_oof.npy
+P_super_v9_frontier_rect_test.npy
+P_wide_v5_rect_oof.npy
+P_wide_v5_rect_test.npy
+alex_09521_fixedw_oof.npy
+alex_09521_nested_oof_rs42.npy
+alex_09521_nested_oof_rs7.npy
+cb_native_ctr4_5f
+cpu_transductive_histgb_oof.npy
+cpu_transductive_histgb_test.npy
+day2_U3_oof.npy
+day2_U3_test.npy
+day2_dz3_full_oof.npy
+day2_dz3_full_test.npy
+day2_dz_alexrestack_oof.npy
+day2_dz_alexrestack_test.npy
+day2_dz_cleanjoint_oof.npy
+day2_dz_cleanjoint_test.npy
+day2_dz_cpu_campaign_oof.npy
+day2_dz_cpu_campaign_test.npy
+day2_dz_fam_p24_oof.npy
+day2_dz_fam_p24_test.npy
+day2_dz_joint25_oof.npy
+day2_dz_joint25_test.npy
+day2_dz_noproxy_oof.npy
+day2_dz_noproxy_test.npy
+day2_dz_soft_oof.npy
+day2_dz_soft_test.npy
+day2_dz_softfamily21_oof.npy
+day2_dz_softfamily21_test.npy
+day2_dz_softfamily_oof.npy
+day2_dz_softfamily_test.npy
+fast_gpu_harvest
+gb_gpt2_bag5_full.npy
+gb_gpt2_bag5_oof.npy
+gb_gpt2_joint_oof.npy
+gb_gpt2_joint_seeds
+gb_gpt2_joint_test.npy
+gb_gpt2_softpseudo_joint_bag3_oof.npy
+gb_gpt2_softpseudo_joint_bag3_test.npy
+gb_softpseudo_clean_bag3_oof.npy
+gb_softpseudo_clean_bag3_test.npy
+gb_superquad_bag5_full.npy
+gb_superquad_bag5_oof.npy
+gbn_cache
+glm_base_oof_track2.npy
+glm_joint_full.npy
+glm_joint_oof.npy
+glm_multismooth_oof.npy
+glm_qmatch_oof.npy
+glm_softpseudo_clean_diff_oof.npy
+glm_softpseudo_clean_diff_test.npy
+glm_softpseudo_clean_w0.35_oof.npy
+glm_softpseudo_clean_w0.35_test.npy
+glm_softpseudo_w0.15_oof.npy
+glm_softpseudo_w0.15_test_PROXY.npy
+glm_softpseudo_w0.25_oof.npy
+glm_softpseudo_w0.25_test_PROXY.npy
+glm_softpseudo_w0.35_oof.npy
+glm_varmatch_oof.npy
+gm_breakout
+gm_clean_l46c_v9
+gm_leap_095369
+gm_recon_p5
+gm_v13_2_stageB
+gm_v13_3_stageB
+gm_v13_4_2_clean
+gm_v13_4_stageB
+gm_v2_ladder
+gm_v3_research
+gm_v4_1
+gm_v4_1_fast_cache.npz
+gm_v4_polish
+gm_v5_fast_cache.npz
+gm_v5_overnight
+gm_v5p2
+gm_v6_audit
+gm_v8_real_l7
+gm_v9_1_hardened
+gpt2_3ep
+gpt2_med_4ep
+gpt2_rev
+hires_lm_5f
+l7_5f_rot10
+l7_s2026_5f
+ladder
+lgb_k_0_full.npy
+lgb_k_0_oof.npy
+lgb_k_1_full.npy
+lgb_k_1_oof.npy
+lgb_k_2_full.npy
+lgb_k_2_oof.npy
+lgb_k_l7_full.npy
+lgb_k_l7_oof.npy
+lgb_k_s100_0_full.npy
+lgb_k_s100_0_oof.npy
+lgb_k_s100_1_full.npy
+lgb_k_s100_1_oof.npy
+lgb_raw_full.npy
+lgb_raw_oof.npy
+lm_gpt2_3ep
+macro_v11
+matrix_8x5
+matrix_v2
+nov07
+nullspace_v3
+oof_nov04_alex_exact.npy
+oof_p7_keep7_nested.npy
+oof_p7_nested_exact.npy
+oof_part6_nested_exact.npy
+orig_nn_train_feats.npz
+own_p24_keyres_delta_oof.npy
+own_p24_keyres_delta_test.npy
+own_teglm_oof.npy
+own_teglm_test.npy
+own_telgb_oof.npy
+own_telgb_test.npy
+p730_rescue
+p7_super_newton_oof.npy
+p7_super_newton_test.npy
+paradigm_B
+part11
+part11_step1.npz
+part6_expand
+phaseA
+phaseB
+public_alex
+public_artifacts
+public_tabpfn
+st9p5_recon_5f
+stage3
+stage4
+stage5
+stage7
+stage9
+stageB_l7_5f
+test_nov04_alex_recon.npy
+unattended
+v10_transductive_bulsah
+v33_5fold
+v33_canary
+v34_1_first_principles
+v34_3_principal
+v34_4_local
+v36
+v36_1
+v36_1_vault
+v37_gpu
+v41_d27_eb_zone_oof.npy
+v41_d27_eb_zone_test.npy
+v43_order_tensor
+v47_kaggle_f0
+v47_pod_f0
+v47_sovereign
+v4p_bank_cache.npz
+v4p_bank_slim.npz
+xgb_k_full.npy
+xgb_k_oof.npy
+V45_AUC_ERROR_DECOMPOSITION.md
+V45_DAY1_RESULT.json
+V45_DAY1_RUN.log
+V45_DAY1_STATUS.md
+V45_DAY2_LOGIT_FUSE.json
+V45_DAY2_RESULT.json
+V45_DAY2_RUN.log
+V45_DAY2_STATUS.md
+V45_DAY3_RESULT.json
+V45_DAY3_RUN.log
+V45_DAY3_STATUS.md
+V45_PLAN_VS_EXECUTION_REPORT.md
+ALL_FOLDS_DONE
+F0_READY_FOR_LOCAL_CANARY
+MANIFEST.json
+MONITOR_F0_SYNCED
+PHASE0_S2026_PASS.json
+README.md
+cache_meta.json
+ckpts
+fold_0_meta.json
+fold_1_meta.json
+fold_2_meta.json
+fold_3_meta.json
+fold_4_meta.json
+l7_s2026_oof_5fold_raw.npy
+l7_s2026_test_5fold_raw.npy
+local_canary.json
+master_perms_seed2026.npy
+oof_0.npy
+oof_1.npy
+oof_2.npy
+oof_3.npy
+oof_4.npy
+orders_10.npy
+run.log
+test_0.npy
+test_1.npy
+test_2.npy
+test_3.npy
+test_4.npy
+test_orders.json
+train.log
+train.pid
+v14_1_audit.json
+v14_2_f1_audit.json
+v14_fold0_parity.json
+v14_train.log
+PHASE1_GATE_COMPLETE
+ckpt
+fold_0.pt
+fold_1.pt
+fold_2.pt
+fold_3.pt
+fold_4.pt
+oof_0.npy
+oof_1.npy
+oof_2.npy
+oof_3.npy
+oof_4.npy
+r_oof2.npy
+r_test.npy
+run.log
+sha256_fold2.txt
+status.json
+test_0.npy
+test_1.npy
+test_2.npy
+test_3.npy
+test_4.npy
+test_4_SURROGATE.json
+z_blend_phase1_test.npy
+
+exec
+/bin/bash -lc "ls preds/cb_native_ctr4_5f; rg -n 'cb_native_ctr4_5f|lgb_raw_oof.npy' scripts | head -24; ls -lh .venv/bin/python3.14; ps -eo pid,etime,%cpu,command | rg 'conditional_f0|import numpy,pandas'" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ exited 1 in 12358ms:
+H2_5F_gpt2med_orth_oof.npy
+H2_5F_gpt2med_orth_test.npy
+cb_native_ctr4_5f_oof.npy
+cb_native_ctr4_5f_orth_LM_oof.npy
+cb_native_ctr4_5f_orth_LM_test.npy
+cb_native_ctr4_5f_orth_LM_test_raw.npy
+cb_native_ctr4_5f_resid_oof.npy
+cb_native_ctr4_5f_resid_orth_LM_oof.npy
+cb_native_ctr4_5f_resid_orth_LM_test.npy
+cb_native_ctr4_5f_resid_orth_LM_test_raw.npy
+cb_native_ctr4_5f_resid_test.npy
+cb_native_ctr4_5f_test.npy
+lm_tree_disagree_gate_oof.npy
+lm_tree_disagree_gate_test.npy
+scripts/step4_non_distilled_audit_and_ctr_catboost.py:5:Outputs: preds/cb_native_ctr4_5f/ + logs/overnight/STEP4_NON_DISTILLED.md
+scripts/step4_non_distilled_audit_and_ctr_catboost.py:57:ART = PRED / "cb_native_ctr4_5f"
+scripts/step4_non_distilled_audit_and_ctr_catboost.py:539:    np.save(ART / "cb_native_ctr4_5f_oof.npy", oof.astype(np.float32))
+scripts/step4_non_distilled_audit_and_ctr_catboost.py:540:    np.save(ART / "cb_native_ctr4_5f_test.npy", te_pred.astype(np.float32))
+scripts/step4_non_distilled_audit_and_ctr_catboost.py:545:        "cb_native_ctr4_5f", oof, te_pred, y, z_ref_o, z_st9_t, s9, folds, lm_bank
+scripts/step4_non_distilled_audit_and_ctr_catboost.py:599:        "## Part 2 — `cb_native_ctr4_5f` forensic gate",
+scripts/step4_non_distilled_audit_and_ctr_catboost.py:621:        "cb_native_ctr4_5f": cb_row,
+scripts/v37_local_audit_fixed.py:474:    elif (REPO / "preds/cb_native_ctr4_5f/H2_5F_gpt2med_orth_oof.npy").exists():
+scripts/v37_local_audit_fixed.py:475:        po = np.load(REPO / "preds/cb_native_ctr4_5f/H2_5F_gpt2med_orth_oof.npy").ravel()
+scripts/v37_local_audit_fixed.py:476:        pt = np.load(REPO / "preds/cb_native_ctr4_5f/H2_5F_gpt2med_orth_test.npy").ravel()
+lrwx------@ 1 moranzavdi  staff    44B Nov 19 16:13 .venv/bin/python3.14 -> /opt/homebrew/opt/python@3.14/bin/python3.14
+/bin/bash: /bin/ps: Operation not permitted
+
+exec
+/bin/bash -lc "ps -eo pid,etime,%cpu,command | rg 'conditional_f0|import numpy,pandas'; ls -lh .venv/bin/python3.14; ls -lh preds/gpt2_med_4ep/oof_0.npy" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 5ms:
+/bin/bash: /bin/ps: Operation not permitted
+lrwx------@ 1 moranzavdi  staff    44B Nov 19 16:13 .venv/bin/python3.14 -> /opt/homebrew/opt/python@3.14/bin/python3.14
+-rwx------@ 1 moranzavdi  staff   8.5M Nov  8 13:14 preds/gpt2_med_4ep/oof_0.npy
+
+exec
+/bin/bash -lc ".venv/bin/python -S -c 'print(\"python works\", flush=True)'
+which -a python3
+ls -d /opt/homebrew/opt/python* /private/tmp/*venv*" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ exited 1 in 0ms:
+python works
+/opt/homebrew/bin/python3
+/opt/homebrew/bin/python3
+/opt/homebrew/bin/python3
+/opt/homebrew/bin/python3
+/usr/bin/python3
+/opt/homebrew/bin/python3
+ls: /private/tmp/*venv*: No such file or directory
+/opt/homebrew/opt/python
+/opt/homebrew/opt/python3
+/opt/homebrew/opt/python@3
+/opt/homebrew/opt/python@3.12
+/opt/homebrew/opt/python@3.14
+
+ succeeded in 140544ms:
+#!/usr/bin/env python3
+"""V47 STEP1 — Schema sister-dataset scan + sovereign z_sovereign_v0 stack.
+
+SOVEREIGNTY LOCK: zero public competitor predictions.
+NO_SUBMIT=True · 0 pods in this script.
+"""
+from __future__ import annotations
+
+import json
+import time
+import urllib.parse
+import urllib.request
+import warnings
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+from scipy.special import expit, logit
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import roc_auc_score
+from sklearn.model_selection import StratifiedKFold
+from scipy.stats import rankdata
+
+warnings.filterwarnings("ignore")
+
+NO_SUBMIT = True
+assert NO_SUBMIT
+
+ROOT = Path(__file__).resolve().parents[2]
+SSD = Path("/tmp/s6e11_v39_ssd")
+DATA = ROOT / "data" if (ROOT / "data/train.csv").exists() else SSD / "data"
+PRED = ROOT / "preds"
+OUT = PRED / "v47_sovereign"
+LOGD = ROOT / "logs/v47"
+OUT.mkdir(parents=True, exist_ok=True)
+LOGD.mkdir(parents=True, exist_ok=True)
+T0 = time.time()
+
+# Explicit ban list (never load)
+BAN_SUBSTR = (
+    "goodpjw", "monya", "dennis", "areeb", "amanatar", "asterios", "gpw70",
+    "nov26_board", "step_ab", "step_ag", "board_direction", "external/banks",
+)
+
+
+def log(m: str) -> None:
+    print(f"[{time.time()-T0:6.1f}s] {m}", flush=True)
+
+
+def assert_sovereign_path(p: Path) -> Path:
+    s = str(p).lower().replace("\\", "/")
+    for b in BAN_SUBSTR:
+        if b in s:
+            raise RuntimeError(f"SOVEREIGNTY VIOLATION: refused path containing '{b}': {p}")
+    if p.name.startswith("._"):
+        raise RuntimeError(f"AppleDouble refused: {p}")
+    return p
+
+
+def load_npy(p: Path) -> np.ndarray:
+    return np.load(assert_sovereign_path(p), allow_pickle=False)
+
+
+def U(v):
+    v = np.asarray(v, float).ravel()
+    return (rankdata(v, method="average") - 0.5) / len(v)
+
+
+def to_logit_cal(v):
+    """Rank → (0,1) → logit float64."""
+    u = np.clip(U(v), 1e-6, 1 - 1e-6)
+    return logit(u).astype(np.float64)
+
+
+# ── Schema scan ──────────────────────────────────────────────
+def http_get_json(url: str, timeout=20):
+    req = urllib.request.Request(url, headers={"User-Agent": "v47-sovereign-scan/1.0"})
+    with urllib.request.urlopen(req, timeout=timeout) as r:
+        return json.loads(r.read().decode())
+
+
+def schema_scan() -> dict:
+    hits = {"huggingface": [], "openml": [], "kaggle": [], "notes": []}
+    queries = [
+        "is_ai_generated_scam_attempt",
+# V47.2 STEP2 — Provenance
+
+- v0 streams: `['B_xgb_llr', 'P4_L4.2_pure5f', 'P4_L4.3_pure5f', 'P4_L4.5_pure5f', 'P_super_v4p_hc', 'P_super_v5_harvest', 'delta1_v4', 'gpt2_med_4ep_mean', 'gpt2_med_4ep_shrink', 'l7_R5', 'l7_U5_gini10', 'l7_curv', 'l7_mean10', 'zone_honest']`
+- **P_super_v5_harvest**: `KEEP` finalize blends v4p_hc + paradigm_B xgb_llr (self); no tip CSV loads
+- **B_xgb_llr**: `KEEP` 
+- **P4_L4.2_pure5f**: `KEEP` 
+- **P4_L4.3_pure5f**: `KEEP` 
+- **P4_L4.5_pure5f**: `KEEP` 
+- **delta1_v4**: `KEEP` 
+- **l7_s2026_5f**: `KEEP` builder mentions goodpjw seed7 path as optional compare; our s2026 preds/ckpts are self-trained
+- **gpt2_med_4ep**: `KEEP` 
+- **P_super_v4p_hc**: `KEEP` 
+- **oof_xgb_clean**: `KEEP` 
+- **SCAN_P_super_v6**: `EXCLUDED_FROM_V1` 
+- **SCAN_soft_diff**: `EXCLUDED_FROM_V1` 
+
+## Checkpoints
+```json
+{
+  "l7_s2026_5f": [
+    "fold_0.pt",
+    "fold_latest.pt",
+    "replica.pt"
+  ],
+  "l7_has_full_5fold_weights": false,
+  "gpt2_med_4ep": [
+    "fold_0.pt",
+    "fold_1.pt",
+    "fold_2.pt",
+    "fold_3.pt",
+    "fold_4.pt"
+  ],
+  "gpt2_has_full_5fold_weights": true
+}
+```
+HGDT_V2_SKIPPED.json
+HGDT_V2_THROUGHPUT.json
+folds_skf42.npy
+peer_z_sovereign_raw_oof.npy
+peer_z_sovereign_raw_test.npy
+z_sovereign_v0_oof.npy
+z_sovereign_v0_test.npy
+z_sovereign_v1_oof.npy
+z_sovereign_v1_test.npy
+1.9.1
+id,amount_usd,hours_since_last_txn,txn_count_last_24h,distance_from_home_km,card_age_months,customer_age,account_balance_usd,cvv_retry_count,velocity_score,time_of_day_hour,day_of_week,merchant_risk_score,prior_disputes,merchant_category,card_type,auth_method,channel,device_type,is_foreign_transaction,is_new_merchant,used_vpn,ip_country_mismatch,billing_shipping_mismatch,is_ai_generated_scam_attempt,is_fraud
+-rwx------@ 1 moranzavdi  staff   5599808 Nov 10 23:38 preds/gm_v4_polish/d1_v4_oof.npy
+-rwx------@ 1 moranzavdi  staff  55996928 Nov 13 22:14 preds/l7_s2026_5f/l7_s2026_oof_5fold_raw.npy
+-rwx------@ 1 moranzavdi  staff   5599808 Nov  7 20:04 preds/matrix_v2/P4_L4.2_pure5f_oof.npy
+
+exec
+/bin/bash -lc ".venv/bin/python -u -c 'import faulthandler; faulthandler.dump_traceback_later(8); print(\"start\"); import numpy; print(\"numpy\"); import pandas; print(\"pandas\"); import sklearn; print(\"sklearn\")'" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+exec
+/bin/bash -lc 'ls -d /private/tmp/s6e11* .venv_forensics/lib/python*/site-packages/numpy /opt/homebrew/lib/python*/site-packages/numpy .venv/lib/python*/site-packages/numpy
+git status --short --untracked-files=normal' in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 616ms:
+.venv/lib/python3.14/site-packages/numpy
+.venv_forensics/lib/python3.14/site-packages/numpy
+/opt/homebrew/lib/python3.12/site-packages/numpy
+/opt/homebrew/lib/python3.14/site-packages/numpy
+/private/tmp/s6e11_udit_meta
+/private/tmp/s6e11_v27
+/private/tmp/s6e11_v28
+/private/tmp/s6e11_v29
+/private/tmp/s6e11_v30
+/private/tmp/s6e11_v31_1
+/private/tmp/s6e11_v31_1_run.log
+/private/tmp/s6e11_v31_1_run2.log
+/private/tmp/s6e11_v31_2
+/private/tmp/s6e11_v31_3
+/private/tmp/s6e11_v31_autopsy
+/private/tmp/s6e11_v32_0
+/private/tmp/s6e11_v32_1
+/private/tmp/s6e11_v32_100k
+/private/tmp/s6e11_v32_dsmeta
+/private/tmp/s6e11_v32_lb
+/private/tmp/s6e11_v33_active_pods.json
+/private/tmp/s6e11_v33_bundle
+/private/tmp/s6e11_v33_ddp_monitor.log
+/private/tmp/s6e11_v33_ddp_monitor_outer.log
+/private/tmp/s6e11_v39_ssd
+/private/tmp/s6e11_v41_ssd
+?? .cache/
+?? areeb_95547/
+?? asterios_board/
+?? goodpjw_95546/
+?? logs/overnight/GM_V20_OVERNIGHT_CPU_FACTORY.log.bak
+?? logs/overnight/GM_V2_SLOT1_LB.txt
+?? logs/overnight/GM_V36_1_HEARTBEAT.jsonl
+?? logs/overnight/GM_V36_HEARTBEAT.jsonl
+?? logs/overnight/STEP2_MONITOR.pid
+?? logs/overnight/STEP3_MONITOR.pid
+?? logs/overnight/STEP4_MONITOR.pid
+?? logs/overnight/WATCHDOG_LOW_RAM
+?? logs/overnight/cpu_campaign_monitor.jsonl
+?? logs/overnight/run_mps_gpt2_data/
+?? logs/overnight/v36_1_ckpt/
+?? logs/overnight/v36_1_state.json
+?? logs/overnight/v36_ckpt/
+?? logs/overnight/v36_state.json
+?? logs/overnight/v37_fold0/
+?? logs/overnight/watchdog_mem.jsonl
+?? logs/v43/V43_F0_POD.txt
+?? logs/v43/V43_F0_WATCH_SUBMIT.nohup
+?? logs/v44/
+?? logs/v45/
+?? logs/v47/
+?? notebooks/lb_095330/output/
+?? out/
+?? scripts/v44_phase2_local_fwfm_ebm.py
+?? scripts/v44_step1_hardened_autopsy.py
+?? scripts/v44_step2_unpack_dir3_stage.py
+?? scripts/v45_day1_auc_decomp_llr_zones.py
+?? scripts/v45_day2_hpr_llr_copula.py
+?? scripts/v45_day3_subtype_domain_moe.py
+?? scripts/v47_sovereign/
+?? submissions/ATH_v3_areeb_95567.csv
+?? submissions/_quarantine_nullspace_v3/
+?? submissions/_tmp_s354_recon_check.csv
+?? submissions/nov06_ladder/
+?? submissions/nov07_ladder/
+
+ succeeded in 131111ms:
+id,amount_usd,hours_since_last_txn,txn_count_last_24h,distance_from_home_km,card_age_months,customer_age,account_balance_usd,cvv_retry_count,velocity_score,time_of_day_hour,day_of_week,merchant_risk_score,prior_disputes,merchant_category,card_type,auth_method,channel,device_type,is_foreign_transaction,is_new_merchant,used_vpn,ip_country_mismatch,billing_shipping_mismatch,is_ai_generated_scam_attempt,is_fraud
+-rwx------@ 1 moranzavdi  staff   5.3M Nov 10 23:38 preds/gm_v4_polish/d1_v4_oof.npy
+-rwx------@ 1 moranzavdi  staff    53M Nov 13 22:14 preds/l7_s2026_5f/l7_s2026_oof_5fold_raw.npy
+-rwx------@ 1 moranzavdi  staff   5.3M Nov  7 20:04 preds/matrix_v2/P4_L4.2_pure5f_oof.npy
+116:    te_ridge = np.mean(te_ridge_folds, axis=0)
+117:    te_xgb = np.mean(te_xgb_folds, axis=0)
+135:        ev = score_candidate_vs_v4p_hc(ctx.y, v4p_o, co, ctx.folds)
+155:    folds = ctx.folds
+163:    # 1. Extract pure 5-fold signals for the 3 Fold-0 winners
+168:        res, co, ct = extract_single_lever_5fold(ctx, k, v4p_o, v4p_t)
+190:    ev_p4_blend = score_candidate_vs_v4p_hc(y, v4p_o, p4_rk_o, folds)
+197:    # Build standardized residual basis columns (each orthogonalized against z_base_o by linear regression on fold-train)
+221:    # Out-of-fold coordinate ascent over signed alphas in [-0.25, +0.25]
+224:    fold_alphas = []
+225:    for fi, (a, b) in enumerate(folds):
+240:        fold_alphas.append(w)
+241:        log(f"  Stack fold {fi}: w={dict(zip(pool_names, [round(float(x),4) for x in w]))} val_delta={float(fast_auc(y[b], oof_z[b]) - fast_auc(y[b], z_base_o[b])):+.3e}")
+243:    mean_w = np.mean(fold_alphas, axis=0)
+250:    ev5 = score_candidate_vs_v4p_hc(y, v4p_o, p5_o, folds)
+259:    pd.DataFrame({"id": test_ids, "is_fraud": p5_t}).to_csv(SUB / "sub_v5_harvest_pure.csv", index=False)
+262:    # Delta_z_test = Z_t @ mean_w is the exact out-of-fold-calibrated orthogonal logit correction!
+263:    ev4_s = pd.read_csv(SUB / "sub_ev4.csv").set_index("id").loc[test_ids, "is_fraud"].to_numpy(np.float64)
+270:    pd.DataFrame({"id": test_ids, "is_fraud": p_on_ev4}).to_csv(SUB / "sub_v5_harvest_on_ev4.csv", index=False)
+271:    pd.DataFrame({"id": test_ids, "is_fraud": p_on_ev4_half}).to_csv(SUB / "sub_v5_harvest_on_ev4_half.csv", index=False)
+335:        "p4_pure_5fold": p4_results,
+340:        "mean_weights": dict(zip(pool_names, map(float, mean_w))),
+1.9.1
+
+exec
+/bin/bash -lc "OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 python3 -u -c 'import numpy,pandas,scipy,sklearn;print(numpy.__version__,sklearn.__version__)'" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ exited 1 in 76ms:
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    import numpy,pandas,scipy,sklearn;print(numpy.__version__,sklearn.__version__)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ModuleNotFoundError: No module named 'pandas'
+
+exec
+/bin/bash -lc "cat preds/l7_s2026_5f/fold_0_meta.json | head -45
+cat preds/gpt2_med_4ep/status.json | head -45
+find /private/tmp/s6e11_v39_ssd -maxdepth 2 -type d | head -24
+rg -n 'lgb_raw_oof|cb_native_ctr4_5f_oof' scripts/gboost.py scripts/step4_non_distilled_audit_and_ctr_catboost.py scripts/gm_v24_2b_fix_lgb_and_gate.py" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 18ms:
+{
+  "fold": 0,
+  "auc": 0.9474933760825137,
+  "prior": 0.016700954340248014,
+  "test_orders": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "oof_shape": [
+    139992,
+    10,
+    2
+  ],
+  "test_shape": [
+    299984,
+    10,
+    2
+  ],
+  "train_min": 70.25838994979858,
+  "score_min": 25.96535406112671,
+  "wall_from_start_min": 162.3858232220014,
+  "SCORE_BS": 512,
+  "SEED": 2026
+}{
+  "fold_2": {
+    "auc": 0.9537251585635241,
+    "one_order_auc": 0.9530437551593975,
+    "refs": {
+      "lm12": {
+        "auc": 0.9560849667798148,
+        "corr": 0.9737593015219718,
+        "best_orth_w": 0.06999999999999999,
+        "best_orth_delta": 9.26313023232872e-05
+      },
+      "g3": {
+        "auc": 0.9532774571739313,
+        "corr": 0.9794857368357706,
+        "best_orth_w": 0.08,
+        "best_orth_delta": 0.0005689342999221081
+      },
+      "w12": {
+        "auc": 0.9573724120019098,
+        "corr": 0.9651520068596423,
+        "best_orth_w": -0.0050000000000000044,
+        "best_orth_delta": 1.460375420592186e-07
+      },
+      "v8": {
+        "auc": 0.9573744938136819,
+        "corr": 0.962078271962522,
+        "best_orth_w": 0.015,
+        "best_orth_delta": 5.2635658842614674e-06
+      }
+    },
+    "train_min": 105.79,
+    "score_min": 47.72
+  },
+  "fold_0": {
+    "auc": 0.9458179006582021,
+    "one_order_auc": 0.945234182427909,
+    "refs": {
+      "lm12": {
+        "auc": 0.948505568399054,
+        "corr": 0.9725343732007156,
+        "best_orth_w": 0.06499999999999999,
+        "best_orth_delta": 9.266094048832052e-05
+      },
+      "g3": {
+        "auc": 0.948505568399054,
+/private/tmp/s6e11_v39_ssd
+/private/tmp/s6e11_v39_ssd/out
+/private/tmp/s6e11_v39_ssd/out/v40_ladder
+/private/tmp/s6e11_v39_ssd/out/qwen15b_lora_f0
+/private/tmp/s6e11_v39_ssd/out/tfm_f0
+/private/tmp/s6e11_v39_ssd/folds
+/private/tmp/s6e11_v39_ssd/logs
+/private/tmp/s6e11_v39_ssd/scripts
+/private/tmp/s6e11_v39_ssd/submissions
+/private/tmp/s6e11_v39_ssd/external
+/private/tmp/s6e11_v39_ssd/external/public_harvest
+/private/tmp/s6e11_v39_ssd/external/sadam_tabpfn
+/private/tmp/s6e11_v39_ssd/external/amanatar_vault
+/private/tmp/s6e11_v39_ssd/data
+/private/tmp/s6e11_v39_ssd/preds
+scripts/step4_non_distilled_audit_and_ctr_catboost.py:539:    np.save(ART / "cb_native_ctr4_5f_oof.npy", oof.astype(np.float32))
+
+ succeeded in 95703ms:
+Subfold 0: -260.43679743 e-5
+Subfold 1: -384.24439645 e-5
+Subfold 2: -471.23052332 e-5
+Subfold 3: -571.74404216 e-5
+Subfold 4: -390.83059727 e-5
+{
+  "n": 139992,
+  "base_auc": 0.9512507991341679,
+  "candidate_auc": 0.9469439662423098,
+  "delta_e5": -430.683289185807,
+  "positive_subfolds": 0,
+  "subfold_deltas_e5": [
+    -260.43679743146254,
+    -384.24439644881846,
+    -471.23052331820014,
+    -571.7440421648123,
+    -390.8305972702419
+  ],
+  "verdict": "NO-GO",
+  "NO_SUBMIT": true,
+  "SUBMIT_ARMED": false
+}
+
+exec
+/bin/bash -lc "sed -n '390,545p' scripts/step4_non_distilled_audit_and_ctr_catboost.py
+rg -n 'lgb_raw|def .*lgb' scripts/gboost.py
+ls -lh preds/stage3 preds/stage4" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 31ms:
+
+
+def fit_cb_native_ctr(y, folds, X_tr, X_te, X_orig, y_orig, z_cal_o, z_cal_t, z_cal_orig):
+    from catboost import CatBoostClassifier, Pool
+
+    ntr, nte = len(y), len(X_te)
+    cat_idx = list(range(X_tr.shape[1]))
+    seeds = [42, 137, 2026]
+    oof = np.zeros(ntr, dtype=np.float64)
+    te_acc = []
+
+    params = dict(
+        loss_function="Logloss",
+        eval_metric="AUC",
+        depth=6,
+        max_ctr_complexity=4,
+        l2_leaf_reg=25.0,
+        learning_rate=0.035,
+        iterations=1800,
+        random_strength=1.5,
+        thread_count=2,
+        verbose=False,
+        allow_writing_files=False,
+        od_type="Iter",
+        od_wait=80,
+    )
+
+    for fi, (a, b) in enumerate(folds):
+        log(f"  CTR fold {fi}/5 seeds={len(seeds)}")
+        # append orig20k to train fold
+        Xa = pd.concat([X_tr.iloc[a], X_orig], axis=0, ignore_index=True)
+        ya = np.concatenate([y[a], y_orig])
+        base_a = np.concatenate([z_cal_o[a], z_cal_orig])
+        Xb = X_tr.iloc[b]
+        yb = y[b]
+        base_b = z_cal_o[b]
+
+        bag_b, bag_t = [], []
+        for sd in seeds:
+            train_pool = Pool(Xa, label=ya, cat_features=cat_idx, baseline=base_a)
+            val_pool = Pool(Xb, label=yb, cat_features=cat_idx, baseline=base_b)
+            model = CatBoostClassifier(**params, random_seed=sd)
+            model.fit(train_pool, eval_set=val_pool, use_best_model=True)
+            # raw margin / logit-ish: use predict_proba then logit, residual vs baseline
+            pb = logit(np.clip(model.predict_proba(Xb)[:, 1], 1e-6, 1 - 1e-6)) - base_b
+            pt = logit(np.clip(model.predict_proba(X_te)[:, 1], 1e-6, 1 - 1e-6)) - z_cal_t
+            bag_b.append(pb)
+            bag_t.append(pt)
+            best_iter = model.get_best_iteration()
+            log(f"    seed={sd} best_iter={best_iter}")
+            del model, train_pool, val_pool
+            gc.collect()
+        oof[b] = np.mean(bag_b, 0)
+        te_acc.append(np.mean(bag_t, 0))
+        # ECDF align fold test to fold oof chunk scale later globally
+        log(f"  CTR fold {fi} done")
+
+    te = np.mean(te_acc, 0)
+    # global PCHIP align test to oof
+    te = pchip_quantile_map(te, oof, n_knots=N_KNOTS)
+    return oof, te
+
+
+def audit_orth(name, oof, test, y, z_ref_o, z_st9_t, s9, folds, lm_bank):
+    names = list(lm_bank.keys())
+    Xo = np.column_stack([z_ref_o] + [lm_bank[n][0] for n in names])
+    Xt = np.column_stack([z_st9_t] + [lm_bank[n][1] for n in names])
+    ro, rt, rtr = fold_orth_multi(oof.astype(np.float64), test.astype(np.float64), Xo, Xt, folds)
+    nest = nested_delta(y, z_ref_o, ro, folds)
+    diag = resid_diagnostics(ro, rt, rtr, s9, expit(z_st9_t + rt))
+    w = nest["w"] if abs(nest["w"]) > 1e-12 else 0.02
+    fd, pos = fold_deltas(y, z_ref_o, ro, folds, nest["w"] if abs(nest["w"]) > 1e-12 else w)
+    rho = (1.0 - float(spearmanr(z_st9_t + (nest["w"] if abs(nest["w"]) > 1e-12 else 0) * rt, z_st9_t).correlation)) * 1e4
+    # step table
+    steps = []
+    for td in [0.2e-4, 0.35e-4, 0.5e-4, 1.0e-4]:
+        ww, got = weight_for_spearman_dist(z_st9_t, rt, td)
+        nest_w = nested_at_w(y, z_ref_o, ro, folds, ww)
+        fdw, posw = fold_deltas(y, z_ref_o, ro, folds, ww)
+        steps.append(
+            {
+                "target_1e4": round(td * 1e4, 4),
+                "achieved_1e4": round(got * 1e4, 4),
+                "w": round(ww, 6),
+                **nest_w,
+                "fold_deltas_1e5": fdw,
+                "pos": posw,
+            }
+        )
+    row = {
+        "name": name,
+        **nest,
+        "fold_deltas_1e5": fd,
+        "dispersion_ratio_raw": diag["dispersion_ratio_raw"],
+        "ks_raw": diag["ks_raw"],
+        "spearman_dist_st9_test_1e4": round(rho, 3),
+        "steps": steps,
+        "gate_pass": (
+            nest["delta_1e5"] >= 0.5
+            and nest["pos"] >= 4
+            and 0.85 <= diag["dispersion_ratio_raw"] <= 1.15
+            and diag["ks_raw"] < 0.015
+        ),
+    }
+    np.save(ART / f"{name}_orth_LM_oof.npy", ro.astype(np.float32))
+    np.save(ART / f"{name}_orth_LM_test.npy", rt.astype(np.float32))
+    np.save(ART / f"{name}_orth_LM_test_raw.npy", rtr.astype(np.float32))
+    log(
+        f"  {name}: Δ={row['delta_1e5']}e-5 {row['pos']}/5 disp={row['dispersion_ratio_raw']} "
+        f"KS={row['ks_raw']} gate={row['gate_pass']}"
+    )
+    return row
+
+
+def main():
+    log("STEP4 START (STRICT NO_SUBMIT) — SoftPseudo/zanch CLOSED")
+    y = pd.read_csv(ROOT / "data/train.csv", usecols=["is_fraud"])["is_fraud"].to_numpy(np.int32)
+    test_ids = pd.read_csv(ROOT / "data/test.csv", usecols=["id"])["id"].to_numpy()
+    folds = list(StratifiedKFold(5, shuffle=True, random_state=42).split(np.zeros(len(y)), y))
+
+    z_ref_o, z_st9_t, s9, base = build_z_ref(y, test_ids, folds)
+    log(f"z_ref_o={base:.7f}")
+    lm_bank = load_lm_bank(y, folds, len(y), len(test_ids), test_ids)
+
+    strike = part1_strike_axis(y, test_ids, z_ref_o, z_st9_t, s9, folds)
+    lm_res, lm_bank = part1_lm_h2(y, folds, z_ref_o, z_st9_t, s9, lm_bank)
+
+    # Part 2
+    log("PART2: build X_cat 48 discrete keys + native CTR CatBoost")
+    tr = pd.read_csv(ROOT / "data/train.csv")
+    te = pd.read_csv(ROOT / "data/test.csv")
+    orig = pd.read_csv(ROOT / "original/credit_card_fraud_2026.csv")
+    X_tr = build_x_cat(tr)
+    X_te = build_x_cat(te)
+    X_orig = build_x_cat(orig)
+    y_orig = orig["is_fraud"].to_numpy(np.int32)
+    log(f"  X_cat cols={list(X_tr.columns)}")
+
+    z_cal_o = calibrate_logit_to_prevalence(z_ref_o, z_ref_o, y)
+    z_cal_t = calibrate_logit_to_prevalence(z_st9_t, z_ref_o, y)
+    # orig baseline: Stage-1 lookup = mean z_cal (no leakage of test)
+    z_cal_orig = np.full(len(y_orig), float(np.mean(z_cal_o)), dtype=np.float64)
+
+    del tr, te, orig
+    gc.collect()
+
+    oof, te_pred = fit_cb_native_ctr(
+        y, folds, X_tr, X_te, X_orig, y_orig, z_cal_o, z_cal_t, z_cal_orig
+    )
+    np.save(ART / "cb_native_ctr4_5f_oof.npy", oof.astype(np.float32))
+    np.save(ART / "cb_native_ctr4_5f_test.npy", te_pred.astype(np.float32))
+    solo = float(fast_auc(y, z_cal_o + oof))
+    log(f"  cb raw solo AUC vs y on z_cal+resid ≈ {solo:.7f}")
+
+    cb_row = audit_orth(
+        "cb_native_ctr4_5f", oof, te_pred, y, z_ref_o, z_st9_t, s9, folds, lm_bank
+preds/stage3:
+total 33792
+-rwx------  1 moranzavdi  staff   2.7M Nov  2 18:19 digit_lgbm_oof.npy
+-rwx------  1 moranzavdi  staff   2.7M Nov  2 18:32 digit_xgb_oof.npy
+-rwx------  1 moranzavdi  staff   2.7M Nov  2 18:18 raw_lgbm_oof.npy
+-rwx------  1 moranzavdi  staff   2.7M Nov  2 18:28 raw_xgb_oof.npy
+-rwx------  1 moranzavdi  staff   2.7M Nov  2 18:22 te_lgbm_oof.npy
+-rwx------  1 moranzavdi  staff   2.7M Nov  2 18:42 te_xgb_oof.npy
+
+preds/stage4:
+total 25088
+-rwx------  1 moranzavdi  staff   2.7M Nov  2 19:07 te_glm_oof.npy
+-rwx------  1 moranzavdi  staff   2.7M Nov  2 18:51 te_lgbm_leaves7_oof.npy
+-rwx------  1 moranzavdi  staff   2.7M Nov  2 19:06 te_xgb_depth3_oof.npy
+-rwx------  1 moranzavdi  staff   1.1M Nov  2 20:21 te_xgb_smooth50_full.npy
+-rwx------  1 moranzavdi  staff   2.7M Nov  2 20:21 te_xgb_smooth50_oof.npy
+
+ succeeded in 28598ms:
+start
+numpy
+Timeout (0:00:08)!
+Thread 0x00000001f4756180 (most recent call first):
+  File "<frozen importlib._bootstrap_external>", line 951 in get_data
+  File "<frozen importlib._bootstrap_external>", line 851 in get_code
+  File "<frozen importlib._bootstrap_external>", line 755 in exec_module
+  File "<frozen importlib._bootstrap>", line 938 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1342 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1371 in _find_and_load
+  File "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/.venv/lib/python3.14/site-packages/pandas/core/frame.py", line 183 in <module>
+  File "<frozen importlib._bootstrap>", line 491 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 759 in exec_module
+  File "<frozen importlib._bootstrap>", line 938 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1342 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1371 in _find_and_load
+  File "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/.venv/lib/python3.14/site-packages/pandas/core/groupby/generic.py", line 62 in <module>
+  File "<frozen importlib._bootstrap>", line 491 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 759 in exec_module
+  File "<frozen importlib._bootstrap>", line 938 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1342 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1371 in _find_and_load
+  File "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/.venv/lib/python3.14/site-packages/pandas/core/groupby/__init__.py", line 1 in <module>
+  File "<frozen importlib._bootstrap>", line 491 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 759 in exec_module
+  File "<frozen importlib._bootstrap>", line 938 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1342 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1371 in _find_and_load
+  File "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/.venv/lib/python3.14/site-packages/pandas/core/api.py", line 46 in <module>
+  File "<frozen importlib._bootstrap>", line 491 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 759 in exec_module
+  File "<frozen importlib._bootstrap>", line 938 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1342 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1371 in _find_and_load
+  File "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/.venv/lib/python3.14/site-packages/pandas/__init__.py", line 46 in <module>
+  File "<frozen importlib._bootstrap>", line 491 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 759 in exec_module
+  File "<frozen importlib._bootstrap>", line 938 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1342 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1371 in _find_and_load
+  File "<string>", line 1 in <module>
+pandas
+sklearn
+
+codex
+The first candidate scored 0.9469439662 against 0.9512507991 and lost all five subfolds. I’ll test whether adding a fresh tabular model trained outside Fold-0 can recover the signal the LM-only combiner missed.
+exec
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+p=Path('scripts/v47_sovereign/conditional_f0.py')
+s=p.read_text().replace('def design(parts, raw, train, residual):','def design(parts, raw, train, residual, tabular):').replace('    consensus = np.mean(pooled, axis=0)','''    consensus = np.mean(pooled, axis=0)
+    if tabular is not None:
+        columns.extend([
+            tabular[:, None],
+            np.maximum(tabular[:, None] - [-3, -1, 1, 3], 0),
+            (tabular * np.tanh(consensus / 2))[:, None],
+        ])''').replace(\"    parser.add_argument('--regime-splines', action='store_true')\",\"    parser.add_argument('--regime-splines', action='store_true')\\n    parser.add_argument('--tabular', action='store_true')\").replace('    oof = np.full(len(y), np.nan)','''    tabular = None
+    if args.tabular:
+        from lightgbm import LGBMClassifier
+
+        features = pd.read_csv(ROOT / 'data/train.csv').drop(columns=['id', 'is_fraud'])
+        for name in features.select_dtypes(include=['object', 'str']).columns:
+            features[name] = features[name].astype('category')
+        tree = LGBMClassifier(
+            n_estimators=450, learning_rate=0.045, num_leaves=31,
+            min_child_samples=120, reg_lambda=5, n_jobs=4, verbosity=-1,
+            random_state=42,
+        )
+        print('Fitting tabular anchor on the outer training split', flush=True)
+        tree.fit(features.loc[~f0], y_full[~f0])
+        score = tree.predict(features.loc[f0], raw_score=True)
+        tabular = logit((rankdata(score) - 0.5) / len(score))
+        assert np.isfinite(tabular).all()
+        print(f'Tabular anchor AUC {roc_auc_score(y, score):.12f}', flush=True)
+
+    oof = np.full(len(y), np.nan)''').replace('design(parts, raw, train, args.regime_splines)','design(parts, raw, train, args.regime_splines, tabular)').replace(\"    name = 'regime_splines_f0' if args.regime_splines else 'conditional_f0'\",\"    name = 'conditional_f0'\\n    if args.tabular:\\n        name += '_tabular'\\n    if args.regime_splines:\\n        name += '_splines'\")
+p.write_text(s)
+PY
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python scripts/v47_sovereign/conditional_f0.py --tabular" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+exec
+/bin/bash -lc "cat > logs/v47/CODEX_DS_REVIEW_NEXT.md <<'MD'
+# Sovereign Fold-0 review
+
+## Hypotheses ranked by expected AUC lift per CPU cost
+
+1. Conditional pooling of self-trained permutation logits. Fit order contrasts, dispersion, and risk-regime interactions with regularized logistic regression. This directly tests the fixed pooling assumptions in the champion while keeping supervised combiner fits inside Fold-0.
+2. Add a fresh outer-train tabular anchor. Its fraud ranking can supply signal absent from both language models and gives the combiner a second model family without depending on the lineage of stored super-stacks.
+3. Add low-degree merchant-risk and velocity splines to the cross-family combiner. These let the effect of the raw risk variables change around known risk ranges.
+4. Rebuild the strongest super-stack inputs inside the outer training split. Preserve the original F0 holdout through every upstream model fit, track choice, and calibration before testing a new stack. This has a higher CPU cost and should begin with the strongest distinct pillar.
+
+## Evaluation contract
+
+Matched saved "'`z_sovereign_v0` on 139,992 rows using the verified SKF rs=42 Fold-0 indices. Each candidate score comes from a logistic combiner fit on the other four SKF rs=7 subfolds inside Fold-0. Rank transforms pool unlabeled Fold-0 scores. Clipping and scaling parameters for learned features come from each combiner training split. The champion scores serve as the reference only. Several legacy component builders fit on other global OOF rows or selected tracks across all folds, so the candidate uses the Fold-0 slices from the self-trained L7 and GPT-2 tensors.
+
+Promotion requires pooled ΔAUC ≥ +8e-5 and at least four positive subfolds.
+
+| Experiment | Base AUC | Candidate AUC | ΔAUC × 10⁵ | Positive | Verdict |
+|---|---:|---:|---:|---:|---|
+| Conditional LM pooling | 0.9512507991341679 | 0.9469439662423098 | −430.683289185807 | 0/5 | NO-GO |
+
+Conditional LM subfold deltas × 10⁵ were −260.43679743, −384.24439645, −471.23052332, −571.74404216, and −390.83059727. The stand-alone pool did not recover the champion'"'s ranking.
+
+Artifacts are "'`scripts/v47_sovereign/conditional_f0.py`, `logs/v47/conditional_f0.json`, and `preds/v47_sovereign/conditional_f0_oof.npy`. The candidate array is in canonical Fold-0 row order.
+
+NO_SUBMIT=True · SUBMIT_ARMED=False · RunPod $0 · cloud $0 · public competitor tip CSVs read 0.
+MD
+ls -lh logs/v47/conditional_f0.json preds/v47_sovereign/conditional_f0_oof.npy
+.venv/bin/python -m py_compile scripts/v47_sovereign/conditional_f0.py' in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 6420ms:
+-rwx------@ 1 moranzavdi  staff   370B Nov 26 15:30 logs/v47/conditional_f0.json
+-rwx------@ 1 moranzavdi  staff   1.1M Nov 26 15:30 preds/v47_sovereign/conditional_f0_oof.npy
+
+ succeeded in 39459ms:
+Fitting tabular anchor on the outer training split
+Tabular anchor AUC 0.943526723763
+Subfold 0: -281.16711946 e-5
+Subfold 1: -368.57441510 e-5
+Subfold 2: -448.02133503 e-5
+Subfold 3: -489.74187323 e-5
+Subfold 4: -375.12706136 e-5
+{
+  "n": 139992,
+  "base_auc": 0.9512507991341679,
+  "candidate_auc": 0.9471946036884362,
+  "delta_e5": -405.61954457316585,
+  "positive_subfolds": 0,
+  "subfold_deltas_e5": [
+    -281.1671194584919,
+    -368.57441510379505,
+    -448.02133503080154,
+    -489.74187322572413,
+    -375.1270613613245
+  ],
+  "verdict": "NO-GO",
+  "NO_SUBMIT": true,
+  "SUBMIT_ARMED": false
+}
+
+exec
+/bin/bash -lc "OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 .venv/bin/python -u - <<'PY'
+import json
+from pathlib import Path
+import numpy as np
+import pandas as pd
+from sklearn.metrics import roc_auc_score
+from sklearn.model_selection import StratifiedKFold
+p = Path('preds')
+s = p / 'v47_sovereign'
+f0 = np.load(s / 'folds_skf42.npy') == 0
+y = pd.read_csv('data/train.csv', usecols=['is_fraud']).is_fraud.to_numpy()[f0]
+l7 = p / 'l7_s2026_5f'
+np.testing.assert_array_equal(
+    np.load(l7 / 'l7_s2026_oof_5fold_raw.npy', mmap_mode='r')[f0], np.load(l7 / 'oof_0.npy')
+)
+z = np.load(s / 'z_sovereign_v0_oof.npy')[f0]
+def auc(v):
+    return roc_auc_score(y, v)
+for path in sorted(s.glob('conditional_f0*_oof.npy')):
+    a = np.load(path)
+    m = json.loads((Path('logs/v47') / (path.stem.removesuffix('_oof') + '.json')).read_text())
+    assert auc(z) == m['base_auc'] and auc(a) == m['candidate_auc']
+    ds = [(roc_auc_score(y[v], a[v]) - roc_auc_score(y[v], z[v])) * 1e5
+          for _, v in StratifiedKFold(5, shuffle=True, random_state=7).split(z, y)]
+    np.testing.assert_array_equal(ds, m['subfold_deltas_e5'])
+    print(path, 'metrics reproduced')
+gpt = np.load(p / 'gpt2_med_4ep/oof_0.npy')
+l7_scores = np.load(l7 / 'oof_0.npy')
+for t in [l7_scores, gpt]:
+    print('primitive AUC:', auc((t[:, :, 1] - t[:, :, 0]).mean(axis=1)))
+PY" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+exec
+/bin/bash -lc 'ls -l /private/tmp/s6e11_v39_ssd/out/{qwen15b_lora_f0,tfm_f0}
+ls -l preds/{hires_lm_5f,l7_5f_rot10} | head -35
+ls -l out/v42_1_modern | head -25' in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 5526ms:
+/private/tmp/s6e11_v39_ssd/out/qwen15b_lora_f0:
+total 310968
+-rw-r--r--@ 1 moranzavdi  wheel       5188 Nov 23 12:41 README.md
+-rw-r--r--@ 1 moranzavdi  wheel       1197 Nov 23 12:41 adapter_config.json
+-rw-------@ 1 moranzavdi  wheel  147770496 Nov 23 12:41 adapter_model.safetensors
+-rw-r--r--@ 1 moranzavdi  wheel       2427 Nov 23 12:41 chat_template.jinja
+-rw-r--r--@ 1 moranzavdi  wheel   11421892 Nov 23 12:41 tokenizer.json
+-rw-r--r--@ 1 moranzavdi  wheel        697 Nov 23 12:41 tokenizer_config.json
+
+/private/tmp/s6e11_v39_ssd/out/tfm_f0:
+total 3464
+-rw-rw-rw-@ 1 moranzavdi  wheel      891 Nov 23 16:14 fold0_tfm_result.json
+-rw-rw-rw-@ 1 moranzavdi  wheel  1760032 Nov 23 16:14 tabicl_f0_va_test.npy
+-rw-rw-rw-@ 1 moranzavdi  wheel      621 Nov 23 16:31 tabicl_gate_fixed.json
+-rw-rw-rw-@ 1 moranzavdi  wheel     3824 Nov 23 16:14 tfm_fold0.log
+preds/hires_lm_5f:
+total 54016
+-rwx------@ 1 moranzavdi  staff        77 Nov 12 16:55 PHASE0_PASS.json
+drwx------@ 1 moranzavdi  staff    131072 Nov 12 16:55 _unit_test_saves
+-rwx------@ 1 moranzavdi  staff       905 Nov 12 16:55 cache_meta.json
+-rwx------@ 1 moranzavdi  staff       207 Nov 12 17:50 canary_eval_local.json
+-rwx------@ 1 moranzavdi  staff       301 Nov 12 17:50 fold0_canary.json
+-rwx------@ 1 moranzavdi  staff  11199488 Nov 12 17:48 oof_0.npy
+-rwx------@ 1 moranzavdi  staff   1120064 Nov 12 17:48 oof_0_idx.npy
+-rwx------@ 1 moranzavdi  staff      1614 Nov 12 16:55 run.log
+-rwx------@ 1 moranzavdi  staff  14399360 Nov 12 17:48 test_0.npy
+
+preds/l7_5f_rot10:
+total 42752
+drwx------@ 1 moranzavdi  staff    131072 Nov 12 15:13 ckpts
+-rwx------@ 1 moranzavdi  staff      2048 Nov 12 12:35 master_perms_seed7.npy
+-rwx------@ 1 moranzavdi  staff  11199488 Nov 12 12:35 oof_0.npy
+-rwx------@ 1 moranzavdi  staff       508 Nov 12 12:37 run.log
+-rwx------@ 1 moranzavdi  staff   9599616 Nov 12 12:35 test_0.npy
+-rwx------@ 1 moranzavdi  staff        95 Nov 12 12:35 test_orders.json
+-rwx------@ 1 moranzavdi  staff       100 Nov 12 12:43 train.log
+-rwx------@ 1 moranzavdi  staff         4 Nov 12 12:43 train.pid
+-rwx------@ 1 moranzavdi  staff        63 Nov 12 12:43 watchdog.log
+total 47360
+-rwx------@ 1 moranzavdi  staff  7880371 Nov 24 17:25 V42_1_StageB_soft_delta_NOSUBMIT.csv
+-rwx------@ 1 moranzavdi  staff  5599808 Nov 24 17:23 z_modern_all_oof.npy
+-rwx------@ 1 moranzavdi  staff  2400000 Nov 24 17:23 z_modern_all_test.npy
+-rwx------@ 1 moranzavdi  staff  5599808 Nov 24 17:23 z_modern_pub_oof.npy
+-rwx------@ 1 moranzavdi  staff  2400000 Nov 24 17:23 z_modern_pub_test.npy
+
+exec
+/bin/bash -lc "cat preds/hires_lm_5f/fold0_canary.json preds/hires_lm_5f/canary_eval_local.json
+cat /private/tmp/s6e11_v39_ssd/out/tfm_f0/tabicl_gate_fixed.json
+rg -n 'hires_lm_5f|eval_set|y\\[b\\]' scripts/train_hires_compact_lm_5f.py | tail -18" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 149ms:
+{
+  "auc": 0.8941588124093419,
+  "prior": 0.016699525687182123,
+  "pass_auc": false,
+  "orth_e5": null,
+  "pass": false,
+  "orth_err": "[Errno 2] No such file or directory: '/workspace/cc/preds/gm_v5_overnight/z_ref_old_oof.npy'",
+  "pass_orth": false,
+  "beat_L7_f0": false,
+  "ref_G26_f0": 0.94919
+}{
+  "auc": 0.8941588124093419,
+  "prior": 0.016699525687182123,
+  "pass_auc": false,
+  "orth_e5": -3.8383618811477227,
+  "pass": false,
+  "pass_orth": false,
+  "beat_L7_f0": false,
+  "ref_G26_f0": 0.94919
+}
+{
+  "name": "tabicl",
+  "solo_f0": 0.9432404008663545,
+  "raw_disp": 0.994698540881593,
+  "r2_B40": 0.27227002874604367,
+  "g_fb": {
+    "mean_d": -4.6772070596134975e-05,
+    "n_pos": 0,
+    "d": [
+      -8.219172978896072e-05,
+      0.0,
+      -6.20674673369459e-05,
+      -8.127882627451122e-05,
+      -8.322329580257026e-06
+    ]
+  },
+  "g_tw": {
+    "mean_d": -4.4503123947903235e-05,
+    "n_pos": 0,
+    "d": [
+      -1.622103071385883e-05,
+      -2.4525577538625498e-05,
+      -0.00014249072701921772,
+      -1.757800453405789e-05,
+      -2.1700279933756228e-05
+    ]
+  },
+  "promote": false,
+  "NO_SUBMIT": true
+}40:OUT = Path(os.environ.get("HIRES_OUT", str(ROOT / "preds" / "hires_lm_5f")))
+41:CK = Path(os.environ.get("HIRES_CKPT", str(ROOT / "checkpoints" / "hires_lm_5f")))
+
+exec
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+p=Path('logs/v47/CODEX_DS_REVIEW_NEXT.md')
+s=p.read_text().replace(' | 0/5 | NO-GO |\\n\\nConditional', ' | 0/5 | NO-GO |\\n| Conditional LM pooling + outer-train LightGBM | 0.9512507991341679 | 0.9471946036884362 | −405.61954457316585 | 0/5 | NO-GO |\\n\\nConditional')
+s=s.replace('Artifacts are', '''The LightGBM learner used the 559,968 outer training rows and fixed boosting rounds. Its solo Fold-0 AUC was 0.943526723763. The combined model improved on the first candidate by +25.06374461e-5 and remained −405.61954457e-5 below the champion. Its subfold deltas × 10⁵ were −281.16711946, −368.57441510, −448.02133503, −489.74187323, and −375.12706136.
+
+**VERIFIED_LIFT=NO.** Both runs are NO-GO. The next spline check has low expected lift given the remaining gap.
+
+Artifacts are''').replace('The candidate array is in canonical Fold-0 row order.', '''The second run wrote "'`logs/v47/conditional_f0_tabular.json` and `preds/v47_sovereign/conditional_f0_tabular_oof.npy`. Both arrays are in canonical Fold-0 row order.'"''')
+p.write_text(s+'''
+"'```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python scripts/v47_sovereign/conditional_f0.py --tabular --regime-splines
+```
+'"''')
+PY
+tail -19 logs/v47/CODEX_DS_REVIEW_NEXT.md" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 16ms:
+
+| Experiment | Base AUC | Candidate AUC | ΔAUC × 10⁵ | Positive | Verdict |
+|---|---:|---:|---:|---:|---|
+| Conditional LM pooling | 0.9512507991341679 | 0.9469439662423098 | −430.683289185807 | 0/5 | NO-GO |
+| Conditional LM pooling + outer-train LightGBM | 0.9512507991341679 | 0.9471946036884362 | −405.61954457316585 | 0/5 | NO-GO |
+
+Conditional LM subfold deltas × 10⁵ were −260.43679743, −384.24439645, −471.23052332, −571.74404216, and −390.83059727. The stand-alone pool did not recover the champion's ranking.
+
+The LightGBM learner used the 559,968 outer training rows and fixed boosting rounds. Its solo Fold-0 AUC was 0.943526723763. The combined model improved on the first candidate by +25.06374461e-5 and remained −405.61954457e-5 below the champion. Its subfold deltas × 10⁵ were −281.16711946, −368.57441510, −448.02133503, −489.74187323, and −375.12706136.
+
+**VERIFIED_LIFT=NO.** Both runs are NO-GO. The next spline check has low expected lift given the remaining gap.
+
+Artifacts are `scripts/v47_sovereign/conditional_f0.py`, `logs/v47/conditional_f0.json`, and `preds/v47_sovereign/conditional_f0_oof.npy`. The second run wrote `logs/v47/conditional_f0_tabular.json` and `preds/v47_sovereign/conditional_f0_tabular_oof.npy`. Both arrays are in canonical Fold-0 row order.
+
+NO_SUBMIT=True · SUBMIT_ARMED=False · RunPod $0 · cloud $0 · public competitor tip CSVs read 0.
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python scripts/v47_sovereign/conditional_f0.py --tabular --regime-splines
+```
+
+codex
+The LightGBM anchor improved the first candidate by +25.06e-5, but the combined model still lost every subfold to the champion. I’ve written both results to the verdict file and am checking the saved predictions against the reported metrics.
+ succeeded in 79705ms:
+preds/v47_sovereign/conditional_f0_oof.npy metrics reproduced
+preds/v47_sovereign/conditional_f0_tabular_oof.npy metrics reproduced
+primitive AUC: 0.9475150811050558
+primitive AUC: 0.9458300284269741
+
+exec
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+p=Path('logs/v47/CODEX_DS_REVIEW_NEXT.md')
+p.write_text(p.read_text().replace('Promotion requires', 'An independent reread reproduced both AUCs and all five subfold deltas for each saved candidate. The consolidated L7 slice matched the original Fold-0 tensor element for element.\\n\\nPromotion requires'))
+PY" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 0ms:
+codex
+**VERIFIED_LIFT=NO.** Both CPU experiments missed the +8e-5 and 4/5 promotion gate. I reproduced the AUCs and subfold deltas from the saved predictions.
+
+| Fold-0 experiment | `z_sovereign_v0` AUC | Candidate AUC | ΔAUC × 10⁵ | Positive | Verdict |
+|---|---:|---:|---:|---:|---|
+| Conditional LM pooling | 0.9512507991341679 | 0.9469439662423098 | −430.683289185807 | 0/5 | NO-GO |
+| Conditional LM pooling + outer-train LightGBM | 0.9512507991341679 | 0.9471946036884362 | −405.619544573166 | 0/5 | NO-GO |
+
+Ranked CPU hypotheses were conditional permutation pooling, adding a fresh tabular anchor, adding merchant-risk and velocity splines, and rebuilding the strongest super-stack inputs with Fold-0 held out at every layer. I ran the first two. Both combiners trained within Fold-0 with each scoring subfold held out. The saved champion served as the benchmark because several legacy streams used upstream fits or track selection across global OOF rows.
+
+The verdict and exact subfold deltas are in [CODEX_DS_REVIEW_NEXT.md](/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/logs/v47/CODEX_DS_REVIEW_NEXT.md). Zero submissions, zero public competitor tip CSVs read, and $0 cloud spend.
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python scripts/v47_sovereign/conditional_f0.py --tabular --regime-splines
+```
+tokens used
+57,498
+**VERIFIED_LIFT=NO.** Both CPU experiments missed the +8e-5 and 4/5 promotion gate. I reproduced the AUCs and subfold deltas from the saved predictions.
+
+| Fold-0 experiment | `z_sovereign_v0` AUC | Candidate AUC | ΔAUC × 10⁵ | Positive | Verdict |
+|---|---:|---:|---:|---:|---|
+| Conditional LM pooling | 0.9512507991341679 | 0.9469439662423098 | −430.683289185807 | 0/5 | NO-GO |
+| Conditional LM pooling + outer-train LightGBM | 0.9512507991341679 | 0.9471946036884362 | −405.619544573166 | 0/5 | NO-GO |
+
+Ranked CPU hypotheses were conditional permutation pooling, adding a fresh tabular anchor, adding merchant-risk and velocity splines, and rebuilding the strongest super-stack inputs with Fold-0 held out at every layer. I ran the first two. Both combiners trained within Fold-0 with each scoring subfold held out. The saved champion served as the benchmark because several legacy streams used upstream fits or track selection across global OOF rows.
+
+The verdict and exact subfold deltas are in [CODEX_DS_REVIEW_NEXT.md](/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/logs/v47/CODEX_DS_REVIEW_NEXT.md). Zero submissions, zero public competitor tip CSVs read, and $0 cloud spend.
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python scripts/v47_sovereign/conditional_f0.py --tabular --regime-splines
+```

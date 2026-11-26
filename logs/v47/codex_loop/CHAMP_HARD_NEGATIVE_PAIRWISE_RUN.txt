@@ -1,0 +1,41 @@
+loading train + assembling 14 streams…
+[  15.2s]   + P_super_v4p_hc
+[  15.6s]   + P_super_v5_harvest
+[  15.9s]   + P4_L4.2_pure5f
+[  16.2s]   + P4_L4.3_pure5f
+[  16.6s]   + P4_L4.5_pure5f
+[  17.0s]   + B_xgb_llr
+[  17.8s]   + delta1_v4
+[  27.0s]   + l7_mean10
+[  27.0s]   + l7_curv
+[  27.0s]   + l7_R5
+[  27.0s]   + l7_U5_gini10
+[  30.4s]   + gpt2_med_4ep_mean
+[  30.4s]   + gpt2_med_4ep_shrink
+[  34.2s]   zone fold0: train_zone_n=31203 train_zone_fraud=0 thr_r1=13.100
+[  34.3s]   zone fold1: train_zone_n=31395 train_zone_fraud=0 thr_r1=13.100
+[  34.3s]   zone fold2: train_zone_n=31202 train_zone_fraud=0 thr_r1=13.100
+[  34.3s]   zone fold3: train_zone_n=31563 train_zone_fraud=0 thr_r1=13.100
+[  34.4s]   zone fold4: train_zone_n=31233 train_zone_fraud=0 thr_r1=13.100
+[  34.4s]   + zone_honest
+fold0: base=0.951251 cand=0.951394 Δe-5=+14.284
+fold1: base=0.952438 cand=0.952520 Δe-5=+8.247
+fold2: base=0.957075 cand=0.957082 Δe-5=+0.794
+fold3: base=0.952647 cand=0.952719 Δe-5=+7.231
+fold4: base=0.947987 cand=0.948119 Δe-5=+13.178
+control vs saved z0 max|Δ|=0.000e+00
+{"delta_e5_vs_uniform_pairwise_folds1_4": [-2.597914660973366, 4.5299602729032, 5.222551084971272, 4.117637254752449], "weighted_delta_e5_vs_uniform_pairwise": 2.818058487913388}
+{
+  "verdict": "NO-GO",
+  "weighted_delta_e5_folds1_4": 7.362311796910159,
+  "positive_folds_1_4": 4,
+  "loo_delta_e5": [
+    7.067492035225016,
+    9.551890989593451,
+    7.406071273215649,
+    5.42379288960652
+  ],
+  "overall_base_auc": 0.952251033980826,
+  "overall_candidate_auc": 0.9523461698415545,
+  "control_repro_max_abs_delta_vs_saved_z0": 0.0
+}

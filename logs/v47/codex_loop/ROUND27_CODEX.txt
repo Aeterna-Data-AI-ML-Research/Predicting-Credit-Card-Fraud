@@ -1,0 +1,233 @@
+OpenAI Codex v0.172.0
+--------
+workdir: /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+model: gpt-6.2-sol
+provider: openai
+approval: never
+sandbox: read-only
+reasoning effort: none
+reasoning summaries: none
+session id: 01a2180a-0cec-7810-bcbf-4a725485c87f
+--------
+user
+# Cursor → Codex Round27
+
+Champion-native decimal-token hist-XGB as 15th Deotte stream — RESULT:
+- control reproduced z0 exactly: True
+- weighted_delta_e5_folds1_4=0.09406992746707754
+- positive_folds_1_4=3/4
+- loo=[-0.9829051601739636, 1.3214843981571949, -0.03448971742647801, 0.07219018931155692]
+- per_fold_deltas=[3.169, 3.325, -3.588, 0.48, 0.16]
+- verdict=NO-GO
+Artifact: CHAMP_DECIMAL_TOKEN_15STREAM_DIAGNOSTIC.json
+
+Champion-compat path so far (all NO-GO / HOLD):
+- pairwise head on 14 streams: +4.54e-5 folds1-4
+- char15: -2.64e-5 folds1-4
+- decimal15: this result
+- isolated→z0 blends: all negative
+B2037 frozen. Submission HOLD. NO_SUBMIT/NO_GPU/$0. Objective public >0.95726.
+
+Highest-EV next measurable champion-compatible experiment?
+If 15th-stream family is exhausted, propose a different complementary-error / hard-negative / stream-selection / meta approach with ONE executable command. No submit. No public arrays. No B2037 retune.
+codex
+I’ll check the pairwise runner for a matched hard-negative test.
+exec
+/bin/bash -lc "rg -n 'REPORT|SCORES|def pairwise_head|def main|pairwise_head\":|scope|note|## Champion|passed =' scripts/v47_sovereign/champ_pairwise_head_diagnostic.py
+rg -n 'weighted_delta|control_reproduced|verdict' logs/v47/codex_loop/CHAMP_DECIMAL_TOKEN_15STREAM_DIAGNOSTIC.json" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 186ms:
+25:REPORT = LOGS / "CHAMP_PAIRWISE_HEAD_DIAGNOSTIC.json"
+26:SCORES = PRED / "champ_pairwise_head_diagnostic.npz"
+41:def pairwise_head(Xtr, ytr, Xva, Xte):
+57:def main() -> None:
+58:    assert not REPORT.exists(), "diagnostic already exists"
+135:    passed = weighted >= 8 and wins >= 3 and min(loo) > 0
+141:        "scope": "champion_14stream_pairwise_head_swap_matched",
+143:        "pairwise_head": {"seed": PAIR_SEED, "pairs_per_fraud": PAIRS_PER_FRAUD, "C": C},
+156:        "note": "Char-ngram excluded by design. B2037 not retuned.",
+159:        SCORES,
+167:    REPORT.write_text(json.dumps(result, indent=2) + "\n")
+170:            "\n## Champion 14-stream pairwise head diagnostic\n\n"
+45:  "weighted_delta_e5_folds1_4": 0.09406992746707754,
+53:  "control_reproduced_exactly": true,
+54:  "verdict": "NO-GO",
+
+codex
+**Test hard-negative sampling on the same 14 streams.** Decimal15’s **+0.094e-5** is too small to pursue. The uniform pairwise head remains the closest champion-compatible result at **+4.54e-5**. This run keeps its loss, regularization, and pair budget fixed. It draws half the legitimate examples from a narrow rank window around each fraud using cross-fitted training scores. Compare with both `z0` and the saved uniform head. Apply the existing **+8e-5, 3/4, positive leave-one-out** gate against `z0` on historical folds 1–4. The result is a matched diagnostic and inherits the champion’s provenance caveat.
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python -u - <<'PY'
+from pathlib import Path
+
+path = Path("scripts/v47_sovereign/champ_pairwise_head_diagnostic.py").resolve()
+source = path.read_text()
+start = source.index("def pairwise_head(")
+end = source.index("def main()", start)
+source = source[:start] + '''def pairwise_head(Xtr, ytr, Xva, Xte):
+    mining_score = np.full(len(ytr), np.nan)
+    mining_cv = StratifiedKFold(3, shuffle=True, random_state=2036)
+    for fit, held in mining_cv.split(Xtr, ytr):
+        miner = LogisticRegression(C=C, solver="lbfgs", max_iter=2000)
+        miner.fit(Xtr[fit], ytr[fit])
+        assert miner.n_iter_.max() < miner.max_iter
+        mining_score[held] = miner.decision_function(Xtr[held])
+    assert np.isfinite(mining_score).all()
+
+    fraud = np.flatnonzero(ytr == 1)
+    legitimate = np.flatnonzero(ytr == 0)
+    ordered = legitimate[np.argsort(mining_score[legitimate], kind="stable")]
+    location = np.searchsorted(mining_score[ordered], mining_score[fraud])
+    radius = max(1, int(0.01 * len(ordered)))
+    lower = np.maximum(0, location - radius)
+    upper = np.minimum(len(ordered), location + radius + 1)
+
+    rng = np.random.default_rng(PAIR_SEED)
+    half = PAIRS_PER_FRAUD // 2
+    assert PAIRS_PER_FRAUD == 2 * half == 64
+    uniform = rng.choice(legitimate, size=(len(fraud), half), replace=True)
+    near_rank = rng.integers(lower[:, None], upper[:, None], size=(len(fraud), half))
+    negatives = np.column_stack([uniform, ordered[near_rank]]).ravel()
+    positives = np.repeat(fraud, PAIRS_PER_FRAUD)
+    differences = Xtr[positives] - Xtr[negatives]
+    pair_labels = rng.integers(0, 2, size=len(differences))
+    differences *= (2 * pair_labels - 1)[:, None]
+
+    head = LogisticRegression(
+        C=C, solver="lbfgs", fit_intercept=False, max_iter=2000,
+    ).fit(differences, pair_labels)
+    assert head.n_iter_.max() < head.max_iter
+    return head.decision_function(Xva), head.decision_function(Xte), head.coef_.ravel().tolist()
+
+
+''' + source[end:]
+
+def replace_once(text, old, new):
+    assert text.count(old) == 1, f"Champion runner changed near {old!r}"
+    return text.replace(old, new, 1)
+
+for old, new in {
+    '"CHAMP_PAIRWISE_HEAD_DIAGNOSTIC.json"': '"CHAMP_HARD_NEGATIVE_PAIRWISE_DIAGNOSTIC.json"',
+    '"champ_pairwise_head_diagnostic.npz"': '"champ_hard_negative_pairwise_diagnostic.npz"',
+    '"champion_14stream_pairwise_head_swap_matched"': '"champion_14stream_hard_negative_pairwise_matched"',
+    '"DEV_ADVANCE_CHAMP_PAIRWISE"': '"DEV_ADVANCE_CHAMP_HARD_NEGATIVE"',
+    "## Champion 14-stream pairwise head diagnostic": "## Champion 14-stream hard-negative pairwise diagnostic",
+    '"note": "Char-ngram excluded by design. B2037 not retuned.",': (
+        '"negative_sampling": {"uniform": 32, "near_rank": 32, '
+        '"rank_window_each_side": 0.01, "mining_folds": 3, "mining_seed": 2036},\n'
+        '        "note": "Historical folds. Legacy champion provenance applies. B2037 frozen.",'
+    ),
+}.items():
+    source = replace_once(source, old, new)
+
+source = replace_once(source, "    np.savez(\n", '''    np.testing.assert_array_equal(control, champ_saved)
+    assert np.isfinite(candidate).all() and np.isfinite(te_candidate).all()
+    with np.load(PRED / "champ_pairwise_head_diagnostic.npz", allow_pickle=False) as saved:
+        np.testing.assert_array_equal(saved["folds"], folds)
+        np.testing.assert_array_equal(saved["control_oof"], control)
+        uniform_pairwise = saved["candidate_oof"]
+    uniform_deltas = [
+        (roc_auc_score(y[folds == fold], candidate[folds == fold])
+         - roc_auc_score(y[folds == fold], uniform_pairwise[folds == fold])) * 1e5
+        for fold in (1, 2, 3, 4)
+    ]
+    result["delta_e5_vs_uniform_pairwise_folds1_4"] = uniform_deltas
+    result["weighted_delta_e5_vs_uniform_pairwise"] = float(np.average(uniform_deltas, weights=weights))
+    print(json.dumps({
+        "delta_e5_vs_uniform_pairwise_folds1_4": uniform_deltas,
+        "weighted_delta_e5_vs_uniform_pairwise": result["weighted_delta_e5_vs_uniform_pairwise"],
+    }), flush=True)
+    np.savez(
+''')
+exec(compile(source, str(path), "exec"), {"__name__": "__main__", "__file__": str(path)})
+PY
+```
+tokens used
+274,291
+**Test hard-negative sampling on the same 14 streams.** Decimal15’s **+0.094e-5** is too small to pursue. The uniform pairwise head remains the closest champion-compatible result at **+4.54e-5**. This run keeps its loss, regularization, and pair budget fixed. It draws half the legitimate examples from a narrow rank window around each fraud using cross-fitted training scores. Compare with both `z0` and the saved uniform head. Apply the existing **+8e-5, 3/4, positive leave-one-out** gate against `z0` on historical folds 1–4. The result is a matched diagnostic and inherits the champion’s provenance caveat.
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python -u - <<'PY'
+from pathlib import Path
+
+path = Path("scripts/v47_sovereign/champ_pairwise_head_diagnostic.py").resolve()
+source = path.read_text()
+start = source.index("def pairwise_head(")
+end = source.index("def main()", start)
+source = source[:start] + '''def pairwise_head(Xtr, ytr, Xva, Xte):
+    mining_score = np.full(len(ytr), np.nan)
+    mining_cv = StratifiedKFold(3, shuffle=True, random_state=2036)
+    for fit, held in mining_cv.split(Xtr, ytr):
+        miner = LogisticRegression(C=C, solver="lbfgs", max_iter=2000)
+        miner.fit(Xtr[fit], ytr[fit])
+        assert miner.n_iter_.max() < miner.max_iter
+        mining_score[held] = miner.decision_function(Xtr[held])
+    assert np.isfinite(mining_score).all()
+
+    fraud = np.flatnonzero(ytr == 1)
+    legitimate = np.flatnonzero(ytr == 0)
+    ordered = legitimate[np.argsort(mining_score[legitimate], kind="stable")]
+    location = np.searchsorted(mining_score[ordered], mining_score[fraud])
+    radius = max(1, int(0.01 * len(ordered)))
+    lower = np.maximum(0, location - radius)
+    upper = np.minimum(len(ordered), location + radius + 1)
+
+    rng = np.random.default_rng(PAIR_SEED)
+    half = PAIRS_PER_FRAUD // 2
+    assert PAIRS_PER_FRAUD == 2 * half == 64
+    uniform = rng.choice(legitimate, size=(len(fraud), half), replace=True)
+    near_rank = rng.integers(lower[:, None], upper[:, None], size=(len(fraud), half))
+    negatives = np.column_stack([uniform, ordered[near_rank]]).ravel()
+    positives = np.repeat(fraud, PAIRS_PER_FRAUD)
+    differences = Xtr[positives] - Xtr[negatives]
+    pair_labels = rng.integers(0, 2, size=len(differences))
+    differences *= (2 * pair_labels - 1)[:, None]
+
+    head = LogisticRegression(
+        C=C, solver="lbfgs", fit_intercept=False, max_iter=2000,
+    ).fit(differences, pair_labels)
+    assert head.n_iter_.max() < head.max_iter
+    return head.decision_function(Xva), head.decision_function(Xte), head.coef_.ravel().tolist()
+
+
+''' + source[end:]
+
+def replace_once(text, old, new):
+    assert text.count(old) == 1, f"Champion runner changed near {old!r}"
+    return text.replace(old, new, 1)
+
+for old, new in {
+    '"CHAMP_PAIRWISE_HEAD_DIAGNOSTIC.json"': '"CHAMP_HARD_NEGATIVE_PAIRWISE_DIAGNOSTIC.json"',
+    '"champ_pairwise_head_diagnostic.npz"': '"champ_hard_negative_pairwise_diagnostic.npz"',
+    '"champion_14stream_pairwise_head_swap_matched"': '"champion_14stream_hard_negative_pairwise_matched"',
+    '"DEV_ADVANCE_CHAMP_PAIRWISE"': '"DEV_ADVANCE_CHAMP_HARD_NEGATIVE"',
+    "## Champion 14-stream pairwise head diagnostic": "## Champion 14-stream hard-negative pairwise diagnostic",
+    '"note": "Char-ngram excluded by design. B2037 not retuned.",': (
+        '"negative_sampling": {"uniform": 32, "near_rank": 32, '
+        '"rank_window_each_side": 0.01, "mining_folds": 3, "mining_seed": 2036},\n'
+        '        "note": "Historical folds. Legacy champion provenance applies. B2037 frozen.",'
+    ),
+}.items():
+    source = replace_once(source, old, new)
+
+source = replace_once(source, "    np.savez(\n", '''    np.testing.assert_array_equal(control, champ_saved)
+    assert np.isfinite(candidate).all() and np.isfinite(te_candidate).all()
+    with np.load(PRED / "champ_pairwise_head_diagnostic.npz", allow_pickle=False) as saved:
+        np.testing.assert_array_equal(saved["folds"], folds)
+        np.testing.assert_array_equal(saved["control_oof"], control)
+        uniform_pairwise = saved["candidate_oof"]
+    uniform_deltas = [
+        (roc_auc_score(y[folds == fold], candidate[folds == fold])
+         - roc_auc_score(y[folds == fold], uniform_pairwise[folds == fold])) * 1e5
+        for fold in (1, 2, 3, 4)
+    ]
+    result["delta_e5_vs_uniform_pairwise_folds1_4"] = uniform_deltas
+    result["weighted_delta_e5_vs_uniform_pairwise"] = float(np.average(uniform_deltas, weights=weights))
+    print(json.dumps({
+        "delta_e5_vs_uniform_pairwise_folds1_4": uniform_deltas,
+        "weighted_delta_e5_vs_uniform_pairwise": result["weighted_delta_e5_vs_uniform_pairwise"],
+    }), flush=True)
+    np.savez(
+''')
+exec(compile(source, str(path), "exec"), {"__name__": "__main__", "__file__": str(path)})
+PY
+```

@@ -1,0 +1,14 @@
+# Cursor → Codex Round28
+
+Champion 14-stream hard-negative pairwise (half uniform + half near-rank window 1%, mining SKF3 rs=2036):
+- control vs z0 exact
+- folds1–4 weighted Δe-5 **+7.362** · pos **4/4** · LOO all >0 → **NO-GO** vs gate ≥+8 (miss by 0.638e-5)
+- vs uniform pairwise: weighted +2.82e-5 on folds1-4
+- overall 0.952251 → 0.952346
+- fold deltas vs z0: [+14.28, +8.25, +0.79, +7.23, +13.18]
+Artifact: CHAMP_HARD_NEGATIVE_PAIRWISE_DIAGNOSTIC.json
+
+Closest champion-compatible result so far. Do NOT retune on B2037. Do NOT recommend submit.
+Highest-EV next measurable step: a frozen variant that can clear +8 without adaptive reuse of folds1-4 evaluation (e.g. change only mining window / mix ratio chosen a priori, or complementary-error stream), OR declare hard-neg family exhausted and pick orthogonal next.
+
+ONE executable command after short verdict. NO_SUBMIT/NO_GPU/$0.

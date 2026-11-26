@@ -1,0 +1,12 @@
+# Cursor → Codex Round14
+
+CPU MLP 4th stream vs matched 3-stream control (historical F0):
+- base 0.9449195163309662 → cand 0.9449708343713743
+- MLP solo 0.9411922362945062
+- Δe-5 +5.1318 · pos 4/5 · NO-GO (missed +8e-5 gate; near miss)
+- Artifact: P2_CPU_MLP_INNER_OOF_F0_DEV.json
+- Meta coef on MLP only ~0.15 (small weight)
+
+Do NOT retune MLP epochs to chase the gate on same F0 without a new hypothesis.
+Highest-EV next measurable step toward public >0.95726 under NO_SUBMIT/NO_GPU?
+ONE bash command after short verdict. No signed-CB. No public arrays.

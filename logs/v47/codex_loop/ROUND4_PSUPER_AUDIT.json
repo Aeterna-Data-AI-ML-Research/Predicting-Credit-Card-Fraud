@@ -1,0 +1,450 @@
+{
+  "base_auc": 0.9512507991341679,
+  "n_audited": 30,
+  "top": [
+    {
+      "name": "P_wide_v5_rect",
+      "path": "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/preds/P_wide_v5_rect_oof.npy",
+      "solo_auc": 0.9519710701657869,
+      "spearman_vs_base": 0.9966404722854674,
+      "blend_auc": 0.9513021420424856,
+      "delta_e5": 5.134290831776411,
+      "pos5": 5,
+      "sub_e5": [
+        4.5946651591188825,
+        3.4925664216256536,
+        3.577823931677493,
+        7.9178799184287385,
+        7.645654184484929
+      ],
+      "verdict": "NO-GO"
+    },
+    {
+      "name": "P_super_v8_part12_rect",
+      "path": "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/preds/P_super_v8_part12_rect_oof.npy",
+      "solo_auc": 0.9518700131972444,
+      "spearman_vs_base": 0.9958990746563886,
+      "blend_auc": 0.9513012250383108,
+      "delta_e5": 5.042590414294779,
+      "pos5": 5,
+      "sub_e5": [
+        4.392872432545936,
+        2.9259945354409567,
+        4.200054180680812,
+        6.385637930284016,
+        7.878990527876439
+      ],
+      "verdict": "NO-GO"
+    },
+    {
+      "name": "P_super_v6_grandmaster",
+      "path": "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/preds/P_super_v6_grandmaster_oof.npy",
+      "solo_auc": 0.951936708931389,
+      "spearman_vs_base": 0.9970326487831095,
+      "blend_auc": 0.9512978554365299,
+      "delta_e5": 4.705630236201408,
+      "pos5": 5,
+      "sub_e5": [
+        4.020332014231798,
+        2.8095756547386053,
+        4.340055986729041,
+        6.3467485397095125,
+        7.155647863399395
+      ],
+      "verdict": "NO-GO"
+    },
+    {
+      "name": "P_super_v7_cpu",
+      "path": "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/preds/P_super_v7_cpu_oof.npy",
+      "solo_auc": 0.951936708931389,
+      "spearman_vs_base": 0.9970326487831095,
+      "blend_auc": 0.9512978554365299,
+      "delta_e5": 4.705630236201408,
+      "pos5": 5,
+      "sub_e5": [
+        4.020332014231798,
+        2.8095756547386053,
+        4.340055986729041,
+        6.3467485397095125,
+        7.155647863399395
+      ],
+      "verdict": "NO-GO"
+    },
+    {
+      "name": "P_super_v9_frontier_rect",
+      "path": "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/preds/P_super_v9_frontier_rect_oof.npy",
+      "solo_auc": 0.9518375232730607,
+      "spearman_vs_base": 0.9962886563149423,
+      "blend_auc": 0.9512971000737691,
+      "delta_e5": 4.630093960122927,
+      "pos5": 5,
+      "sub_e5": [
+        4.105705860102393,
+        2.5844991519918814,
+        3.30559819776699,
+        5.996744024661105,
+        7.536763890936271
+      ],
+      "verdict": "NO-GO"
+    },
+    {
+      "name": "P_restack_own",
+      "path": "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/preds/P_restack_own_oof.npy",
+      "solo_auc": 0.9517384075557289,
+      "spearman_vs_base": 0.9960286923715415,
+      "blend_auc": 0.9512956981453529,
+      "delta_e5": 4.489901118498452,
+      "pos5": 5,
+      "sub_e5": [
+        4.532575089388757,
+        2.1886749575483755,
+        3.2278194166401875,
+        5.257845603978684,
+        7.731210843731073
+      ],
+      "verdict": "NO-GO"
+    },
+    {
+      "name": "P_restack_pub",
+      "path": "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/preds/P_restack_pub_oof.npy",
+      "solo_auc": 0.9515975712569361,
+      "spearman_vs_base": 0.9957172519956005,
+      "blend_auc": 0.9512880481545936,
+      "delta_e5": 3.7249020425678125,
+      "pos5": 5,
+      "sub_e5": [
+        3.9427194270857946,
+        1.6453868475263533,
+        2.9011485359053957,
+        4.098941765229291,
+        6.160079465011847
+      ],
+      "verdict": "NO-GO"
+    },
+    {
+      "name": "P_super_v7_regime_only",
+      "path": "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/preds/P_super_v7_regime_only_oof.npy",
+      "solo_auc": 0.9514250625664955,
+      "spearman_vs_base": 0.9959792083558375,
+      "blend_auc": 0.9512799505414576,
+      "delta_e5": 2.915140728976251,
+      "pos5": 5,
+      "sub_e5": [
+        1.9946434896889187,
+        1.9713597135373462,
+        5.3122907507474615,
+        2.224473140155503,
+        5.211178335318145
+      ],
+      "verdict": "NO-GO"
+    },
+    {
+      "name": "P_super_v7",
+      "path": "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/preds/P_super_v7_oof.npy",
+      "solo_auc": 0.951496130390036,
+      "spearman_vs_base": 0.9968552362441173,
+      "blend_auc": 0.9512788656788916,
+      "delta_e5": 2.8066544723759357,
+      "pos5": 5,
+      "sub_e5": [
+        1.9791209722619385,
+        1.9946434896889187,
+        4.557836573848562,
+        2.4889209959688685,
+        5.02450926062048
+      ],
+      "verdict": "NO-GO"
+    },
+    {
+      "name": "P_super_v5p5_rect",
+      "path": "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/preds/P_super_v5p5_rect_oof.npy",
+      "solo_auc": 0.9515800036328909,
+      "spearman_vs_base": 0.9981558842688024,
+      "blend_auc": 0.9512738392526187,
+      "delta_e5": 2.3040118450778913,
+      "pos5": 5,
+      "sub_e5": [
+        1.6221030713969853,
+        1.3038914640661758,
+        3.3678212226551096,
+        3.1967079041850255,
+        2.9244821702634205
+      ],
+      "verdict": "NO-GO"
+    },
+    {
+      "name": "P_super_v5_rect",
+      "path": "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/preds/P_super_v5_rect_oof.npy",
+      "solo_auc": 0.9515777157851871,
+      "spearman_vs_base": 0.9981321006797644,
+      "blend_auc": 0.951273435149084,
+      "delta_e5": 2.26360149161442,
+      "pos5": 5,
+      "sub_e5": [
+        1.482400414520857,
+        1.0477699264765938,
+        3.3133760758752295,
+        2.8078139985843187,
+        2.9555936827296847
+      ],
+      "verdict": "NO-GO"
+    },
+    {
+      "name": "P_super_v5p5_clean",
+      "path": "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/preds/P_super_v5p5_clean_oof.npy",
+      "solo_auc": 0.9515126955264667,
+      "spearman_vs_base": 0.9983343839331134,
+      "blend_auc": 0.9512694873683996,
+      "delta_e5": 1.8688234231678535,
+      "pos5": 5,
+      "sub_e5": [
+        1.0865762200662488,
+        1.0089636329091434,
+        2.9244821702523183,
+        2.395586458614485,
+        2.442253727297228
+      ],
+      "verdict": "NO-GO"
+    },
+    {
+      "name": "P_super_v7_master",
+      "path": "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/preds/P_super_v7_master_oof.npy",
+      "solo_auc": 0.9514516230484306,
+      "spearman_vs_base": 0.9983785503201096,
+      "blend_auc": 0.9512682937087281,
+      "delta_e5": 1.7494574560239506,
+      "pos5": 5,
+      "sub_e5": [
+        2.211958733699948,
+        1.18747258334162,
+        2.9944830732597794,
+        1.9444695280923519,
+        2.7611467299015757
+      ],
+      "verdict": "NO-GO"
+    },
+    {
+      "name": "P_super_v6",
+      "path": "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/preds/P_super_v6_oof.npy",
+      "solo_auc": 0.9514338114080199,
+      "spearman_vs_base": 0.9984818972941152,
+      "blend_auc": 0.9512666772945895,
+      "delta_e5": 1.5878160421589627,
+      "pos5": 5,
+      "sub_e5": [
+        1.800612021829462,
+        1.0477699264765938,
+        2.0222483092080523,
+        2.535588264629407,
+        1.7966898439802925
+      ],
+      "verdict": "NO-GO"
+    },
+    {
+      "name": "P_super_v7_clean_reg",
+      "path": "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/preds/P_super_v7_clean_reg_oof.npy",
+      "solo_auc": 0.951359705036748,
+      "spearman_vs_base": 0.9980701845586377,
+      "blend_auc": 0.9512662110212806,
+      "delta_e5": 1.5411887112737332,
+      "pos5": 5,
+      "sub_e5": [
+        2.6776342565648648,
+        1.0555311852011862,
+        3.1655963917298635,
+        1.244460497973332,
+        2.193361627711443
+      ],
+      "verdict": "NO-GO"
+    },
+    {
+      "name": "P_super_v7_clean",
+      "path": "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/preds/P_super_v7_clean_oof.npy",
+      "solo_auc": 0.9513905645585938,
+      "spearman_vs_base": 0.9983271986442601,
+      "blend_auc": 0.9512659094978739,
+      "delta_e5": 1.5110363706050123,
+      "pos5": 5,
+      "sub_e5": [
+        2.607782928154556,
+        0.7994096476116042,
+        2.753368851771132,
+        1.345572913435955,
+        2.0144704311220174
+      ],
+      "verdict": "NO-GO"
+    },
+    {
+      "name": "P_super_v6_campaign",
+      "path": "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/preds/P_super_v6_campaign_oof.npy",
+      "solo_auc": 0.9514232021359917,
+      "spearman_vs_base": 0.9984972693192965,
+      "blend_auc": 0.9512654991773617,
+      "delta_e5": 1.4700043193816015,
+      "pos5": 5,
+      "sub_e5": [
+        0.5432881100442266,
+        1.272846429190011,
+        2.0766934559990347,
+        1.8900243813013695,
+        1.8666907469766514
+      ],
+      "verdict": "NO-GO"
+    },
+    {
+      "name": "P_super_v5_full",
+      "path": "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/preds/P_super_v5_full_oof.npy",
+      "solo_auc": 0.9513730964061876,
+      "spearman_vs_base": 0.996936814269049,
+      "blend_auc": 0.9512633449946734,
+      "delta_e5": 1.2545860505475126,
+      "pos5": 5,
+      "sub_e5": [
+        1.171950065925742,
+        1.847179574088198,
+        0.4822284429550905,
+        2.9555936827074802,
+        0.8400108361450442
+      ],
+      "verdict": "NO-GO"
+    },
+    {
+      "name": "P_super_v4p_7hc",
+      "path": "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/preds/P_super_v4p_7hc_oof.npy",
+      "solo_auc": 0.9513976643468479,
+      "spearman_vs_base": 0.9990212459143639,
+      "blend_auc": 0.9512624901602731,
+      "delta_e5": 1.1691026105209446,
+      "pos5": 5,
+      "sub_e5": [
+        0.853738458617137,
+        0.36477915958954554,
+        1.4389074507792365,
+        2.418920092950305,
+        1.2133489855292723
+      ],
+      "verdict": "NO-GO"
+    },
+    {
+      "name": "P_super_v4p_hc_master",
+      "path": "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/preds/P_super_v4p_hc_master_oof.npy",
+      "solo_auc": 0.9513860448159833,
+      "spearman_vs_base": 0.9989667084155068,
+      "blend_auc": 0.9512622135047765,
+      "delta_e5": 1.1414370608586744,
+      "pos5": 5,
+      "sub_e5": [
+        0.7140358017632131,
+        0.2328377614380095,
+        1.4700189632343985,
+        2.3566970680510835,
+        1.104458691969512
+      ],
+      "verdict": "NO-GO"
+    },
+    {
+      "name": "P_super_v4p",
+      "path": "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/preds/P_super_v4p_oof.npy",
+      "solo_auc": 0.9513609826256152,
+      "spearman_vs_base": 0.9987407691254008,
+      "blend_auc": 0.9512618125097304,
+      "delta_e5": 1.1013375562529681,
+      "pos5": 5,
+      "sub_e5": [
+        0.6286619559037199,
+        0.07761258714600316,
+        2.0455819435327705,
+        2.434475849177886,
+        0.7933435674623013
+      ],
+      "verdict": "NO-GO"
+    },
+    {
+      "name": "P_super_v4_master",
+      "path": "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/preds/P_super_v4_master_oof.npy",
+      "solo_auc": 0.9513525788263394,
+      "spearman_vs_base": 0.9987703734147687,
+      "blend_auc": 0.9512613027175791,
+      "delta_e5": 1.0503583411258788,
+      "pos5": 5,
+      "sub_e5": [
+        0.9003060109202821,
+        0.0388062935785527,
+        1.9444695280812496,
+        2.23225101825264,
+        0.8789002266973434
+      ],
+      "verdict": "NO-GO"
+    },
+    {
+      "name": "P_super_v7_pure_master",
+      "path": "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/preds/P_super_v7_pure_master_oof.npy",
+      "solo_auc": 0.951345569184258,
+      "spearman_vs_base": 0.998885907929161,
+      "blend_auc": 0.9512606033076153,
+      "delta_e5": 0.9804173447425235,
+      "pos5": 5,
+      "sub_e5": [
+        0.8382159411790546,
+        0.17074769170788429,
+        1.711133184723046,
+        2.2633625306967,
+        0.7466762987906606
+      ],
+      "verdict": "NO-GO"
+    },
+    {
+      "name": "P_super_v7_pure",
+      "path": "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/preds/P_super_v7_pure_oof.npy",
+      "solo_auc": 0.9513410774180463,
+      "spearman_vs_base": 0.9988711558148855,
+      "blend_auc": 0.9512598448363659,
+      "delta_e5": 0.9045702198062777,
+      "pos5": 5,
+      "sub_e5": [
+        0.9003060109091798,
+        0.10865762201106577,
+        0.9177896172607447,
+        2.5122546302824844,
+        0.8088993237009845
+      ],
+      "verdict": "NO-GO"
+    },
+    {
+      "name": "P_super_v4",
+      "path": "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/preds/P_super_v4_oof.npy",
+      "solo_auc": 0.9513081756191063,
+      "spearman_vs_base": 0.9985679322891448,
+      "blend_auc": 0.9512594842516734,
+      "delta_e5": 0.8685117505513595,
+      "pos5": 4,
+      "sub_e5": [
+        0.9080672696337722,
+        -0.3414953834601775,
+        2.0144704311220174,
+        1.9366916499841125,
+        0.420005418066971
+      ],
+      "verdict": "NO-GO"
+    }
+  ],
+  "best": {
+    "name": "P_wide_v5_rect",
+    "path": "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/preds/P_wide_v5_rect_oof.npy",
+    "solo_auc": 0.9519710701657869,
+    "spearman_vs_base": 0.9966404722854674,
+    "blend_auc": 0.9513021420424856,
+    "delta_e5": 5.134290831776411,
+    "pos5": 5,
+    "sub_e5": [
+      4.5946651591188825,
+      3.4925664216256536,
+      3.577823931677493,
+      7.9178799184287385,
+      7.645654184484929
+    ],
+    "verdict": "NO-GO"
+  },
+  "VERIFIED_LIFT": false,
+  "NO_SUBMIT": true
+}

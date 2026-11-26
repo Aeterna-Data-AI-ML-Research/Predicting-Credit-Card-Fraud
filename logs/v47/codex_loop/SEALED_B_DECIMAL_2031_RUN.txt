@@ -1,0 +1,71 @@
+loading /tmp/s6e11_isol/data/train.csv
+Frozen B fold 1/4
+  Inner fit 1/3
+  Inner fit 2/3
+  Inner fit 3/3
+  Δe-5=+121.046
+Frozen B fold 2/4
+  Inner fit 1/3
+  Inner fit 2/3
+  Inner fit 3/3
+  Δe-5=+109.922
+Frozen B fold 3/4
+  Inner fit 1/3
+  Inner fit 2/3
+  Inner fit 3/3
+  Δe-5=+135.704
+Frozen B fold 4/4
+  Inner fit 1/3
+  Inner fit 2/3
+  Inner fit 3/3
+  Δe-5=+130.882
+{
+  "scope": "B_decimal_token_transport_previously_examined_rows",
+  "lock_sha256": "be5f3326199af49594d198bf2ad8850959f41cafa6717f13088d03ec1bb86b12",
+  "per_fold": [
+    {
+      "fold": 1,
+      "n": 139992,
+      "base_auc": 0.9467207692467257,
+      "candidate_auc": 0.9479312340409706,
+      "delta_e5": 121.04647942449142
+    },
+    {
+      "fold": 2,
+      "n": 139992,
+      "base_auc": 0.945251050528828,
+      "candidate_auc": 0.9463502688948872,
+      "delta_e5": 109.9218366059196
+    },
+    {
+      "fold": 3,
+      "n": 139992,
+      "base_auc": 0.947943883377874,
+      "candidate_auc": 0.9493009232567993,
+      "delta_e5": 135.70398789252147
+    },
+    {
+      "fold": 4,
+      "n": 139992,
+      "base_auc": 0.9459057616881332,
+      "candidate_auc": 0.9472145781063027,
+      "delta_e5": 130.88164181694896
+    }
+  ],
+  "weighted_delta_e5": 124.38848643497036,
+  "positive_folds": 4,
+  "loo_delta_e5": [
+    125.50248877179668,
+    129.21070304465394,
+    120.61665261578665,
+    122.22410130764418
+  ],
+  "paired_ci95_e5": [
+    104.4049907435196,
+    145.909275833013
+  ],
+  "verdict": "B_TRANSPORT_PASS",
+  "milestone": "LOCAL_GATE_PASS",
+  "NO_SUBMIT": true,
+  "NO_GPU": true
+}

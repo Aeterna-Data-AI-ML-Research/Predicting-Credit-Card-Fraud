@@ -1,0 +1,715 @@
+OpenAI Codex v0.172.0
+--------
+workdir: /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+model: gpt-6.2-sol
+provider: openai
+approval: never
+sandbox: read-only
+reasoning effort: none
+reasoning summaries: none
+session id: 01a2180a-0cec-7810-bcbf-4a725485c87f
+--------
+user
+# Cursor → Codex Round10 — measurable result (S6E11 fraud)
+
+## Verified hist-XGB inner-OOF integration (F0 DEV)
+- Control reproduced: True (matched isolated 2-stream exactly 0.9446644275289812)
+- Candidate 3-stream (LR+LGBM+histXGB) inner-OOF meta: 0.9449195163309662
+- Δe-5 +25.5089 · pos 4/5 · DEV_ADVANCE
+- Meta coefs ≈ [0.721, 0.829, 0.826]
+- Artifact: logs/v47/codex_loop/P2_XGB_INNER_OOF_F0_DEV.json
+
+## Context
+Still far below public pin 0.95726 and below saved z_sovereign_v0 0.95125. Milestone remains LOCAL_GATE_PASS (dev-only). NO_SUBMIT/NO_GPU.
+
+## Ask
+Highest-EV next measurable step toward public ROC-AUC > 0.95726 under locks. Choose one:
+- Expand isolated rebuild with one auditable self-owned P4/family stream on CPU
+- Freeze sealed-B transport diagnostic now with the 3-stream recipe
+- Another complementary self-owned stream batch
+
+Give ONE bash command only after a short verdict. No signed-CB. No public arrays.
+codex
+I’ll look for a CPU-rebuildable P4 feature and a matched control.
+exec
+/bin/bash -lc "ls scripts/v47_sovereign
+rg -n 'def .*L4|L4\\.2|L4\\.3|L4\\.5' scripts/p4_pure_5fold.py
+rg -n 'def .*l4|def .*L4' scripts | rg -i 'regime|lever|p4' | head -25
+ls /tmp/s6e11_isol" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 6567ms:
+__pycache__
+adjudicate_crossfold_cb.py
+audit_unused_psuper_f0.py
+conditional_f0.py
+crossfold_signed_cb_resid.py
+hgdt_v2_mps_fold0.py
+isolated_champion_f0_diagnostic.py
+kaggle_hgdt_f0
+launch_f0_pod.py
+p2_batch_isolated_f0.py
+pod_f0
+step1_schema_and_z_sovereign.py
+step2_provenance_and_z_v1.py
+step3_f0_gate.py
+step4_f0_gate_report.py
+v47_3_f0_gate.py
+3:Pure 5-Fold Extraction of the 3 Proven Fold-0 Winners (P4_L4.3, P4_L4.2, P4_L4.5)
+65:    For a single lever (e.g. P4_L4.3), compute 3 clean 5-fold OOF/test tracks:
+164:    p4_keys = ["P4_L4.3", "P4_L4.2", "P4_L4.5"]
+313:        PRED / "matrix_v2/P4_L4.3_pure5f_oof.npy",
+314:        PRED / "matrix_v2/P4_L4.3_pure5f_test.npy",
+315:        PRED / "matrix_v2/P4_L4.2_pure5f_oof.npy",
+316:        PRED / "matrix_v2/P4_L4.2_pure5f_test.npy",
+317:        PRED / "matrix_v2/P4_L4.5_pure5f_oof.npy",
+318:        PRED / "matrix_v2/P4_L4.5_pure5f_test.npy",
+scripts/part11_grandmaster_auc_engine.py:774:def step4(state, y, folds, names, O, T, bank_ctx, l4_oof, l4_te, base_nested):
+data
+logs
+p2_spline.py
+p2_xgb_inner.py
+preds
+run_isol.py
+
+exec
+/bin/bash -lc "head -42 scripts/p4_pure_5fold.py
+rg -n 'LEVER_GENERATORS|P4_L4\\.5' scripts | head -24
+cat /tmp/s6e11_isol/p2_xgb_inner.py | head -32
+ls -l logs/v47/codex_loop/P2_XGB_INNER_OOF_F0_DEV.json" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 0ms:
+#!/usr/bin/env python3
+"""
+Pure 5-Fold Extraction of the 3 Proven Fold-0 Winners (P4_L4.3, P4_L4.2, P4_L4.5)
++ B_xgb_llr Super-Stack + True Orthogonal Residual Injection onto sub_ev4 (0.95243 LB).
+STRICT NO_SUBMIT.
+"""
+from __future__ import annotations
+import gc, hashlib, json, os, sys, time
+from datetime import datetime, timezone
+from pathlib import Path
+import numpy as np
+import pandas as pd
+from scipy.special import expit
+from scipy.stats import ks_2samp, rankdata, spearmanr
+from sklearn.linear_model import Ridge, LogisticRegression
+from sklearn.model_selection import StratifiedKFold
+from sklearn.preprocessing import StandardScaler
+
+ROOT = Path("/workspace/s6e11")
+sys.path.insert(0, str(ROOT / "scripts"))
+os.environ.setdefault("S6E11_ROOT", str(ROOT))
+os.environ.setdefault("INPUT_DIR", str(ROOT))
+
+from paradigm_stack_delta_eval import (
+    fast_auc, to_z_ranklogit, score_candidate_vs_v4p_hc, test1_orthogonal_alpha_probe,
+)
+from gpu_matrix_v2_runner import Ctx, LEVER_GENERATORS
+from gpu_matrix_v2_core import (
+    per_feature_ks_filter, fit_lever_Direct_and_Ridge, residual_context_init_score,
+)
+
+PRED = ROOT / "preds"
+SUB = ROOT / "submissions"
+LOG = ROOT / "logs/overnight/p4_pure_5fold.log"
+STATE = ROOT / "logs/overnight/harvest_v5_state.json"
+
+def utc():
+    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+def log(msg):
+    line = f"[{utc()}] {msg}"
+    print(line, flush=True)
+scripts/build_v7_sovereign_cpu.py:87:    l45_o = np.load(PRED / "matrix_v2/P4_L4.5_pure5f_oof.npy").astype(np.float64).ravel()
+scripts/build_v7_sovereign_cpu.py:88:    l45_t = np.load(PRED / "matrix_v2/P4_L4.5_pure5f_test.npy").astype(np.float64).ravel()
+scripts/build_v7_sovereign_cpu.py:122:        ("P4_L4.5_pure5f", zrk(l45_o), zrk(l45_t)),
+scripts/gpu_autonomous_orchestrator_v2.py:28:from gpu_matrix_v2_runner import Ctx, LEVER_GENERATORS, evaluate_lever_5fold, evaluate_lever_fold0  # noqa: E402
+scripts/gpu_autonomous_orchestrator_v2.py:32:    ("2", ["P4_L4.3", "P4_L4.1", "P4_L4.4", "P4_L4.2", "P4_L4.5"]),
+scripts/gpu_autonomous_orchestrator_v2.py:143:            if key not in LEVER_GENERATORS:
+scripts/gpu_matrix_v2_runner.py:615:LEVER_GENERATORS = {
+scripts/gpu_matrix_v2_runner.py:625:    "P4_L4.5": gen_L4_5_keypair_te,
+scripts/gpu_matrix_v2_runner.py:672:    gen = LEVER_GENERATORS.get(key)
+scripts/gpu_matrix_v2_runner.py:751:    gen = LEVER_GENERATORS[key]
+scripts/ds_slot1_ks_rect_submit.py:143:        ("P4_L4.5", np.load(PRED / "matrix_v2/P4_L4.5_pure5f_oof.npy").ravel(),
+scripts/ds_slot1_ks_rect_submit.py:144:         np.load(PRED / "matrix_v2/P4_L4.5_pure5f_test.npy").ravel(), mw["P4_L4.5"]),
+scripts/build_v6_grandmaster_fusion.py:5:+ our proprietary Nov 07 GPU discoveries (P4_L4.3_pure5f, P4_L4.2_pure5f, P4_L4.5_pure5f, B_xgb_llr, P_super_v5_harvest)
+scripts/build_v6_grandmaster_fusion.py:69:    l45_o = np.load(PRED / "matrix_v2/P4_L4.5_pure5f_oof.npy").astype(np.float64).ravel()
+scripts/build_v6_grandmaster_fusion.py:70:    l45_t = np.load(PRED / "matrix_v2/P4_L4.5_pure5f_test.npy").astype(np.float64).ravel()
+scripts/build_v6_grandmaster_fusion.py:83:    # - r_l45: our P4_L4.5 2nd-order key-pair residual
+scripts/build_v6_grandmaster_fusion.py:89:        ("our_P4_L4.5_pure5f", l45_o, l45_t),
+scripts/p4_pure_5fold.py:3:Pure 5-Fold Extraction of the 3 Proven Fold-0 Winners (P4_L4.3, P4_L4.2, P4_L4.5)
+scripts/p4_pure_5fold.py:27:from gpu_matrix_v2_runner import Ctx, LEVER_GENERATORS
+scripts/p4_pure_5fold.py:72:    gen = LEVER_GENERATORS[key]
+scripts/p4_pure_5fold.py:164:    p4_keys = ["P4_L4.3", "P4_L4.2", "P4_L4.5"]
+scripts/p4_pure_5fold.py:317:        PRED / "matrix_v2/P4_L4.5_pure5f_oof.npy",
+scripts/p4_pure_5fold.py:318:        PRED / "matrix_v2/P4_L4.5_pure5f_test.npy",
+scripts/forensic_audit_3min.py:151:        ("matrix_v2/P4_L4.5_fold0.npz", None),
+import hashlib
+import json
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+from lightgbm import LGBMClassifier
+from scipy.special import logit
+from sklearn.compose import ColumnTransformer
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import roc_auc_score
+from sklearn.model_selection import StratifiedKFold
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
+from xgboost import XGBClassifier
+
+pred = Path("preds/v47_sovereign")
+logs = Path("logs/v47/codex_loop")
+frame = pd.read_csv("/tmp/s6e11_isol/data/train.csv", low_memory=False)
+labels = frame.pop("is_fraud").to_numpy()
+ids = frame.pop("id").to_numpy()
+train, valid = next(StratifiedKFold(5, shuffle=True, random_state=42).split(frame, labels))
+np.testing.assert_array_equal(valid, np.flatnonzero(np.load(pred / "folds_skf42.npy") == 0))
+assert len(valid) == 139992
+manifest = json.loads((logs / "ISOLATED_CHAMPION_F0_DIAGNOSTIC.json").read_text())
+with np.load(pred / "isolated_champion_f0_diagnostic.npz", allow_pickle=False) as saved:
+    np.testing.assert_array_equal(saved["row_indices"], valid)
+    np.testing.assert_array_equal(saved["ids"], ids[valid])
+    saved_anchor = saved["stack"]
+assert hashlib.sha256(np.ascontiguousarray(saved_anchor).tobytes()).hexdigest() == manifest["candidate_sha256"]
+
+categories = frame.select_dtypes(include=["object", "str", "category"]).columns.tolist()
+-rwx------@ 1 moranzavdi  staff  585 Nov 26 17:01 logs/v47/codex_loop/P2_XGB_INNER_OOF_F0_DEV.json
+
+exec
+/bin/bash -lc "rg -n '"'^def gen_L4_'"' scripts/gpu_matrix_v2_runner.py
+sed -n '330,425p' scripts/gpu_matrix_v2_runner.py
+tail -75 /tmp/s6e11_isol/p2_xgb_inner.py
+ls preds/v47_sovereign/*p2_xgb*" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 0ms:
+380:def gen_L4_1_rolling(ctx: Ctx, fold_a: np.ndarray, fold_b: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+415:def gen_L4_2_bulsah(ctx: Ctx, fold_a: np.ndarray, fold_b: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+431:def gen_L4_3_velocity_flag(ctx: Ctx, fold_a: np.ndarray, fold_b: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+444:def gen_L4_4_benford(ctx: Ctx, fold_a: np.ndarray, fold_b: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+457:def gen_L4_5_keypair_te(ctx: Ctx, fold_a: np.ndarray, fold_b: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+489:def gen_L4_3_v2_stepgrid(ctx: Ctx, fold_a: np.ndarray, fold_b: np.ndarray):
+    Fb = Fb[:, keep]
+    Fte = Fte[:, keep]
+    return Fa, Fb, Fte
+
+
+def gen_L3_4_bottleneck_xgb(ctx: Ctx, fold_a: np.ndarray, fold_b: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """h64 bottleneck: compress raw to 64 via linear then use as F_lever."""
+    X = ctx.raw_tr
+    Xte = ctx.raw_te
+    # PCA-like via torch SVD on fold_a
+    xa = torch.tensor(X[fold_a], dtype=torch.float32, device=device())
+    xa = xa - xa.mean(0, keepdim=True)
+    try:
+        U, S, V = torch.pca_lowrank(xa, q=64)
+        W = V[:, :64]
+    except Exception:
+        W = torch.randn(X.shape[1], 64, device=device())
+        W, _ = torch.linalg.qr(W)
+    Fa = (torch.tensor(X[fold_a], dtype=torch.float32, device=device()) @ W).cpu().numpy()
+    Fb = (torch.tensor(X[fold_b], dtype=torch.float32, device=device()) @ W).cpu().numpy()
+    Fte = (torch.tensor(Xte, dtype=torch.float32, device=device()) @ W).cpu().numpy()
+    Fa, keep = per_feature_ks_filter(Fa, Fte)
+    return Fa, Fb[:, keep], Fte[:, keep]
+
+
+def gen_L3_5_logsumexp(ctx: Ctx, fold_a: np.ndarray, fold_b: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Log-sum-exp posterior over flag-state specialists."""
+    flag_tr = ctx.tr[FLAGS].to_numpy(np.int8)
+    flag_te = ctx.te[FLAGS].to_numpy(np.int8)
+    # 8 random projections of flag bitmasks
+    rng = np.random.default_rng(7)
+    W = rng.normal(size=(6, 8))
+    Ht = flag_tr @ W
+    He = flag_te @ W
+    # couple with champ
+    Fo = np.column_stack([Ht, ctx.z_champ_o.reshape(-1, 1)])
+    Ft = np.column_stack([He, ctx.z_champ_t.reshape(-1, 1)])
+    # LSE feature
+    lse_o = np.logaddexp.reduce(Ht, axis=1)
+    lse_t = np.logaddexp.reduce(He, axis=1)
+    Fo = np.column_stack([Fo, lse_o])
+    Ft = np.column_stack([Ft, lse_t])
+    Fa, Fb, Fte = Fo[fold_a], Fo[fold_b], Ft
+    Fa, keep = per_feature_ks_filter(Fa, Fte)
+    return Fa, Fb[:, keep], Fte[:, keep]
+
+
+# -------------------- Rung 2 generators (rescue CPU winners) --------------------
+
+
+def gen_L4_1_rolling(ctx: Ctx, fold_a: np.ndarray, fold_b: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """CPU-proven L4.1: contiguous row-id rolling residual windows + local jumps (within-block IQR)."""
+    from scipy.special import expit
+
+    n, nt = ctx.n, ctx.nt
+    z = ctx.z_champ_o
+    zt = ctx.z_champ_t
+    p_o = expit(z)
+    res_y = (ctx.y - p_o).astype(np.float64)
+    X_tr = np.zeros((n, 6), dtype=np.float64)
+    X_te = np.zeros((nt, 6), dtype=np.float64)
+    # Use fold_a residuals only for OOF rolling on fold_b (and all folds for full matrix when fold_a is train)
+    grid_res = np.zeros(n, dtype=np.float64)
+    grid_cnt = np.zeros(n, dtype=np.float64)
+    grid_res[fold_a] = res_y[fold_a]
+    grid_cnt[fold_a] = 1.0
+    cs_r = np.concatenate([[0.0], np.cumsum(grid_res)])
+    cs_c = np.concatenate([[0.0], np.cumsum(grid_cnt)])
+    for wi, w in enumerate((5, 20, 100)):
+        lo = np.maximum(0, np.arange(n) - w)
+        hi = np.minimum(n, np.arange(n) + w + 1)
+        s_r = (cs_r[hi] - cs_r[lo]) - grid_res
+        s_c = (cs_c[hi] - cs_c[lo]) - grid_cnt
+        X_tr[:, wi] = s_r / (s_c + 5.0)
+    X_tr[:, 3] = np.abs(z - np.roll(z, 1))
+    X_tr[:, 4] = np.abs(z - np.roll(z, -1))
+    X_tr[:, 5] = z - 0.5 * (np.roll(z, 1) + np.roll(z, -1))
+    X_te[:, 3] = np.abs(zt - np.roll(zt, 1))
+    X_te[:, 4] = np.abs(zt - np.roll(zt, -1))
+    X_te[:, 5] = zt - 0.5 * (np.roll(zt, 1) + np.roll(zt, -1))
+    Fo, Ft = within_block_iqr_standardize(X_tr, X_te)
+    Fa, Fb, Fte, keep = per_feature_ks_filter(Fo[fold_a], Fo[fold_b], Ft)
+    return Fa, Fb, Fte
+
+
+def gen_L4_2_bulsah(ctx: Ctx, fold_a: np.ndarray, fold_b: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    def bulsah(df):
+        s = df["amount_usd"].astype(str)
+        # sub-float string features
+        has_dot = s.str.contains(r"\.").astype(np.float64)
+        frac_len = s.str.split(".").str[-1].str.len().fillna(0).astype(np.float64)
+        n_digits = s.str.replace(r"\D", "", regex=True).str.len().astype(np.float64)
+        return np.column_stack([has_dot, frac_len, n_digits, np.log1p(df["amount_usd"])])
+
+    Fa = bulsah(ctx.tr.iloc[fold_a])
+    Fb = bulsah(ctx.tr.iloc[fold_b])
+    ).fit(tree_fit, fit_labels)
+    margins.append(xgb.predict(tree_score, output_margin=True))
+
+    scores = np.column_stack(margins)
+    inner_oof[held] = scores[:len(held)]
+    outer_scores.append(scores[len(held):])
+
+assert np.isfinite(inner_oof).all() and np.isfinite(outer_scores).all()
+
+def rank_design(scores):
+    columns = []
+    for reference, values in zip(inner_oof.T, scores.T):
+        ordered = np.sort(reference)
+        left = np.searchsorted(ordered, values, side="left")
+        right = np.searchsorted(ordered, values, side="right")
+        eps = 0.5 / len(ordered)
+        columns.append(logit(np.clip((left + right) / (2 * len(ordered)), eps, 1 - eps)))
+    return np.column_stack(columns)
+
+inner_design = rank_design(inner_oof)
+outer_designs = [rank_design(scores) for scores in outer_scores]
+
+def stack(width):
+    scaler = StandardScaler().fit(inner_design[:, :width])
+    model = LogisticRegression(C=0.03, max_iter=2000).fit(
+        scaler.transform(inner_design[:, :width]), labels[train],
+    )
+    scores = [model.decision_function(scaler.transform(design[:, :width])) for design in outer_designs]
+    return np.mean(scores, axis=0), model.coef_.ravel().tolist()
+
+control, _ = stack(2)
+candidate, coefficients = stack(3)
+observed = labels[valid]
+base_auc = roc_auc_score(observed, control)
+saved_auc = roc_auc_score(observed, saved_anchor)
+control_reproduced = bool(
+    abs(base_auc - saved_auc) < 1e-12 and
+    np.allclose(control, saved_anchor, rtol=1e-8, atol=1e-8)
+)
+candidate_auc = roc_auc_score(observed, candidate)
+delta = candidate_auc - base_auc
+subfolds = StratifiedKFold(5, shuffle=True, random_state=7)
+sub_deltas = [
+    (roc_auc_score(observed[held], candidate[held]) - roc_auc_score(observed[held], control[held])) * 1e5
+    for _, held in subfolds.split(control, observed)
+]
+positive = sum(change > 0 for change in sub_deltas)
+verdict = (
+    "CONTROL_DRIFT" if not control_reproduced
+    else "DEV_ADVANCE" if delta >= 8e-5 and positive >= 4
+    else "NO-GO"
+)
+result = {
+    "scope": "historical_F0_DEV_ONLY", "saved_anchor_auc": saved_auc,
+    "matched_control_auc": base_auc, "control_reproduced": control_reproduced,
+    "candidate_auc": candidate_auc, "delta_e5": delta * 1e5,
+    "subfold_deltas_e5": sub_deltas, "positive_subfolds": positive,
+    "meta_coefficients_lr_lgbm_xgb": coefficients, "verdict": verdict,
+    "NO_SUBMIT": True, "NO_GPU": True,
+}
+payload = json.dumps(result, indent=2)
+(logs / "P2_XGB_INNER_OOF_F0_DEV.json").write_text(payload + "\n")
+np.savez(
+    pred / "p2_xgb_inner_oof_f0_dev.npz", ids=ids[valid], row_indices=valid,
+    control=control, candidate=candidate, outer_stream_margins=np.stack(outer_scores),
+)
+with Path("logs/v47/CODEX_DS_REVIEW_NEXT.md").open("a") as review:
+    review.write(
+        "\n## P2 hist-XGB inner-OOF integration\n\n"
+        f"Historical Fold-0 only. Saved control reproduced {control_reproduced}. "
+        f"Matched control {base_auc:.16f}, candidate {candidate_auc:.16f}, "
+        f"Δe-5 {delta * 1e5:+.8f}, {positive}/5 positive, {verdict}. "
+        f"Subfold Δe-5 {sub_deltas}.\n"
+    )
+print(payload)
+preds/v47_sovereign/p2_xgb_inner_oof_f0_dev.npz
+
+exec
+/bin/bash -lc "sed -n '457,489p' scripts/gpu_matrix_v2_runner.py
+sed -n '32,72p' /tmp/s6e11_isol/p2_xgb_inner.py
+cat logs/v47/codex_loop/P2_XGB_INNER_OOF_F0_DEV.json" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 0ms:
+def gen_L4_5_keypair_te(ctx: Ctx, fold_a: np.ndarray, fold_b: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Top key-pair EB TE using cats x flags (lightweight)."""
+    def te_matrix(df, y=None, stats=None):
+        out = []
+        new_stats = {}
+        for c in CATS[:3]:
+            for f in FLAGS[:4]:
+                key = df[c].astype(str) + "|" + df[f].astype(str)
+                name = f"{c}__{f}"
+                if stats is None:
+                    # EB TE on fold_a only
+                    tmp = pd.DataFrame({"k": key, "y": y})
+                    g = tmp.groupby("k")["y"].agg(["sum", "count"])
+                    prior = float(y.mean())
+                    m = 20.0
+                    te = (g["sum"] + prior * m) / (g["count"] + m)
+                    new_stats[name] = te.to_dict()
+                    mapped = key.map(lambda k: new_stats[name].get(k, prior)).to_numpy(np.float64)
+                else:
+                    prior = 0.12
+                    mapped = key.map(lambda k, n=name: stats[n].get(k, prior)).to_numpy(np.float64)
+                out.append(mapped)
+        X = np.column_stack(out)
+        return X, (new_stats if stats is None else stats)
+
+    Fa, st = te_matrix(ctx.tr.iloc[fold_a], y=ctx.y[fold_a])
+    Fb, _ = te_matrix(ctx.tr.iloc[fold_b], stats=st)
+    Fte, _ = te_matrix(ctx.te, stats=st)
+    Fa, keep = per_feature_ks_filter(Fa, Fte)
+    return Fa, Fb[:, keep], Fte[:, keep]
+
+
+def gen_L4_3_v2_stepgrid(ctx: Ctx, fold_a: np.ndarray, fold_b: np.ndarray):
+categories = frame.select_dtypes(include=["object", "str", "category"]).columns.tolist()
+numeric = [column for column in frame if column not in categories]
+inner_oof = np.full((len(train), 3), np.nan)
+outer_scores = []
+splits = StratifiedKFold(3, shuffle=True, random_state=2026)
+for fold, (fit, held) in enumerate(splits.split(frame.iloc[train], labels[train]), 1):
+    print(f"Inner fit {fold}/3", flush=True)
+    fit_rows, held_rows = train[fit], train[held]
+    np.testing.assert_equal(np.intersect1d(fit_rows, valid).size, 0)
+    fit_frame = frame.iloc[fit_rows]
+    score_frame = frame.iloc[np.concatenate([held_rows, valid])]
+    fit_labels = labels[fit_rows]
+
+    linear = make_pipeline(
+        ColumnTransformer([
+            ("numeric", StandardScaler(), numeric),
+            ("categorical", OneHotEncoder(handle_unknown="ignore"), categories),
+        ]),
+        LogisticRegression(C=0.1, max_iter=1000),
+    ).fit(fit_frame, fit_labels)
+    margins = [linear.decision_function(score_frame)]
+
+    tree_fit, tree_score = fit_frame.copy(), score_frame.copy()
+    for column in categories:
+        tree_fit[column] = tree_fit[column].astype("category")
+        tree_score[column] = pd.Categorical(
+            tree_score[column], categories=tree_fit[column].cat.categories,
+        )
+    lgbm = LGBMClassifier(
+        n_estimators=450, learning_rate=0.045, num_leaves=31,
+        min_child_samples=120, reg_lambda=5, n_jobs=4, verbosity=-1, random_state=42,
+    ).fit(tree_fit, fit_labels)
+    margins.append(lgbm.predict(tree_score, raw_score=True))
+
+    for column in categories:
+        freq = tree_fit[column].value_counts(dropna=False)
+        tree_fit[f"{column}_freq"] = tree_fit[column].map(freq).astype(float)
+        tree_score[f"{column}_freq"] = tree_score[column].astype(object).map(freq).fillna(0).astype(float)
+    xgb = XGBClassifier(
+        n_estimators=400, learning_rate=0.05, max_depth=4, subsample=0.8,
+        colsample_bytree=0.8, reg_lambda=5, tree_method="hist",
+{
+  "scope": "historical_F0_DEV_ONLY",
+  "saved_anchor_auc": 0.9446644275289812,
+  "matched_control_auc": 0.9446644275289812,
+  "control_reproduced": true,
+  "candidate_auc": 0.9449195163309662,
+  "delta_e5": 25.508880198499284,
+  "subfold_deltas_e5": [
+    16.72551253024679,
+    38.76748728006696,
+    65.80084883095472,
+    -0.015555756216478756,
+    11.036809041509166
+  ],
+  "positive_subfolds": 4,
+  "meta_coefficients_lr_lgbm_xgb": [
+    0.7207895953184429,
+    0.8290798059331913,
+    0.8255056137312979
+  ],
+  "verdict": "DEV_ADVANCE",
+  "NO_SUBMIT": true,
+  "NO_GPU": true
+}
+
+exec
+/bin/bash -lc "sed -n '489,554p' scripts/gpu_matrix_v2_runner.py
+rg -n '"'^CATS|''^FLAGS'"' scripts/gpu_matrix_v2_runner.py" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 0ms:
+def gen_L4_3_v2_stepgrid(ctx: Ctx, fold_a: np.ndarray, fold_b: np.ndarray):
+    """CPU Fold-0 winner L4.3 (+3.68e-5): velocity/risk step-grid parity forensics."""
+    def grid_feats(df):
+        vel = df["velocity_score"].to_numpy(np.float64)
+        mr = df["merchant_risk_score"].to_numpy(np.float64)
+        v_step = np.rint(vel / 0.1)
+        m_step = np.rint(mr / 0.02)
+        return np.column_stack([
+            v_step % 2, v_step % 5, v_step % 10,
+            m_step % 2, m_step % 5, m_step % 10,
+            np.abs(vel - v_step * 0.1) * 1e4,
+            np.abs(mr - m_step * 0.02) * 1e4,
+            (v_step % 2) * (m_step % 2),
+        ]).astype(np.float64)
+    Fa, Fb, Fte = grid_feats(ctx.tr.iloc[fold_a]), grid_feats(ctx.tr.iloc[fold_b]), grid_feats(ctx.te)
+    return per_feature_ks_filter(Fa, Fb, Fte)[:3]
+
+
+def gen_L1_3_ot(ctx: Ctx, fold_a: np.ndarray, fold_b: np.ndarray):
+    """CPU Fold-0 winner L1.3: fold-anchored 1D quantile OT shifts vs orig20k."""
+    orig_path = ROOT / "original" / "credit_card_fraud_2026.csv"
+    if not orig_path.exists():
+        orig_path = ROOT / "external_bank/fresh_ds_nov06eve/original/credit_card_fraud_2026.csv"
+    orig = pd.read_csv(orig_path)
+    cols = NUMS[:8]
+    X_tr_list, X_te_list = [], []
+    for c in cols:
+        vo = np.sort(orig[c].to_numpy(np.float64))
+        vtr = ctx.tr[c].to_numpy(np.float64)
+        vte = ctx.te[c].to_numpy(np.float64)
+        # Fit quantile map on fold_a only
+        va = np.sort(vtr[fold_a])
+        def shift(v, ref_src=va, ref_dst=vo):
+            u = (rankdata(v, method="average") - 0.5) / max(len(v), 1)
+            # map via fold_a ECDF then to orig quantiles — fold-anchored
+            mapped = np.quantile(ref_dst, np.clip(u, 0.001, 0.999))
+            return (v - mapped) / (float(np.std(ref_dst)) + 1e-12)
+        X_tr_list.append(shift(vtr))
+        X_te_list.append(shift(vte))
+    Fo = np.column_stack(X_tr_list)
+    Ft = np.column_stack(X_te_list)
+    return per_feature_ks_filter(Fo[fold_a], Fo[fold_b], Ft)[:3]
+
+
+def gen_L1_4_beta_prior(ctx: Ctx, fold_a: np.ndarray, fold_b: np.ndarray):
+    """Orig20k Beta prior TE on cats."""
+    orig_path = ROOT / "original" / "credit_card_fraud_2026.csv"
+    if not orig_path.exists():
+        orig_path = ROOT / "external_bank/fresh_ds_nov06eve/original/credit_card_fraud_2026.csv"
+    orig = pd.read_csv(orig_path)
+    y_o = orig["is_fraud"].to_numpy(np.float64)
+    prior = float(ctx.y[fold_a].mean())
+    outs_tr, outs_te = [], []
+    for c in CATS:
+        # orig prior
+        g_o = pd.DataFrame({"k": orig[c].astype(str), "y": y_o}).groupby("k")["y"].agg(["sum", "count"])
+        # fold_a counts
+        g_a = pd.DataFrame({"k": ctx.tr.iloc[fold_a][c].astype(str), "y": ctx.y[fold_a]}).groupby("k")["y"].agg(["sum", "count"])
+        alpha = 8.0
+        keys = set(g_o.index) | set(g_a.index)
+        te = {}
+        for k in keys:
+            so, co = (float(g_o.loc[k, "sum"]), float(g_o.loc[k, "count"])) if k in g_o.index else (0.0, 0.0)
+            sa, ca = (float(g_a.loc[k, "sum"]), float(g_a.loc[k, "count"])) if k in g_a.index else (0.0, 0.0)
+            te[k] = (sa + alpha * so + 20 * prior) / (ca + alpha * co + 20)
+        outs_tr.append(ctx.tr[c].astype(str).map(lambda k: te.get(k, prior)).to_numpy(np.float64))
+57:FLAGS = [
+80:CATS = ["merchant_category", "card_type", "auth_method", "channel", "device_type"]
+
+codex
+**Expand the isolated stack before spending sealed B.** The three-stream model earned a dev advance, but it still trails the public target by about 0.01234 AUC on a different evaluation set. Add one CPU hist-XGB stream with the nine deterministic P4 L4.3 velocity and merchant-risk step-grid features. The run reuses Round 10’s inner splits, verifies the saved three-stream control, and measures whether the fourth stream adds **≥+8e-5 with ≥4/5 positive** on historical Fold-0.
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python -u - <<'PY'
+from pathlib import Path
+
+source_path = Path("/tmp/s6e11_isol/p2_xgb_inner.py")
+source = source_path.read_text()
+prefix, marker, _ = source.partition("\ncontrol, _ = stack(2)")
+assert marker, "Round 10 runner boundary changed"
+
+def replace_once(text, old, new):
+    assert text.count(old) == 1, f"Round 10 runner changed near {old!r}"
+    return text.replace(old, new, 1)
+
+prefix = replace_once(prefix, '"/tmp/s6e11_isol/data/train.csv"', '"data/train.csv"')
+prefix = replace_once(prefix, "(len(train), 3)", "(len(train), 4)")
+prefix = replace_once(prefix, "from xgboost import XGBClassifier", """from xgboost import XGBClassifier
+from sklearn.base import clone
+
+def step_grid(features):
+    velocity = features["velocity_score"].to_numpy(dtype=np.float64)
+    risk = features["merchant_risk_score"].to_numpy(dtype=np.float64)
+    velocity_step = np.rint(velocity / 0.1)
+    risk_step = np.rint(risk / 0.02)
+    return features.assign(
+        p4_velocity_mod2=velocity_step % 2,
+        p4_velocity_mod5=velocity_step % 5,
+        p4_velocity_mod10=velocity_step % 10,
+        p4_risk_mod2=risk_step % 2,
+        p4_risk_mod5=risk_step % 5,
+        p4_risk_mod10=risk_step % 10,
+        p4_velocity_grid_error=np.abs(velocity - velocity_step * 0.1) * 1e4,
+        p4_risk_grid_error=np.abs(risk - risk_step * 0.02) * 1e4,
+        p4_parity_interaction=(velocity_step % 2) * (risk_step % 2),
+    )
+""")
+prefix = replace_once(prefix, "    scores = np.column_stack(margins)", """    p4_model = clone(xgb).set_params(device="cpu")
+    p4_model.fit(step_grid(tree_fit), fit_labels)
+    margins.append(p4_model.predict(step_grid(tree_score), output_margin=True))
+
+    scores = np.column_stack(margins)""")
+suffix = """
+control, _ = stack(3)
+candidate, coefficients = stack(4)
+with np.load(pred / "p2_xgb_inner_oof_f0_dev.npz", allow_pickle=False) as saved:
+    np.testing.assert_array_equal(saved["row_indices"], valid)
+    np.testing.assert_array_equal(saved["ids"], ids[valid])
+    np.testing.assert_allclose(control, saved["candidate"], rtol=1e-8, atol=1e-8)
+observed = labels[valid]
+base_auc = roc_auc_score(observed, control)
+assert abs(base_auc - 0.9449195163309662) < 1e-12
+candidate_auc = roc_auc_score(observed, candidate)
+delta = candidate_auc - base_auc
+subfold_deltas = [
+    (roc_auc_score(observed[held], candidate[held])
+     - roc_auc_score(observed[held], control[held])) * 1e5
+    for _, held in StratifiedKFold(5, shuffle=True, random_state=7).split(control, observed)
+]
+positive = sum(change > 0 for change in subfold_deltas)
+verdict = "DEV_ADVANCE" if delta >= 8e-5 and positive >= 4 else "NO-GO"
+result = {
+    "scope": "historical_F0_DEV_ONLY",
+    "stream": "P4_L4.3_stepgrid_hist_xgb",
+    "base_auc": base_auc, "candidate_auc": candidate_auc,
+    "delta_e5": delta * 1e5, "positive_subfolds": positive,
+    "subfold_deltas_e5": subfold_deltas, "meta_coefficients": coefficients,
+    "verdict": verdict, "NO_SUBMIT": True, "NO_GPU": True,
+}
+payload = json.dumps(result, indent=2)
+(logs / "P2_P4_STEPGRID_INNER_OOF_F0_DEV.json").write_text(payload + "\\n")
+np.savez(pred / "p2_p4_stepgrid_inner_oof_f0_dev.npz",
+         ids=ids[valid], row_indices=valid, control=control, candidate=candidate,
+         outer_stream_margins=np.stack(outer_scores))
+with Path("logs/v47/CODEX_DS_REVIEW_NEXT.md").open("a") as review:
+    review.write(
+        "\\n## P2 isolated P4 L4.3 step-grid stream\\n\\n"
+        f"Historical Fold-0. Matched control {base_auc:.16f}, candidate {candidate_auc:.16f}, "
+        f"Δe-5 {delta * 1e5:+.8f}, {positive}/5 positive, {verdict}. "
+        f"Subfold Δe-5 {subfold_deltas}.\\n"
+    )
+print(payload)
+"""
+exec(compile(prefix + "\n" + suffix, str(source_path), "exec"), {"__name__": "__main__"})
+PY
+```
+tokens used
+184,450
+**Expand the isolated stack before spending sealed B.** The three-stream model earned a dev advance, but it still trails the public target by about 0.01234 AUC on a different evaluation set. Add one CPU hist-XGB stream with the nine deterministic P4 L4.3 velocity and merchant-risk step-grid features. The run reuses Round 10’s inner splits, verifies the saved three-stream control, and measures whether the fourth stream adds **≥+8e-5 with ≥4/5 positive** on historical Fold-0.
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python -u - <<'PY'
+from pathlib import Path
+
+source_path = Path("/tmp/s6e11_isol/p2_xgb_inner.py")
+source = source_path.read_text()
+prefix, marker, _ = source.partition("\ncontrol, _ = stack(2)")
+assert marker, "Round 10 runner boundary changed"
+
+def replace_once(text, old, new):
+    assert text.count(old) == 1, f"Round 10 runner changed near {old!r}"
+    return text.replace(old, new, 1)
+
+prefix = replace_once(prefix, '"/tmp/s6e11_isol/data/train.csv"', '"data/train.csv"')
+prefix = replace_once(prefix, "(len(train), 3)", "(len(train), 4)")
+prefix = replace_once(prefix, "from xgboost import XGBClassifier", """from xgboost import XGBClassifier
+from sklearn.base import clone
+
+def step_grid(features):
+    velocity = features["velocity_score"].to_numpy(dtype=np.float64)
+    risk = features["merchant_risk_score"].to_numpy(dtype=np.float64)
+    velocity_step = np.rint(velocity / 0.1)
+    risk_step = np.rint(risk / 0.02)
+    return features.assign(
+        p4_velocity_mod2=velocity_step % 2,
+        p4_velocity_mod5=velocity_step % 5,
+        p4_velocity_mod10=velocity_step % 10,
+        p4_risk_mod2=risk_step % 2,
+        p4_risk_mod5=risk_step % 5,
+        p4_risk_mod10=risk_step % 10,
+        p4_velocity_grid_error=np.abs(velocity - velocity_step * 0.1) * 1e4,
+        p4_risk_grid_error=np.abs(risk - risk_step * 0.02) * 1e4,
+        p4_parity_interaction=(velocity_step % 2) * (risk_step % 2),
+    )
+""")
+prefix = replace_once(prefix, "    scores = np.column_stack(margins)", """    p4_model = clone(xgb).set_params(device="cpu")
+    p4_model.fit(step_grid(tree_fit), fit_labels)
+    margins.append(p4_model.predict(step_grid(tree_score), output_margin=True))
+
+    scores = np.column_stack(margins)""")
+suffix = """
+control, _ = stack(3)
+candidate, coefficients = stack(4)
+with np.load(pred / "p2_xgb_inner_oof_f0_dev.npz", allow_pickle=False) as saved:
+    np.testing.assert_array_equal(saved["row_indices"], valid)
+    np.testing.assert_array_equal(saved["ids"], ids[valid])
+    np.testing.assert_allclose(control, saved["candidate"], rtol=1e-8, atol=1e-8)
+observed = labels[valid]
+base_auc = roc_auc_score(observed, control)
+assert abs(base_auc - 0.9449195163309662) < 1e-12
+candidate_auc = roc_auc_score(observed, candidate)
+delta = candidate_auc - base_auc
+subfold_deltas = [
+    (roc_auc_score(observed[held], candidate[held])
+     - roc_auc_score(observed[held], control[held])) * 1e5
+    for _, held in StratifiedKFold(5, shuffle=True, random_state=7).split(control, observed)
+]
+positive = sum(change > 0 for change in subfold_deltas)
+verdict = "DEV_ADVANCE" if delta >= 8e-5 and positive >= 4 else "NO-GO"
+result = {
+    "scope": "historical_F0_DEV_ONLY",
+    "stream": "P4_L4.3_stepgrid_hist_xgb",
+    "base_auc": base_auc, "candidate_auc": candidate_auc,
+    "delta_e5": delta * 1e5, "positive_subfolds": positive,
+    "subfold_deltas_e5": subfold_deltas, "meta_coefficients": coefficients,
+    "verdict": verdict, "NO_SUBMIT": True, "NO_GPU": True,
+}
+payload = json.dumps(result, indent=2)
+(logs / "P2_P4_STEPGRID_INNER_OOF_F0_DEV.json").write_text(payload + "\\n")
+np.savez(pred / "p2_p4_stepgrid_inner_oof_f0_dev.npz",
+         ids=ids[valid], row_indices=valid, control=control, candidate=candidate,
+         outer_stream_margins=np.stack(outer_scores))
+with Path("logs/v47/CODEX_DS_REVIEW_NEXT.md").open("a") as review:
+    review.write(
+        "\\n## P2 isolated P4 L4.3 step-grid stream\\n\\n"
+        f"Historical Fold-0. Matched control {base_auc:.16f}, candidate {candidate_auc:.16f}, "
+        f"Δe-5 {delta * 1e5:+.8f}, {positive}/5 positive, {verdict}. "
+        f"Subfold Δe-5 {subfold_deltas}.\\n"
+    )
+print(payload)
+"""
+exec(compile(prefix + "\n" + suffix, str(source_path), "exec"), {"__name__": "__main__"})
+PY
+```

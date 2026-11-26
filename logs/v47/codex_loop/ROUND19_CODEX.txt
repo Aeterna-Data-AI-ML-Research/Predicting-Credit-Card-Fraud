@@ -1,0 +1,279 @@
+OpenAI Codex v0.172.0
+--------
+workdir: /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+model: gpt-6.2-sol
+provider: openai
+approval: never
+sandbox: read-only
+reasoning effort: none
+reasoning summaries: none
+session id: 01a2180a-0cec-7810-bcbf-4a725485c87f
+--------
+user
+# Cursor → Codex Round19
+
+5-stream sealed B (seed 2033) COMPLETE: **B_TRANSPORT_PASS**
+- Weighted Δe-5 +34.83 · 4/4 · LOO all>0 · CI95 [18.90, 50.68]
+- Candidate fold AUCs: 0.94455, **0.95012**, 0.94604, 0.94830
+- Best absolute isolated fold so far ≈ 0.95012 (still < public 0.95726 by ~0.007)
+- Control was 4-stream; candidate adds char n-gram LR
+
+Highest-EV next measurable step to close remaining gap to public >0.95726 under NO_SUBMIT/NO_GPU?
+ONE bash command after short verdict. No signed-CB. No public arrays.
+codex
+I’ll check where a conditional decimal stream can join the frozen stack.
+exec
+/bin/bash -lc "rg -n 'evaluation =|scores =|len\\(train\\)|train.csv' /tmp/s6e11_isol/char_ngram.sh
+ls preds/v47_sovereign/*char_ngram*
+rg -n 'candidate_auc' logs/v47/codex_loop/P2_DECIMAL_CHAR_NGRAM_F0_DEV.json" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 94ms:
+7:assembly, boundary, _ = "".join(lines[1:-1]).partition('\nevaluation = """')
+17:runner = replace_once(runner, "(len(train), 4)", "(len(train), 5)")
+18:assert runner.count('"/tmp/s6e11_isol/data/train.csv"') == 2
+19:runner = runner.replace('"/tmp/s6e11_isol/data/train.csv"', '"/tmp/s6e11_isol/data/train.csv"')
+40:runner = replace_once(runner, "    scores = np.column_stack(margins)", """    lexical_fit = lexical_matrix(fit_rows)
+47:    scores = np.column_stack(margins)""")
+49:evaluation = """
+preds/v47_sovereign/p2_decimal_char_ngram_f0_dev.npz
+preds/v47_sovereign/sealed_b_decimal_char_ngram_2033_transport.npz
+5:  "candidate_auc": 0.9468323528460475,
+
+codex
+**Test whether decimal-token evidence depends on transaction magnitude.** Both lexical streams gained AUC across the transport folds. The next experiment asks whether the same suffix has different fraud odds at different amounts, velocities, or risk scores. Fit one CPU XGB challenger with suffix-by-magnitude rates shrunk toward the corresponding main effects. Cross-fit every rate table, reproduce the five-stream control, and apply the **+8e-5 and 4/5** gate on historical Fold-0. The **0.95012** peak came from one transport fold, so it gives no calibrated estimate of the remaining public-score gap.
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python -u - <<'PY'
+from pathlib import Path
+
+source_path = Path("/tmp/s6e11_isol/char_ngram.sh")
+lines = source_path.read_text().splitlines(keepends=True)
+assert lines[0].rstrip().endswith("<<'PY'") and lines[-1].strip() == "PY"
+assembly, boundary, _ = "".join(lines[1:-1]).partition('\nevaluation = """')
+assert boundary, "Character n-gram runner boundary changed"
+namespace = {"__name__": "_assemble_char_runner"}
+exec(compile(assembly, str(source_path), "exec"), namespace)
+runner = namespace["runner"]
+
+def replace_once(text, old, new):
+    assert text.count(old) == 1, f"Runner changed near {old!r}"
+    return text.replace(old, new, 1)
+
+runner = replace_once(runner, "(len(train), 5)", "(len(train), 6)")
+for staged in ('"/tmp/s6e11_isol/data/train.csv"', '"/private/tmp/s6e11_isol/data/train.csv"'):
+    runner = runner.replace(staged, '"data/train.csv"')
+assert runner.count('"data/train.csv"') == 2 and 'device="cpu"' in runner
+
+runner = replace_once(runner, "outer_scores = []", """outer_scores = []
+from scipy.special import expit
+
+def magnitude_conditioned_rates(reference, query):
+    target = labels[reference]
+    prior = float(target.mean())
+    result = {}
+    for column in decimal_fields:
+        values = frame[column].to_numpy(dtype=float)
+        cutpoints = np.unique(np.quantile(values[reference], np.arange(1, 10) / 10))
+        fit_bin = np.searchsorted(cutpoints, values[reference], side="right")
+        score_bin = np.searchsorted(cutpoints, values[query], side="right")
+        fit_token = suffix[column].iloc[reference].to_numpy()
+        score_token = suffix[column].iloc[query].to_numpy()
+        table = pd.DataFrame({"token": fit_token, "bin": fit_bin, "label": target})
+
+        def smoothed_rate(key, values):
+            stats = table.groupby(key)["label"].agg(["sum", "size"])
+            rate = (stats["sum"] + 200 * prior) / (stats["size"] + 200)
+            return rate.reindex(values).fillna(prior).to_numpy()
+
+        token_rate = smoothed_rate("token", score_token)
+        bin_rate = smoothed_rate("bin", score_bin)
+        additive_prior = expit(logit(token_rate) + logit(bin_rate) - logit(prior))
+        joint = table.groupby(["token", "bin"])["label"].agg(["sum", "size"])
+        query_key = pd.MultiIndex.from_arrays([score_token, score_bin], names=["token", "bin"])
+        matched = joint.reindex(query_key).fillna(0)
+        posterior = (matched["sum"].to_numpy() + 200 * additive_prior) / (
+            matched["size"].to_numpy() + 200
+        )
+        result[f"decimal_magnitude_logodds__{column}"] = logit(posterior) - logit(bin_rate)
+        result[f"decimal_magnitude_interaction__{column}"] = logit(posterior) - logit(additive_prior)
+    return pd.DataFrame(result, index=query)
+""")
+runner = replace_once(runner, "    scores = np.column_stack(margins)", """    magnitude_parts = []
+    for ref, held_encoder in StratifiedKFold(3, shuffle=True, random_state=2030).split(fit_frame, fit_labels):
+        magnitude_parts.append(magnitude_conditioned_rates(fit_rows[ref], fit_rows[held_encoder]))
+    magnitude_fit = pd.concat(magnitude_parts).reindex(tree_fit.index)
+    magnitude_score = magnitude_conditioned_rates(fit_rows, score_frame.index.to_numpy())
+    assert np.isfinite(magnitude_fit.to_numpy()).all() and np.isfinite(magnitude_score.to_numpy()).all()
+
+    conditioned = clone(xgb).set_params(device="cpu")
+    conditioned.fit(tree_fit.join(training_rates).join(magnitude_fit), fit_labels)
+    margins.append(conditioned.predict(
+        tree_score.join(inference_rates).join(magnitude_score), output_margin=True,
+    ))
+
+    scores = np.column_stack(margins)""")
+
+evaluation = """
+control, _ = stack(5)
+candidate, coefficients = stack(6)
+with np.load(pred / "p2_decimal_char_ngram_f0_dev.npz", allow_pickle=False) as saved:
+    np.testing.assert_array_equal(saved["row_indices"], valid)
+    np.testing.assert_array_equal(saved["ids"], ids[valid])
+    np.testing.assert_allclose(control, saved["candidate"], rtol=1e-8, atol=1e-8)
+observed = labels[valid]
+base_auc = roc_auc_score(observed, control)
+assert abs(base_auc - 0.9468323528460475) < 1e-12
+candidate_auc = roc_auc_score(observed, candidate)
+delta = candidate_auc - base_auc
+subfold_deltas = [
+    (roc_auc_score(observed[held], candidate[held]) - roc_auc_score(observed[held], control[held])) * 1e5
+    for _, held in StratifiedKFold(5, shuffle=True, random_state=7).split(control, observed)
+]
+positive = sum(change > 0 for change in subfold_deltas)
+verdict = "DEV_ADVANCE" if delta >= 8e-5 and positive >= 4 else "NO-GO"
+result = {
+    "scope": "historical_F0_DEV_ONLY",
+    "experiment": "magnitude_conditioned_decimal_likelihood_hist_xgb",
+    "base_auc": base_auc, "candidate_auc": candidate_auc,
+    "stream_solo_auc": roc_auc_score(observed, np.mean([part[:, 5] for part in outer_designs], axis=0)),
+    "delta_e5": delta * 1e5, "positive_subfolds": positive,
+    "subfold_deltas_e5": subfold_deltas, "meta_coefficients": coefficients,
+    "verdict": verdict, "NO_SUBMIT": True, "NO_GPU": True,
+}
+payload = json.dumps(result, indent=2)
+(logs / "P2_DECIMAL_MAGNITUDE_F0_DEV.json").write_text(payload + "\\n")
+np.savez(
+    pred / "p2_decimal_magnitude_f0_dev.npz", ids=ids[valid], row_indices=valid,
+    control=control, candidate=candidate, outer_stream_margins=np.stack(outer_scores),
+)
+with Path("logs/v47/CODEX_DS_REVIEW_NEXT.md").open("a") as review:
+    review.write(
+        "\\n## P2 magnitude-conditioned decimal likelihood\\n\\n"
+        f"Historical Fold-0. Control {base_auc:.16f}, candidate {candidate_auc:.16f}, "
+        f"solo {result['stream_solo_auc']:.16f}, Δe-5 {delta * 1e5:+.8f}, "
+        f"{positive}/5 positive, {verdict}. Subfold Δe-5 {subfold_deltas}.\\n"
+    )
+print(payload)
+"""
+exec(compile(runner + "\n" + evaluation, str(source_path), "exec"), {"__name__": "__main__"})
+PY
+```
+tokens used
+224,494
+**Test whether decimal-token evidence depends on transaction magnitude.** Both lexical streams gained AUC across the transport folds. The next experiment asks whether the same suffix has different fraud odds at different amounts, velocities, or risk scores. Fit one CPU XGB challenger with suffix-by-magnitude rates shrunk toward the corresponding main effects. Cross-fit every rate table, reproduce the five-stream control, and apply the **+8e-5 and 4/5** gate on historical Fold-0. The **0.95012** peak came from one transport fold, so it gives no calibrated estimate of the remaining public-score gap.
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python -u - <<'PY'
+from pathlib import Path
+
+source_path = Path("/tmp/s6e11_isol/char_ngram.sh")
+lines = source_path.read_text().splitlines(keepends=True)
+assert lines[0].rstrip().endswith("<<'PY'") and lines[-1].strip() == "PY"
+assembly, boundary, _ = "".join(lines[1:-1]).partition('\nevaluation = """')
+assert boundary, "Character n-gram runner boundary changed"
+namespace = {"__name__": "_assemble_char_runner"}
+exec(compile(assembly, str(source_path), "exec"), namespace)
+runner = namespace["runner"]
+
+def replace_once(text, old, new):
+    assert text.count(old) == 1, f"Runner changed near {old!r}"
+    return text.replace(old, new, 1)
+
+runner = replace_once(runner, "(len(train), 5)", "(len(train), 6)")
+for staged in ('"/tmp/s6e11_isol/data/train.csv"', '"/private/tmp/s6e11_isol/data/train.csv"'):
+    runner = runner.replace(staged, '"data/train.csv"')
+assert runner.count('"data/train.csv"') == 2 and 'device="cpu"' in runner
+
+runner = replace_once(runner, "outer_scores = []", """outer_scores = []
+from scipy.special import expit
+
+def magnitude_conditioned_rates(reference, query):
+    target = labels[reference]
+    prior = float(target.mean())
+    result = {}
+    for column in decimal_fields:
+        values = frame[column].to_numpy(dtype=float)
+        cutpoints = np.unique(np.quantile(values[reference], np.arange(1, 10) / 10))
+        fit_bin = np.searchsorted(cutpoints, values[reference], side="right")
+        score_bin = np.searchsorted(cutpoints, values[query], side="right")
+        fit_token = suffix[column].iloc[reference].to_numpy()
+        score_token = suffix[column].iloc[query].to_numpy()
+        table = pd.DataFrame({"token": fit_token, "bin": fit_bin, "label": target})
+
+        def smoothed_rate(key, values):
+            stats = table.groupby(key)["label"].agg(["sum", "size"])
+            rate = (stats["sum"] + 200 * prior) / (stats["size"] + 200)
+            return rate.reindex(values).fillna(prior).to_numpy()
+
+        token_rate = smoothed_rate("token", score_token)
+        bin_rate = smoothed_rate("bin", score_bin)
+        additive_prior = expit(logit(token_rate) + logit(bin_rate) - logit(prior))
+        joint = table.groupby(["token", "bin"])["label"].agg(["sum", "size"])
+        query_key = pd.MultiIndex.from_arrays([score_token, score_bin], names=["token", "bin"])
+        matched = joint.reindex(query_key).fillna(0)
+        posterior = (matched["sum"].to_numpy() + 200 * additive_prior) / (
+            matched["size"].to_numpy() + 200
+        )
+        result[f"decimal_magnitude_logodds__{column}"] = logit(posterior) - logit(bin_rate)
+        result[f"decimal_magnitude_interaction__{column}"] = logit(posterior) - logit(additive_prior)
+    return pd.DataFrame(result, index=query)
+""")
+runner = replace_once(runner, "    scores = np.column_stack(margins)", """    magnitude_parts = []
+    for ref, held_encoder in StratifiedKFold(3, shuffle=True, random_state=2030).split(fit_frame, fit_labels):
+        magnitude_parts.append(magnitude_conditioned_rates(fit_rows[ref], fit_rows[held_encoder]))
+    magnitude_fit = pd.concat(magnitude_parts).reindex(tree_fit.index)
+    magnitude_score = magnitude_conditioned_rates(fit_rows, score_frame.index.to_numpy())
+    assert np.isfinite(magnitude_fit.to_numpy()).all() and np.isfinite(magnitude_score.to_numpy()).all()
+
+    conditioned = clone(xgb).set_params(device="cpu")
+    conditioned.fit(tree_fit.join(training_rates).join(magnitude_fit), fit_labels)
+    margins.append(conditioned.predict(
+        tree_score.join(inference_rates).join(magnitude_score), output_margin=True,
+    ))
+
+    scores = np.column_stack(margins)""")
+
+evaluation = """
+control, _ = stack(5)
+candidate, coefficients = stack(6)
+with np.load(pred / "p2_decimal_char_ngram_f0_dev.npz", allow_pickle=False) as saved:
+    np.testing.assert_array_equal(saved["row_indices"], valid)
+    np.testing.assert_array_equal(saved["ids"], ids[valid])
+    np.testing.assert_allclose(control, saved["candidate"], rtol=1e-8, atol=1e-8)
+observed = labels[valid]
+base_auc = roc_auc_score(observed, control)
+assert abs(base_auc - 0.9468323528460475) < 1e-12
+candidate_auc = roc_auc_score(observed, candidate)
+delta = candidate_auc - base_auc
+subfold_deltas = [
+    (roc_auc_score(observed[held], candidate[held]) - roc_auc_score(observed[held], control[held])) * 1e5
+    for _, held in StratifiedKFold(5, shuffle=True, random_state=7).split(control, observed)
+]
+positive = sum(change > 0 for change in subfold_deltas)
+verdict = "DEV_ADVANCE" if delta >= 8e-5 and positive >= 4 else "NO-GO"
+result = {
+    "scope": "historical_F0_DEV_ONLY",
+    "experiment": "magnitude_conditioned_decimal_likelihood_hist_xgb",
+    "base_auc": base_auc, "candidate_auc": candidate_auc,
+    "stream_solo_auc": roc_auc_score(observed, np.mean([part[:, 5] for part in outer_designs], axis=0)),
+    "delta_e5": delta * 1e5, "positive_subfolds": positive,
+    "subfold_deltas_e5": subfold_deltas, "meta_coefficients": coefficients,
+    "verdict": verdict, "NO_SUBMIT": True, "NO_GPU": True,
+}
+payload = json.dumps(result, indent=2)
+(logs / "P2_DECIMAL_MAGNITUDE_F0_DEV.json").write_text(payload + "\\n")
+np.savez(
+    pred / "p2_decimal_magnitude_f0_dev.npz", ids=ids[valid], row_indices=valid,
+    control=control, candidate=candidate, outer_stream_margins=np.stack(outer_scores),
+)
+with Path("logs/v47/CODEX_DS_REVIEW_NEXT.md").open("a") as review:
+    review.write(
+        "\\n## P2 magnitude-conditioned decimal likelihood\\n\\n"
+        f"Historical Fold-0. Control {base_auc:.16f}, candidate {candidate_auc:.16f}, "
+        f"solo {result['stream_solo_auc']:.16f}, Δe-5 {delta * 1e5:+.8f}, "
+        f"{positive}/5 positive, {verdict}. Subfold Δe-5 {subfold_deltas}.\\n"
+    )
+print(payload)
+"""
+exec(compile(runner + "\n" + evaluation, str(source_path), "exec"), {"__name__": "__main__"})
+PY
+```

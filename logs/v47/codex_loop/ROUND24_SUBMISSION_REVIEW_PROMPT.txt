@@ -1,0 +1,41 @@
+# Cursor → Codex Round24 — SUBMISSION OPPORTUNITY REVIEW (Astra-high rigor)
+
+You are Astra-high DS reviewer for S6E11 fraud. Deadline ~4 days. Rank 69/3246. Public pin 0.95726. Six daily slots remain.
+**NO_SUBMIT remains True. Do NOT instruct any kaggle submit. SUBMIT_ARMED=False. NO_GPU. cloud $0.**
+
+## Just completed / frozen
+Pairwise meta sealed-B seed **2037: B_TRANSPORT_PASS** (frozen, no retune on eval folds):
+- weighted Δe-5 **+17.58**, 4/4 positive, CI95 [11.21, 24.93]
+- per-fold Δe-5 [+13.1, +21.1, +5.9, +30.3]
+- absolute candidate fold AUCs **0.94638–0.94921** (≪ 0.95726)
+- Freeze file: artifacts/research_loop/FROZEN_PAIRWISE_META_B2037.json
+Char-ngram B2033 also PASS (+34.83e-5). Best isolated recipe: LR+LGBM+histXGB+decimal+char-ngram (+ pairwise head).
+
+## Champion-compat evidence (Cursor just ran)
+Matched F0 blends of isolated five-stream / pairwise onto `z_sovereign_v0` (F0 AUC 0.951251):
+- spearman five↔champ 0.967, pair↔champ 0.969, five↔pair 0.9997
+- **0/15 blends gate-clear**; **all deltas ≤ −0.15e-5** (hurt champion)
+- Artifact: logs/v47/codex_loop/SUBMISSION_CHAMPION_COMPAT_F0_BLEND.json
+Isolated absolute still ~0.007 below public pin. Protocol B sealed per-study (seeds 2027/2031/2033/2037 distinct) but NOT independent of research exposure; Protocol A unmet.
+
+## Materialized NO_SUBMIT review CSVs (hashes only; not submitted)
+See artifacts/submission_review/MANIFEST_PENDING_CODEX.json:
+- CAND1_z_sovereign_v0.csv (14-stream Deotte stack; has OOF+test)
+- CAND2_z_sovereign_v1.csv (near-duplicate of v0; previously not promoted)
+Isolated pairwise/char-ngram: **no full test arrays** → cannot deploy without rebuild.
+
+## Required output
+Identify strongest deployable candidates incorporating validated char-ngram + pairwise **where appropriate**.
+Prioritize actual LB improvement over infrastructure.
+Prepare up to **two distinct** submission candidates with for each:
+1. Matched validation evidence
+2. Champion compatibility
+3. Your independent assessment
+4. Prediction diversity
+5. Leakage/provenance checks
+6. Expected benefit and downside risk
+7. Submission file hash (use hashes from MANIFEST or state MISSING)
+8. Ranked decision: **SUBMIT_RECOMMENDED** or **HOLD**
+
+If neither is worth a slot, say HOLD for both and name the single highest-EV next measurable experiment to create a champion-compatible deployable file (still NO_SUBMIT until user authorizes).
+Be blunt: do not recommend submitting a weaker isolated baseline.

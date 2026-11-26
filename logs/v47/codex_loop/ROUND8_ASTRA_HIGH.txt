@@ -1,0 +1,566 @@
+OpenAI Codex v0.172.0
+--------
+workdir: /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+model: gpt-6.2-sol
+provider: openai
+approval: never
+sandbox: read-only
+reasoning effort: none
+reasoning summaries: none
+session id: 01a2180a-0cec-7810-bcbf-4a725485c87f
+--------
+user
+# ASTRA-HIGH strategic review request (S6E11 fraud ONLY)
+
+Act as an adversarial Astra-high grandmaster DS reviewer / research strategist (maximum rigor). Use this ChatGPT Codex session model.
+
+## Objective
+Increase **public** ROC-AUC above **0.95726**. NO_SUBMIT / NO_GPU / cloud $0 / no tip CSVs.
+
+## Accepted facts
+- CROSS_FOLD_FAIL on frozen signed-CB (−0.10). Family **permanently retired** unless materially new evidence.
+- LOCAL_GATE_PASS remains historical only; not final success.
+- Round8 isolated 2-stream diagnostic COMPLETE:
+  - saved champion F0 0.9512507991341679
+  - isolated stack 0.9446644275289812 (Δe-5 −658.64)
+  - isolated LR 0.9413067 · LGBM 0.9440808
+  - JSON: logs/v47/codex_loop/ISOLATED_CHAMPION_F0_DIAGNOSTIC.json
+- Provenance: saved champion uses global OOF + P4 track selection across folds → cannot certify isolation.
+- Sealed-eval draft: artifacts/research_loop/SEALED_EVAL_PROTOCOL_DRAFT.md (must NOT treat reshuffled examined rows as untouched holdout).
+
+## Your deliverables
+1. Strategic diagnosis: why public tip 0.95726 vs local sovereign ~0.952, and what isolation implies for beating public.
+2. Ranked P2 experiment batch (3–5) against the **isolated anchor** (not leaky saved champion), prioritizing expected **generalizing** AUC.
+3. Spec for expanding the isolated anchor (which self-owned streams can be rebuilt with true outer isolation on CPU).
+4. Finalize sealed evaluation choice A/B/C from the draft (or propose better), with freeze-before-touch checklist.
+5. ONE bash command to execute next (measurable outcome). No signed-CB. No public-array blends.
+
+Put full "## Astra-high provenance strategy" text in your reply for Cursor to append if sandbox is RO.
+
+End with the single next command.
+warning: This session was recorded with model `gpt-5.4` but is resuming with `gpt-6.2-sol`. Consider switching back to `gpt-5.4` as it may affect Codex performance.
+codex
+I’ll read the sealed-eval draft and Round 8 artifacts.
+exec
+/bin/bash -lc "cat artifacts/research_loop/SEALED_EVAL_PROTOCOL_DRAFT.md
+cat logs/v47/codex_loop/ISOLATED_CHAMPION_F0_DIAGNOSTIC.json
+ls scripts/v47_sovereign
+rg --files scripts artifacts/research_loop | rg 'isolated|P2|p2_' | head -25
+head -1 data/train.csv" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 5ms:
+# Sealed evaluation protocol (draft) — S6E11 fraud
+
+**Status:** DRAFT pending Astra-high review. Not yet unblinded.
+
+## What this is not
+- Not a new random reshuffle of the same SKF(5, rs=42) rows already used for LOCAL_GATE_PASS / signed-CB / Round6–7 research.
+- Not “folds 1–4” of the historical SKF as untouched holdout (already exposed for several recipes).
+- Not public LB verification (NO_SUBMIT remains).
+
+## Purpose
+Provide a **fresh sealed evaluator** for recipes developed after CROSS_FOLD_FAIL, so that `CROSS_FOLD_VERIFIED` / `INDEPENDENT_HOLDOUT_VERIFIED` mean something beyond matched Fold-0.
+
+## Candidate sealed designs (pick one after Astra-high)
+
+### A. Time-aware / entity-blocked holdout (preferred if keys exist)
+If merchant/card/entity IDs exist with leakage risk, hold out entire entities never used in any prior research fit. Size for resolving ΔAUC ≈ 8e-5 at 95% paired power using F0 variance.
+
+### B. Frozen secondary seed panel (diagnostic only)
+A second SKF seed (e.g. rs=2027) used **once** after recipe freeze. Label as **transport diagnostic**, not independent holdout, because rows overlap the historical training universe.
+
+### C. Competition public LB (only after SUBMISSION_READY)
+Requires explicit user arm of SUBMIT. Counts as `PUBLIC_LB_VERIFIED` iff COMPLETE publicScore > 0.95726.
+
+## Freeze-before-touch rules
+1. Freeze baseline, candidate, preprocessing, hyperparams, ranking batch, coefficient(s), bootstrap unit.
+2. Write SHA256 of code + arrays + protocol to `artifacts/research_loop/SEALED_LOCK.json`.
+3. Score both arms once on identical sealed rows.
+4. Require ΔAUC ≥ +8e-5 and paired 95% LB > 0 (within-fold / within-class as applicable).
+5. Miss ⇒ no retune-and-rescore on same sealed cohort.
+
+## Isolation requirements for any arm compared on sealed data
+All of: feature prep, selection, base-model fits, stacking, and hyperparameter / track selection must exclude sealed rows (and their entities if blocked).
+
+## Public champion
+Preserve actual public pin **0.95726**. Local `z_sovereign_v0` remains the OOF research baseline, not the public claim.
+{
+  "scope": "historical_F0_DEV_ONLY_isolation_diagnostic",
+  "streams": [
+    "raw_onehot_LR",
+    "raw_native_categorical_LGBM"
+  ],
+  "n_outer_train": 559968,
+  "n_outer_score": 139992,
+  "inner_folds": 3,
+  "inner_split_seed": 2026,
+  "saved_champion_auc": 0.9512507991341679,
+  "isolated_stack_auc": 0.9446644275289812,
+  "delta_e5_vs_saved_champion": -658.6371605186714,
+  "isolated_lr_auc": 0.9413067436937739,
+  "isolated_lgbm_auc": 0.9440808429637034,
+  "outer_train_index_sha256": "a7c6d22ba8012df4052c17b4e504d06e11d6cfce142a2c7dbaa208d09fe368d3",
+  "outer_score_index_sha256": "3aeed8490042545539683354cd0adb52f778a63c93c8564291ee174a7fdc7f38",
+  "candidate_sha256": "78339f12ccc2d8477d674ec92bda7f2ad6e95e253b8a125738f93db21abb9d30",
+  "milestone": "LOCAL_GATE_PASS",
+  "NO_SUBMIT": true,
+  "SUBMIT_ARMED": false
+}
+__pycache__
+adjudicate_crossfold_cb.py
+audit_unused_psuper_f0.py
+conditional_f0.py
+crossfold_signed_cb_resid.py
+hgdt_v2_mps_fold0.py
+isolated_champion_f0_diagnostic.py
+kaggle_hgdt_f0
+launch_f0_pod.py
+pod_f0
+step1_schema_and_z_sovereign.py
+step2_provenance_and_z_v1.py
+step3_f0_gate.py
+step4_f0_gate_report.py
+v47_3_f0_gate.py
+scripts/gm_v5p2_hierarchical_s5_upgrade.py
+scripts/gm_v18_6_strict_fold_isolated_peer_check.py
+scripts/step2_lm_orth_and_v10_transductive.py
+scripts/v47_sovereign/isolated_champion_f0_diagnostic.py
+scripts/v41_step2_aa_frontier_geometry_audit.py
+scripts/v44_step2_unpack_dir3_stage.py
+scripts/v47_sovereign/step2_provenance_and_z_v1.py
+id,amount_usd,hours_since_last_txn,txn_count_last_24h,distance_from_home_km,card_age_months,customer_age,account_balance_usd,cvv_retry_count,velocity_score,time_of_day_hour,day_of_week,merchant_risk_score,prior_disputes,merchant_category,card_type,auth_method,channel,device_type,is_foreign_transaction,is_new_merchant,used_vpn,ip_country_mismatch,billing_shipping_mismatch,is_ai_generated_scam_attempt,is_fraud
+
+exec
+/bin/bash -lc "sed -n '1,185p' scripts/v47_sovereign/isolated_champion_f0_diagnostic.py
+ls preds/v47_sovereign/*isolated*
+rg -n '0\\.95726' artifacts/research_loop | head -12
+ls logs/v47/AGENTS.md logs/AGENTS.md 2>/dev/null" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ exited 1 in 0ms:
+import hashlib
+import json
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+from lightgbm import LGBMClassifier
+from scipy.special import logit
+from sklearn.compose import ColumnTransformer
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import roc_auc_score
+from sklearn.model_selection import StratifiedKFold
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
+
+print("START isolated champion diagnostic", flush=True)
+pred = Path("preds/v47_sovereign")
+log = Path("logs/v47")
+print("loading train.csv...", flush=True)
+df = pd.read_csv("data/train.csv", low_memory=False)
+print("train loaded", df.shape, flush=True)
+y = df.pop("is_fraud").to_numpy()
+ids = df.pop("id").to_numpy()
+folds = np.load(pred / "folds_skf42.npy")
+train, valid = next(StratifiedKFold(5, shuffle=True, random_state=42).split(df, y))
+np.testing.assert_array_equal(valid, np.flatnonzero(folds == 0))
+assert len(valid) == 139992
+
+# Keep scores and category vocabularies local to each fit.
+cats = df.select_dtypes(include=["object", "str", "category"]).columns.tolist()
+nums = [col for col in df.columns if col not in cats]
+x_train, x_valid = df.iloc[train], df.iloc[valid]
+y_train, y_valid = y[train], y[valid]
+
+def fit_score(fit, labels, score):
+    preprocessing = ColumnTransformer([
+        ("numeric", StandardScaler(), nums),
+        ("categorical", OneHotEncoder(handle_unknown="ignore"), cats),
+    ])
+    linear = make_pipeline(preprocessing, LogisticRegression(C=0.1, max_iter=1000))
+    linear.fit(fit, labels)
+
+    tree_fit, tree_score = fit.copy(), score.copy()
+    for col in cats:
+        tree_fit[col] = tree_fit[col].astype("category")
+        tree_score[col] = pd.Categorical(tree_score[col], categories=tree_fit[col].cat.categories)
+    tree = LGBMClassifier(
+        n_estimators=450, learning_rate=0.045, num_leaves=31,
+        min_child_samples=120, reg_lambda=5, n_jobs=4,
+        verbosity=-1, random_state=42,
+    )
+    tree.fit(tree_fit, labels)
+    return np.column_stack([
+        linear.decision_function(score),
+        tree.predict(tree_score, raw_score=True),
+    ])
+
+def rank_logit_from_reference(reference, scores):
+    columns = []
+    for j in range(reference.shape[1]):
+        ordered = np.sort(reference[:, j])
+        values = scores[:, j]
+        left = np.searchsorted(ordered, values, side="left")
+        right = np.searchsorted(ordered, values, side="right")
+        q = (left + right) / (2 * len(ordered))
+        eps = 0.5 / len(ordered)
+        columns.append(logit(np.clip(q, eps, 1 - eps)))
+    return np.column_stack(columns)
+
+inner_oof = np.full((len(train), 2), np.nan)
+outer_by_inner_model = []
+for k, (fit, score) in enumerate(
+    StratifiedKFold(3, shuffle=True, random_state=2026).split(x_train, y_train)
+):
+    fit_rows = train[fit]
+    score_rows = train[score]
+    assert np.all(folds[fit_rows] != 0) and np.all(folds[score_rows] != 0)
+    print(f"Inner fold {k + 1}/3, fitting on {len(fit_rows)} rows", flush=True)
+    batch = pd.concat([x_train.iloc[score], x_valid])
+    scores = fit_score(x_train.iloc[fit], y_train[fit], batch)
+    inner_oof[score] = scores[:len(score)]
+    outer_by_inner_model.append(scores[len(score):])
+
+assert np.isfinite(inner_oof).all()
+scaler = StandardScaler()
+meta_train = scaler.fit_transform(rank_logit_from_reference(inner_oof, inner_oof))
+meta = LogisticRegression(C=0.03, max_iter=2000).fit(meta_train, y_train)
+
+# Apply the same inner-OOF rank references to each component model, then average logits.
+outer_design = np.stack([
+    rank_logit_from_reference(inner_oof, scores) for scores in outer_by_inner_model
+])
+assert np.isfinite(outer_design).all()
+outer_streams = outer_design.mean(axis=0)
+candidate = np.mean([
+    meta.decision_function(scaler.transform(design)) for design in outer_design
+], axis=0)
+
+def digest(array):
+    return hashlib.sha256(np.ascontiguousarray(array).tobytes()).hexdigest()
+
+champion = np.load(pred / "z_sovereign_v0_oof.npy").ravel()[valid]
+base_auc = roc_auc_score(y_valid, champion)
+assert abs(base_auc - 0.9512507991341679) < 1e-12
+auc = roc_auc_score(y_valid, candidate)
+result = {
+    "scope": "historical_F0_DEV_ONLY_isolation_diagnostic",
+    "streams": ["raw_onehot_LR", "raw_native_categorical_LGBM"],
+    "n_outer_train": len(train),
+    "n_outer_score": len(valid),
+    "inner_folds": 3,
+    "inner_split_seed": 2026,
+    "saved_champion_auc": base_auc,
+    "isolated_stack_auc": auc,
+    "delta_e5_vs_saved_champion": (auc - base_auc) * 1e5,
+    "isolated_lr_auc": roc_auc_score(y_valid, outer_streams[:, 0]),
+    "isolated_lgbm_auc": roc_auc_score(y_valid, outer_streams[:, 1]),
+    "outer_train_index_sha256": digest(train),
+    "outer_score_index_sha256": digest(valid),
+    "candidate_sha256": digest(candidate),
+    "milestone": "LOCAL_GATE_PASS",
+    "NO_SUBMIT": True,
+    "SUBMIT_ARMED": False,
+}
+payload = json.dumps(result, indent=2)
+(log / "codex_loop/ISOLATED_CHAMPION_F0_DIAGNOSTIC.json").write_text(payload + "\n")
+np.savez(
+    pred / "isolated_champion_f0_diagnostic.npz",
+    ids=ids[valid], row_indices=valid, stack=candidate, streams=outer_streams,
+)
+with (log / "CODEX_DS_REVIEW_NEXT.md").open("a") as f:
+    f.write(
+        "\n## Isolated champion Fold-0 diagnostic\n\n"
+        "Corrected Round7b reproduced solo AUC 0.9368051080303192. "
+        "The signed blend scored 0.9512048308028603, Δe-5 −4.5968, 0/5, NO-GO.\n\n"
+        f"The isolated two-stream stack scored {auc:.16f} against saved champion "
+        f"{base_auc:.16f}, Δe-5 {result['delta_e5_vs_saved_champion']:+.8f}. "
+        f"Isolated LR {result['isolated_lr_auc']:.16f}, "
+        f"isolated LightGBM {result['isolated_lgbm_auc']:.16f}. "
+        "All fitting used the outer training partition. Only historical Fold-0 was scored. "
+        "This is a smaller-stack diagnostic. Milestone remains LOCAL_GATE_PASS. "
+        "NO_SUBMIT=True, SUBMIT_ARMED=False, RunPod $0, tip CSVs read 0.\n"
+    )
+print(payload)
+preds/v47_sovereign/isolated_champion_f0_diagnostic.npz
+artifacts/research_loop/SEALED_EVAL_PROTOCOL_DRAFT.md:22:Requires explicit user arm of SUBMIT. Counts as `PUBLIC_LB_VERIFIED` iff COMPLETE publicScore > 0.95726.
+artifacts/research_loop/SEALED_EVAL_PROTOCOL_DRAFT.md:35:Preserve actual public pin **0.95726**. Local `z_sovereign_v0` remains the OOF research baseline, not the public claim.
+artifacts/research_loop/CURRENT_RESEARCH.json:7:  "objective": "genuinely generalizing public ROC-AUC > 0.95726",
+artifacts/research_loop/CURRENT_RESEARCH.json:8:  "public_champion_pin": 0.95726,
+
+codex
+## Astra-high provenance strategy
+
+**The public score gap is unexplained.** The supplied 0.95726 public score and the saved sovereign stack’s ~0.952 local OOF score come from different recipes and evaluation rows. The gap could reflect stronger features or ensembling, a different mix of easy and hard fraud–legitimate pairs, sampling variation, or leaderboard selection across attempts. There is no matched evidence to assign the gap to any of those causes. Keep **0.95726 as the public target** and use paired local gains to select candidates. A local AUC plus an assumed leaderboard offset cannot establish a public win.
+
+**Round 8 establishes the CPU development anchor at 0.9446644275289812.** It beats its isolated raw LightGBM component by **+58.36e-5**. Its **−658.64e-5** gap to the saved Fold-0 champion combines differences in stream coverage, training size, stacking, and provenance. The experiment cannot estimate how much the champion’s global OOF reuse or P4 selection inflated its score. The research priority is to recover missing signal with reproducible streams before spending more CPU on small blend-weight gains.
+
+### Ranked P2 experiments
+
+Use the frozen Round 8 stack as the paired control. Run one prespecified candidate per hypothesis on historical Fold-0. Record solo AUC, paired ΔAUC, and the five existing dev subfold deltas. Use **+8e-5 and at least 4/5 positive** as a dev advance criterion. Historical Fold-0 has already informed research choices, so even a pass only earns a place in the next frozen evaluation.
+
+| Rank | Experiment | Why it could generalize |
+|---|---|---|
+| 1 | **Nonlinear additive logistic stream.** Fit splines on numeric columns, one-hot encode native categories, and test a fixed 15% rank-logit blend with the isolated anchor. | Recovers smooth univariate effects the raw LR misses and gives the stack a regularized alternative to tree splits. One CPU fit makes the incremental test cheap. |
+| 2 | **Smoothed interaction model.** Use a small fixed set of crosses such as `auth_method × channel`, `merchant_category × card_type`, and a coarse `velocity_score × merchant_risk_score` grid. Fit regularized one-hot effects and fall back to main effects for unseen combinations. | Tests whether a few repeatable fraud regimes add signal beyond the additive model. Sparse combinations can otherwise create unstable gains. |
+| 3 | **CPU histogram booster on structured features.** Fit a fixed XGBoost histogram recipe with raw fields and train-fitted coarse bins or frequency features. Compare it against the same-feature LightGBM control before adding either stream to the stack. | Separates feature gain from learner diversity. The corrected digit residual’s failure lowers the priority of another cents-only experiment. |
+| 4 | **Rebuild one auditable P4 feature family.** Extract one deterministic feature generator, rebuild its supervised dependencies inside each training partition, and freeze a single learner before historical Fold-0 scoring. | This is the closest CPU path to recovering signal from the stronger legacy stack. It earns its higher cost only if its source lineage and incremental value can be demonstrated. |
+
+### Expanding the isolated anchor
+
+The CPU-rebuildable core is **raw one-hot LR, raw native-categorical LightGBM, spline and interaction LR, and a small CPU histogram booster**. A P4 feature family can join once its inputs, base margins, and track choice can all be regenerated inside the split. Saved P4 tracks, super-stack scores, and LM or LLR arrays stay outside this build unless their complete outer-isolated lineage can be reproduced under the CPU lock.
+
+For each outer split, generate fresh three-fold inner OOF scores. Fit vocabularies, bins, frequencies, supervised encoders, and base models inside the applicable training partitions. Fit rank references, scaling, and the regularized meta-model on the inner OOF design. Score the outer rows with the inner-model ensemble using the same reference mapping as Round 8. Record code and data hashes, row IDs, split indices, feature lists, seeds, and score hashes. If a stream has label-dependent features or track selection, apply an additional training-only split wherever those choices would otherwise see the rows they score.
+
+### Sealed evaluation decision
+
+**Use B once as a frozen transport diagnostic. Reserve A for independent verification.** A second SKF seed can test split sensitivity, but every row comes from the examined development universe. The training schema has a row `id`, `merchant_category`, and transaction attributes. It exposes no evident card or merchant entity identifier or transaction timestamp. A requires a genuinely unexposed, relevant labeled cohort with documented lineage and reliable grouping or time keys where applicable. If such a cohort is unavailable, independent verification stays pending. C requires separate authorization after submission readiness and a completed public score **strictly above 0.95726**.
+
+Before touching either evaluator, freeze:
+
+- **Recipes and artifacts.** One baseline and one candidate, exact preprocessing, feature sources, fitting and calibration rules, seeds, blend formula, inference ranking batch, and CPU environment. Record hashes in `artifacts/research_loop/SEALED_LOCK.json`.
+- **Cohort and evaluation design.** Lock row IDs or the split generator, duplicate and entity policy, and scoring code. For A, size the cohort using a stated power target and development estimates of paired variance and positive counts. A 95% confidence level is distinct from statistical power.
+- **Decision rules.** For B, apply the weighted within-fold **+8e-5**, **≥3/4 positive**, positive leave-one-fold-out means, and paired 95% lower bound above zero as transport diagnostics. For A, require paired **ΔAUC ≥ +8e-5** and a two-sided paired 95% lower bound above zero, resampling intact independent groups where applicable. Score both arms once, release the prespecified metrics, and require a fresh evaluator for a revised recipe.
+
+The workspace is read-only. This section is ready for Cursor to append to `logs/v47/CODEX_DS_REVIEW_NEXT.md`. The command runs P2 experiment 1 on historical Fold-0, verifies the saved anchor’s identity, and appends the measured result. The spline model uses only outer-training rows. The blend weight is fixed before scoring.
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python -u - <<'PY'
+import hashlib
+import json
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+from scipy.special import logit
+from scipy.stats import rankdata
+from sklearn.compose import ColumnTransformer
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import roc_auc_score
+from sklearn.model_selection import StratifiedKFold
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import OneHotEncoder, SplineTransformer, StandardScaler
+
+pred = Path("preds/v47_sovereign")
+review = Path("logs/v47/CODEX_DS_REVIEW_NEXT.md")
+output = Path("logs/v47/codex_loop")
+frame = pd.read_csv("data/train.csv", low_memory=False)
+labels = frame.pop("is_fraud").to_numpy()
+row_ids = frame.pop("id").to_numpy()
+folds = np.load(pred / "folds_skf42.npy")
+train, valid = next(StratifiedKFold(5, shuffle=True, random_state=42).split(frame, labels))
+np.testing.assert_array_equal(valid, np.flatnonzero(folds == 0))
+assert len(valid) == 139992
+
+with np.load(pred / "isolated_champion_f0_diagnostic.npz", allow_pickle=False) as saved:
+    np.testing.assert_array_equal(saved["row_indices"], valid)
+    np.testing.assert_array_equal(saved["ids"], row_ids[valid])
+    anchor = saved["stack"]
+manifest = json.loads((output / "ISOLATED_CHAMPION_F0_DIAGNOSTIC.json").read_text())
+assert hashlib.sha256(np.ascontiguousarray(anchor).tobytes()).hexdigest() == manifest["candidate_sha256"]
+
+fit_frame = frame.iloc[train]
+categorical = fit_frame.select_dtypes(include=["object", "str", "category"]).columns.tolist()
+numeric = [column for column in frame if column not in categorical]
+continuous = [column for column in numeric if fit_frame[column].nunique() > 20]
+discrete = [column for column in numeric if column not in continuous]
+basis = ColumnTransformer([
+    ("splines", make_pipeline(
+        SplineTransformer(n_knots=6, degree=3, extrapolation="constant"),
+        StandardScaler(),
+    ), continuous),
+    ("discrete", StandardScaler(), discrete),
+    ("categories", OneHotEncoder(handle_unknown="ignore"), categorical),
+])
+model = make_pipeline(basis, LogisticRegression(C=0.05, max_iter=1000))
+print(f"Fitting additive stream on {len(train)} outer-training rows", flush=True)
+model.fit(fit_frame, labels[train])
+lr = model.named_steps["logisticregression"]
+assert np.max(lr.n_iter_) < lr.max_iter
+stream = model.decision_function(frame.iloc[valid])
+assert np.isfinite(anchor).all() and np.isfinite(stream).all()
+
+def rank_logit(scores):
+    return logit((rankdata(scores) - 0.5) / len(scores))
+
+weight = 0.15
+candidate = (1 - weight) * rank_logit(anchor) + weight * rank_logit(stream)
+observed = labels[valid]
+base_auc = roc_auc_score(observed, anchor)
+assert abs(base_auc - manifest["isolated_stack_auc"]) < 1e-12
+candidate_auc = roc_auc_score(observed, candidate)
+delta = candidate_auc - base_auc
+subfold_deltas = [
+    (roc_auc_score(observed[index], candidate[index])
+     - roc_auc_score(observed[index], anchor[index])) * 1e5
+    for _, index in StratifiedKFold(5, shuffle=True, random_state=7).split(anchor, observed)
+]
+positive = sum(change > 0 for change in subfold_deltas)
+result = {
+    "scope": "historical_F0_DEV_ONLY",
+    "base_auc": base_auc,
+    "solo_auc": roc_auc_score(observed, stream),
+    "candidate_auc": candidate_auc,
+    "delta_e5": delta * 1e5,
+    "positive_subfolds": positive,
+    "subfold_deltas_e5": subfold_deltas,
+    "fixed_spline_weight": weight,
+    "continuous_features": continuous,
+    "discrete_features": discrete,
+    "categorical_features": categorical,
+    "verdict": "DEV_ADVANCE" if delta >= 8e-5 and positive >= 4 else "NO-GO",
+    "NO_SUBMIT": True,
+    "SUBMIT_ARMED": False,
+}
+payload = json.dumps(result, indent=2)
+(output / "P2_SPLINE_F0_DEV.json").write_text(payload + "\n")
+np.savez(pred / "p2_spline_f0_dev.npz", row_indices=valid, ids=row_ids[valid],
+         stream=stream, candidate=candidate)
+with review.open("a") as handle:
+    handle.write(
+        "\n## P2 additive spline Fold-0 development result\n\n"
+        f"Isolated anchor {base_auc:.16f}. Spline solo {result['solo_auc']:.16f}. "
+        f"Fixed 85:15 blend {candidate_auc:.16f}, Δe-5 {delta * 1e5:+.8f}, "
+        f"{positive}/5 positive, {result['verdict']}. "
+        f"Subfold Δe-5 {subfold_deltas}. Historical Fold-0 only.\n"
+    )
+print(payload)
+PY
+```
+tokens used
+160,719
+## Astra-high provenance strategy
+
+**The public score gap is unexplained.** The supplied 0.95726 public score and the saved sovereign stack’s ~0.952 local OOF score come from different recipes and evaluation rows. The gap could reflect stronger features or ensembling, a different mix of easy and hard fraud–legitimate pairs, sampling variation, or leaderboard selection across attempts. There is no matched evidence to assign the gap to any of those causes. Keep **0.95726 as the public target** and use paired local gains to select candidates. A local AUC plus an assumed leaderboard offset cannot establish a public win.
+
+**Round 8 establishes the CPU development anchor at 0.9446644275289812.** It beats its isolated raw LightGBM component by **+58.36e-5**. Its **−658.64e-5** gap to the saved Fold-0 champion combines differences in stream coverage, training size, stacking, and provenance. The experiment cannot estimate how much the champion’s global OOF reuse or P4 selection inflated its score. The research priority is to recover missing signal with reproducible streams before spending more CPU on small blend-weight gains.
+
+### Ranked P2 experiments
+
+Use the frozen Round 8 stack as the paired control. Run one prespecified candidate per hypothesis on historical Fold-0. Record solo AUC, paired ΔAUC, and the five existing dev subfold deltas. Use **+8e-5 and at least 4/5 positive** as a dev advance criterion. Historical Fold-0 has already informed research choices, so even a pass only earns a place in the next frozen evaluation.
+
+| Rank | Experiment | Why it could generalize |
+|---|---|---|
+| 1 | **Nonlinear additive logistic stream.** Fit splines on numeric columns, one-hot encode native categories, and test a fixed 15% rank-logit blend with the isolated anchor. | Recovers smooth univariate effects the raw LR misses and gives the stack a regularized alternative to tree splits. One CPU fit makes the incremental test cheap. |
+| 2 | **Smoothed interaction model.** Use a small fixed set of crosses such as `auth_method × channel`, `merchant_category × card_type`, and a coarse `velocity_score × merchant_risk_score` grid. Fit regularized one-hot effects and fall back to main effects for unseen combinations. | Tests whether a few repeatable fraud regimes add signal beyond the additive model. Sparse combinations can otherwise create unstable gains. |
+| 3 | **CPU histogram booster on structured features.** Fit a fixed XGBoost histogram recipe with raw fields and train-fitted coarse bins or frequency features. Compare it against the same-feature LightGBM control before adding either stream to the stack. | Separates feature gain from learner diversity. The corrected digit residual’s failure lowers the priority of another cents-only experiment. |
+| 4 | **Rebuild one auditable P4 feature family.** Extract one deterministic feature generator, rebuild its supervised dependencies inside each training partition, and freeze a single learner before historical Fold-0 scoring. | This is the closest CPU path to recovering signal from the stronger legacy stack. It earns its higher cost only if its source lineage and incremental value can be demonstrated. |
+
+### Expanding the isolated anchor
+
+The CPU-rebuildable core is **raw one-hot LR, raw native-categorical LightGBM, spline and interaction LR, and a small CPU histogram booster**. A P4 feature family can join once its inputs, base margins, and track choice can all be regenerated inside the split. Saved P4 tracks, super-stack scores, and LM or LLR arrays stay outside this build unless their complete outer-isolated lineage can be reproduced under the CPU lock.
+
+For each outer split, generate fresh three-fold inner OOF scores. Fit vocabularies, bins, frequencies, supervised encoders, and base models inside the applicable training partitions. Fit rank references, scaling, and the regularized meta-model on the inner OOF design. Score the outer rows with the inner-model ensemble using the same reference mapping as Round 8. Record code and data hashes, row IDs, split indices, feature lists, seeds, and score hashes. If a stream has label-dependent features or track selection, apply an additional training-only split wherever those choices would otherwise see the rows they score.
+
+### Sealed evaluation decision
+
+**Use B once as a frozen transport diagnostic. Reserve A for independent verification.** A second SKF seed can test split sensitivity, but every row comes from the examined development universe. The training schema has a row `id`, `merchant_category`, and transaction attributes. It exposes no evident card or merchant entity identifier or transaction timestamp. A requires a genuinely unexposed, relevant labeled cohort with documented lineage and reliable grouping or time keys where applicable. If such a cohort is unavailable, independent verification stays pending. C requires separate authorization after submission readiness and a completed public score **strictly above 0.95726**.
+
+Before touching either evaluator, freeze:
+
+- **Recipes and artifacts.** One baseline and one candidate, exact preprocessing, feature sources, fitting and calibration rules, seeds, blend formula, inference ranking batch, and CPU environment. Record hashes in `artifacts/research_loop/SEALED_LOCK.json`.
+- **Cohort and evaluation design.** Lock row IDs or the split generator, duplicate and entity policy, and scoring code. For A, size the cohort using a stated power target and development estimates of paired variance and positive counts. A 95% confidence level is distinct from statistical power.
+- **Decision rules.** For B, apply the weighted within-fold **+8e-5**, **≥3/4 positive**, positive leave-one-fold-out means, and paired 95% lower bound above zero as transport diagnostics. For A, require paired **ΔAUC ≥ +8e-5** and a two-sided paired 95% lower bound above zero, resampling intact independent groups where applicable. Score both arms once, release the prespecified metrics, and require a fresh evaluator for a revised recipe.
+
+The workspace is read-only. This section is ready for Cursor to append to `logs/v47/CODEX_DS_REVIEW_NEXT.md`. The command runs P2 experiment 1 on historical Fold-0, verifies the saved anchor’s identity, and appends the measured result. The spline model uses only outer-training rows. The blend weight is fixed before scoring.
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python -u - <<'PY'
+import hashlib
+import json
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+from scipy.special import logit
+from scipy.stats import rankdata
+from sklearn.compose import ColumnTransformer
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import roc_auc_score
+from sklearn.model_selection import StratifiedKFold
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import OneHotEncoder, SplineTransformer, StandardScaler
+
+pred = Path("preds/v47_sovereign")
+review = Path("logs/v47/CODEX_DS_REVIEW_NEXT.md")
+output = Path("logs/v47/codex_loop")
+frame = pd.read_csv("data/train.csv", low_memory=False)
+labels = frame.pop("is_fraud").to_numpy()
+row_ids = frame.pop("id").to_numpy()
+folds = np.load(pred / "folds_skf42.npy")
+train, valid = next(StratifiedKFold(5, shuffle=True, random_state=42).split(frame, labels))
+np.testing.assert_array_equal(valid, np.flatnonzero(folds == 0))
+assert len(valid) == 139992
+
+with np.load(pred / "isolated_champion_f0_diagnostic.npz", allow_pickle=False) as saved:
+    np.testing.assert_array_equal(saved["row_indices"], valid)
+    np.testing.assert_array_equal(saved["ids"], row_ids[valid])
+    anchor = saved["stack"]
+manifest = json.loads((output / "ISOLATED_CHAMPION_F0_DIAGNOSTIC.json").read_text())
+assert hashlib.sha256(np.ascontiguousarray(anchor).tobytes()).hexdigest() == manifest["candidate_sha256"]
+
+fit_frame = frame.iloc[train]
+categorical = fit_frame.select_dtypes(include=["object", "str", "category"]).columns.tolist()
+numeric = [column for column in frame if column not in categorical]
+continuous = [column for column in numeric if fit_frame[column].nunique() > 20]
+discrete = [column for column in numeric if column not in continuous]
+basis = ColumnTransformer([
+    ("splines", make_pipeline(
+        SplineTransformer(n_knots=6, degree=3, extrapolation="constant"),
+        StandardScaler(),
+    ), continuous),
+    ("discrete", StandardScaler(), discrete),
+    ("categories", OneHotEncoder(handle_unknown="ignore"), categorical),
+])
+model = make_pipeline(basis, LogisticRegression(C=0.05, max_iter=1000))
+print(f"Fitting additive stream on {len(train)} outer-training rows", flush=True)
+model.fit(fit_frame, labels[train])
+lr = model.named_steps["logisticregression"]
+assert np.max(lr.n_iter_) < lr.max_iter
+stream = model.decision_function(frame.iloc[valid])
+assert np.isfinite(anchor).all() and np.isfinite(stream).all()
+
+def rank_logit(scores):
+    return logit((rankdata(scores) - 0.5) / len(scores))
+
+weight = 0.15
+candidate = (1 - weight) * rank_logit(anchor) + weight * rank_logit(stream)
+observed = labels[valid]
+base_auc = roc_auc_score(observed, anchor)
+assert abs(base_auc - manifest["isolated_stack_auc"]) < 1e-12
+candidate_auc = roc_auc_score(observed, candidate)
+delta = candidate_auc - base_auc
+subfold_deltas = [
+    (roc_auc_score(observed[index], candidate[index])
+     - roc_auc_score(observed[index], anchor[index])) * 1e5
+    for _, index in StratifiedKFold(5, shuffle=True, random_state=7).split(anchor, observed)
+]
+positive = sum(change > 0 for change in subfold_deltas)
+result = {
+    "scope": "historical_F0_DEV_ONLY",
+    "base_auc": base_auc,
+    "solo_auc": roc_auc_score(observed, stream),
+    "candidate_auc": candidate_auc,
+    "delta_e5": delta * 1e5,
+    "positive_subfolds": positive,
+    "subfold_deltas_e5": subfold_deltas,
+    "fixed_spline_weight": weight,
+    "continuous_features": continuous,
+    "discrete_features": discrete,
+    "categorical_features": categorical,
+    "verdict": "DEV_ADVANCE" if delta >= 8e-5 and positive >= 4 else "NO-GO",
+    "NO_SUBMIT": True,
+    "SUBMIT_ARMED": False,
+}
+payload = json.dumps(result, indent=2)
+(output / "P2_SPLINE_F0_DEV.json").write_text(payload + "\n")
+np.savez(pred / "p2_spline_f0_dev.npz", row_indices=valid, ids=row_ids[valid],
+         stream=stream, candidate=candidate)
+with review.open("a") as handle:
+    handle.write(
+        "\n## P2 additive spline Fold-0 development result\n\n"
+        f"Isolated anchor {base_auc:.16f}. Spline solo {result['solo_auc']:.16f}. "
+        f"Fixed 85:15 blend {candidate_auc:.16f}, Δe-5 {delta * 1e5:+.8f}, "
+        f"{positive}/5 positive, {result['verdict']}. "
+        f"Subfold Δe-5 {subfold_deltas}. Historical Fold-0 only.\n"
+    )
+print(payload)
+PY
+```

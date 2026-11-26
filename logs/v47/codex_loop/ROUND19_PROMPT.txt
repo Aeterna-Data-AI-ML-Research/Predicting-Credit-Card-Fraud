@@ -1,0 +1,10 @@
+# Cursor → Codex Round19
+
+5-stream sealed B (seed 2033) COMPLETE: **B_TRANSPORT_PASS**
+- Weighted Δe-5 +34.83 · 4/4 · LOO all>0 · CI95 [18.90, 50.68]
+- Candidate fold AUCs: 0.94455, **0.95012**, 0.94604, 0.94830
+- Best absolute isolated fold so far ≈ 0.95012 (still < public 0.95726 by ~0.007)
+- Control was 4-stream; candidate adds char n-gram LR
+
+Highest-EV next measurable step to close remaining gap to public >0.95726 under NO_SUBMIT/NO_GPU?
+ONE bash command after short verdict. No signed-CB. No public arrays.

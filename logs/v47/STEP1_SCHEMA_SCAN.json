@@ -1,0 +1,125 @@
+{
+  "huggingface": [
+    {
+      "query": "uditjain",
+      "id": "uditjain/adaption-financial-math-qa",
+      "downloads": 529,
+      "likes": 0,
+      "tags": [
+        "multilinguality:monolingual",
+        "source_datasets:original",
+        "language:en",
+        "size_categories:1K<n<10K",
+        "format:json",
+        "modality:text",
+        "library:datasets",
+        "library:pandas"
+      ]
+    },
+    {
+      "query": "uditjain",
+      "id": "uditjain/veneer-bench",
+      "downloads": 87,
+      "likes": 0,
+      "tags": [
+        "language:en",
+        "license:cc-by-4.0",
+        "size_categories:1K<n<10K",
+        "format:csv",
+        "modality:tabular",
+        "modality:text",
+        "library:datasets",
+        "library:pandas"
+      ]
+    }
+  ],
+  "openml": [],
+  "kaggle": [
+    {
+      "query": "is_ai_generated_scam_attempt",
+      "raw": "Warning: Looks like you're using an outdated `kaggle` version (installed: 2.2.4), please consider upgrading to the latest version (2.2.5)\nNo datasets found\n"
+    },
+    {
+      "query": "cvv_retry_count",
+      "raw": "Warning: Looks like you're using an outdated `kaggle` version (installed: 2.2.4), please consider upgrading to the latest version (2.2.5)\nNo datasets found\n"
+    },
+    {
+      "query": "Credit Card Fraud Detection 2026",
+      "raw": "Warning: Looks like you're using an outdated `kaggle` version (installed: 2.2.4), please consider upgrading to the latest version (2.2.5)\nref                                                             title                                              size  lastUpdated                 downloadCount  voteCount  usabilityRating  \n--------------------------------------------------------------  -------------------------------------------  ----------  --------------------------  -------------  ---------  ---------------  \nmohankrishnathalla/credit-card-fraud-detection-dataset-2026     Credit Card Fraud Detection Dataset 2026        6976318  2026-11-25 17:02:31.600000           1436         29                1  \nmohankrishnathalla/credit-card-fraud-detection-with-drift-2026  Credit Card Fraud Detection with Drift 2026     8689341  2026-11-25 17:02:35.233000            286          5                1  \nrajandasthrice/credittransact-a-profile-driven-dataset          CreditTransAct: A Profile-Driven Dataset              0  2026-10-05 16:14:20.140000              7          0        0.4117647  \n"
+    },
+    {
+      "query": "uditjain",
+      "raw": "Warning: Looks like you're using an outdated `kaggle` version (installed: 2.2.4), please consider upgrading to the latest version (2.2.5)\nNo datasets found\n"
+    }
+  ],
+  "notes": [
+    "OpenML credit card fraud: HTTPError: HTTP Error 412: Precondition Failed",
+    "OpenML udit jain: HTTPError: HTTP Error 412: Precondition Failed",
+    "OpenML cvv_retry: HTTPError: HTTP Error 412: Precondition Failed"
+  ],
+  "local_orig20k": {
+    "path": "/tmp/s6e11_v39_ssd/data/orig20k.csv",
+    "rows": 20000,
+    "cols": [
+      "transaction_id",
+      "amount_usd",
+      "merchant_category",
+      "card_type",
+      "auth_method",
+      "channel",
+      "device_type",
+      "is_foreign_transaction",
+      "hours_since_last_txn",
+      "txn_count_last_24h",
+      "distance_from_home_km",
+      "card_age_months",
+      "customer_age",
+      "account_balance_usd",
+      "is_new_merchant",
+      "used_vpn",
+      "ip_country_mismatch",
+      "billing_shipping_mismatch",
+      "cvv_retry_count",
+      "velocity_score",
+      "time_of_day_hour",
+      "day_of_week",
+      "is_ai_generated_scam_attempt",
+      "merchant_risk_score",
+      "prior_disputes",
+      "is_fraud"
+    ],
+    "n_cols": 26,
+    "overlap_with_train": [
+      "account_balance_usd",
+      "amount_usd",
+      "auth_method",
+      "billing_shipping_mismatch",
+      "card_age_months",
+      "card_type",
+      "channel",
+      "customer_age",
+      "cvv_retry_count",
+      "day_of_week",
+      "device_type",
+      "distance_from_home_km",
+      "hours_since_last_txn",
+      "ip_country_mismatch",
+      "is_ai_generated_scam_attempt",
+      "is_foreign_transaction",
+      "is_fraud",
+      "is_new_merchant",
+      "merchant_category",
+      "merchant_risk_score",
+      "prior_disputes",
+      "time_of_day_hour",
+      "txn_count_last_24h",
+      "used_vpn",
+      "velocity_score"
+    ],
+    "n_overlap": 25,
+    "has_is_ai_generated_scam_attempt": true,
+    "has_cvv_retry_count": true,
+    "fraud_count": 339
+  },
+  "explain_096153": "Public LB scores \u22650.961 typically come from (a) different evaluation slices, (b) notebooks that still blend public tip CSVs, or (c) datasets/schemas that are sisters of Udit Jain 2026 orig20k \u2014 NOT from a verified sovereign self-train stack. Local orig20k: 20000 rows, 25/25 train-col overlap, schema flags present=True."
+}

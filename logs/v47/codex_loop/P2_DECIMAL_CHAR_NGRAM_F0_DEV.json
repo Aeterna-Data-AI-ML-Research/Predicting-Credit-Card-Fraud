@@ -1,0 +1,26 @@
+{
+  "scope": "historical_F0_DEV_ONLY",
+  "experiment": "field_specific_boundary_marked_decimal_char_ngram_lr",
+  "base_auc": 0.9461443510359124,
+  "candidate_auc": 0.9468323528460475,
+  "lexical_solo_auc": 0.8229832175646649,
+  "delta_e5": 68.80018101350637,
+  "positive_subfolds": 5,
+  "subfold_deltas_e5": [
+    8.226934237609562,
+    75.33853834387205,
+    97.7679278729493,
+    120.3782195457026,
+    37.48937250179773
+  ],
+  "meta_coefficients": [
+    0.48790800108402216,
+    0.4437533175484318,
+    0.4373408109845917,
+    0.9516049844163341,
+    0.19100890942955828
+  ],
+  "verdict": "DEV_ADVANCE",
+  "NO_SUBMIT": true,
+  "NO_GPU": true
+}

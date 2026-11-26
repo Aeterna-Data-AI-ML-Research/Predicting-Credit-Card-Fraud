@@ -1,0 +1,29 @@
+{
+  "frozen_at": "2026-11-26T16:49:15.055813+00:00",
+  "policy": "NO_RETUNE_ON_EVAL_FOLDS_SEED_2037",
+  "verdict": "B_TRANSPORT_PASS",
+  "weighted_delta_e5": 17.58198793087862,
+  "positive_folds": 4,
+  "paired_ci95_e5": [
+    11.207188985734444,
+    24.934166431320598
+  ],
+  "loo_delta_e5": [
+    19.073435170750365,
+    16.420316247378608,
+    21.481811744979613,
+    13.352388560405883
+  ],
+  "lock_sha256": "b70be42bb031a3ddbf6cb0a0e84c82854e71fe679574e55482311318ad1b94ab",
+  "lock_path": "artifacts/research_loop/SEALED_LOCK_FIVE_STREAM_PAIRWISE_B2037.json",
+  "report_path": "logs/v47/codex_loop/SEALED_B_FIVE_STREAM_PAIRWISE_2037_TRANSPORT.json",
+  "scores_path": "preds/v47_sovereign/sealed_b_five_stream_pairwise_2037_transport.npz",
+  "script_path": "scripts/v47_sovereign/sealed_b_five_stream_pairwise_2037.py",
+  "pairwise_head": {
+    "seed": 2035,
+    "pairs_per_fraud": 64,
+    "C": 0.03
+  },
+  "NO_SUBMIT": true,
+  "note": "Frozen after B_TRANSPORT_PASS. Do not retune pairwise head on SKF 2037 evaluation folds."
+}

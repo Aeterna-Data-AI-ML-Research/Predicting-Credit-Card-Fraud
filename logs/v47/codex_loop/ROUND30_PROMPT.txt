@@ -1,0 +1,18 @@
+# Cursor → Codex Round30
+
+Champion regime-interaction head (velocity×merchant gates, scale=0.10) on 14 streams:
+- control=z0 exact
+- folds1–4 weighted Δe-5=-1.2672640766320244 pos=1/4 → NO-GO
+- loo=[-0.6144969773765515, -1.9403314299837329, -1.1702682196745864, -1.343959679493227]
+Artifact: CHAMP_REGIME_INTERACTION_HEAD_DIAGNOSTIC.json
+
+Champion-compat ledger this loop:
+1. pairwise head +4.54 NO-GO
+2. char15 -2.64 NO-GO
+3. decimal15 +0.09 NO-GO
+4. hardneg +7.36 near-miss NO-GO (do not retune)
+5. B2039 hardneg vs uniform FAIL -7.16 0/4
+6. regime -1.27 NO-GO
+B2037 pairwise frozen PASS. Submissions HOLD. NO_SUBMIT/NO_GPU/$0. Objective public >0.95726.
+
+Highest-EV next measurable champion-compatible experiment? Prefer stream pruning / complementary-error residual on unused self-owned OOF / rank calibration — not hard-neg or regime retunes. ONE command after short verdict.

@@ -1,0 +1,224 @@
+OpenAI Codex v0.172.0
+--------
+workdir: /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+model: gpt-6.2-sol
+provider: openai
+approval: never
+sandbox: read-only
+reasoning effort: none
+reasoning summaries: none
+session id: 01a2180a-0cec-7810-bcbf-4a725485c87f
+--------
+user
+# Cursor → Codex Round29
+
+Sealed-B 2039 hard-negative vs uniform on frozen 5-stream:
+- verdict=B_TRANSPORT_FAIL
+- weighted_delta_e5=-7.15677172417606
+- positive_folds=0/4
+- loo=[-4.715873314309338, -7.936985061529621, -8.396951533221989, -7.577276987643286]
+- paired_ci95=[-12.760869192083094, -1.4981917662654234]
+- per_fold=[-14.479, -4.816, -3.436, -5.895]
+Artifact: SEALED_B_FIVE_STREAM_HARD_NEGATIVE_2039_TRANSPORT.json
+
+Context: champion hard-neg was near-miss +7.36e-5 (NO-GO). Transport of same sampler vs uniform FAILS on isolated 5-stream. Do not retune hard-neg window/mix after seeing these folds. B2037 remains frozen PASS. Char15/decimal15 champion streams NO-GO. Submissions HOLD. NO_SUBMIT.
+
+Highest-EV next measurable champion-compatible experiment toward public >0.95726?
+Prefer orthogonal family (not hard-neg retune). ONE command after short verdict.
+codex
+**Stop tuning hard negatives. Test whether the champion needs different stream weights in different risk regimes.** The frozen sampler lost **7.16e-5 with 0/4 wins** against uniform sampling in B2039. The next experiment keeps the 14 streams and row-wise loss fixed. It adds regularized interactions between stream scores and two prespecified gates, `velocity_score` and `merchant_risk_score`. The matched screen requires exact `z0` reproduction, **≥+8e-5**, **≥3/4 wins**, and positive leave-one-fold-out means. Historical folds and inherited champion provenance limit this to a development diagnostic.
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python -u - <<'PY'
+from pathlib import Path
+
+path = Path("scripts/v47_sovereign/champ_pairwise_head_diagnostic.py").resolve()
+source = path.read_text()
+
+def replace_once(text, old, new):
+    assert text.count(old) == 1, f"Champion runner changed near {old!r}"
+    return text.replace(old, new, 1)
+
+start = source.index("def pairwise_head(")
+end = source.index("def main()", start)
+source = source[:start] + '''GATE_FIELDS = ("velocity_score", "merchant_risk_score")
+INTERACTION_SCALE = 0.10
+
+
+def regime_head(Xtr, ytr, Xva, Xte, raw_train, raw_valid, raw_test):
+    low, median, high = np.quantile(raw_train, [0.25, 0.50, 0.75], axis=0)
+    spread = np.maximum(high - low, 1e-8)
+
+    def gates(raw):
+        return np.tanh((raw - median) / spread)
+
+    training_center = gates(raw_train).mean(axis=0)
+
+    def expand(stream_scores, raw):
+        centered = gates(raw) - training_center
+        return np.column_stack([
+            stream_scores,
+            *(INTERACTION_SCALE * stream_scores * centered[:, index:index + 1]
+              for index in range(len(GATE_FIELDS))),
+        ])
+
+    head = LogisticRegression(C=C, solver="lbfgs", max_iter=2000)
+    head.fit(expand(Xtr, raw_train), ytr)
+    assert head.n_iter_.max() < head.max_iter
+    return (
+        head.predict_proba(expand(Xva, raw_valid))[:, 1],
+        head.predict_proba(expand(Xte, raw_test))[:, 1],
+        head.coef_.ravel().tolist(),
+    )
+
+
+''' + source[end:]
+
+source = replace_once(
+    source,
+    '    y = tr["is_fraud"].to_numpy(int)\n',
+    '''    y = tr["is_fraud"].to_numpy(int)
+    gate_train = tr.loc[:, list(GATE_FIELDS)].to_numpy(dtype=float)
+    test_frame = pd.read_csv(step1.DATA / "test.csv", usecols=["id", *GATE_FIELDS])
+    gate_test = test_frame.loc[:, list(GATE_FIELDS)].to_numpy(dtype=float)
+    assert test_frame["id"].is_unique and len(test_frame) == 299984
+    assert np.isfinite(gate_train).all() and np.isfinite(gate_test).all()
+''',
+)
+source = replace_once(
+    source,
+    "        va_scores, te_scores, coef = pairwise_head(Xtr, y[trm], Xva, Xte)",
+    '''        va_scores, te_scores, coef = regime_head(
+            Xtr, y[trm], Xva, Xte, gate_train[trm], gate_train[va], gate_test,
+        )''',
+)
+source = replace_once(
+    source,
+    "    print(f\"control vs saved z0 max|Δ|={repro_delta:.3e}\", flush=True)",
+    '''    np.testing.assert_array_equal(control, champ_saved)
+    assert np.isfinite(candidate).all() and np.isfinite(te_candidate).all()
+    print(f"control vs saved z0 max|Δ|={repro_delta:.3e}", flush=True)''',
+)
+source = replace_once(source, "        folds=folds,", '''        folds=folds,
+        test_ids=test_frame["id"].to_numpy(),''')
+
+for old, new in {
+    '"CHAMP_PAIRWISE_HEAD_DIAGNOSTIC.json"': '"CHAMP_REGIME_INTERACTION_HEAD_DIAGNOSTIC.json"',
+    '"champ_pairwise_head_diagnostic.npz"': '"champ_regime_interaction_head_diagnostic.npz"',
+    '"champion_14stream_pairwise_head_swap_matched"': '"champion_14stream_rowwise_regime_interaction_matched"',
+    '"pairwise_head": {"seed": PAIR_SEED, "pairs_per_fraud": PAIRS_PER_FRAUD, "C": C},': (
+        '"regime_head": {"fields": list(GATE_FIELDS), '
+        '"interaction_scale": INTERACTION_SCALE, "C": C},'
+    ),
+    '"pairwise_coef": coef,': '"regime_coef": coef,',
+    '"DEV_ADVANCE_CHAMP_PAIRWISE"': '"DEV_ADVANCE_CHAMP_REGIME"',
+    '"note": "Char-ngram excluded by design. B2037 not retuned.",': (
+        '"note": "Historical development only. Legacy champion provenance applies. B2037 frozen.",\n'
+        '        "SUBMIT_ARMED": False,'
+    ),
+    "## Champion 14-stream pairwise head diagnostic": "## Champion 14-stream regime-interaction head diagnostic",
+}.items():
+    source = replace_once(source, old, new)
+
+exec(compile(source, str(path), "exec"), {"__name__": "__main__", "__file__": str(path)})
+PY
+```
+tokens used
+283,940
+**Stop tuning hard negatives. Test whether the champion needs different stream weights in different risk regimes.** The frozen sampler lost **7.16e-5 with 0/4 wins** against uniform sampling in B2039. The next experiment keeps the 14 streams and row-wise loss fixed. It adds regularized interactions between stream scores and two prespecified gates, `velocity_score` and `merchant_risk_score`. The matched screen requires exact `z0` reproduction, **≥+8e-5**, **≥3/4 wins**, and positive leave-one-fold-out means. Historical folds and inherited champion provenance limit this to a development diagnostic.
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python -u - <<'PY'
+from pathlib import Path
+
+path = Path("scripts/v47_sovereign/champ_pairwise_head_diagnostic.py").resolve()
+source = path.read_text()
+
+def replace_once(text, old, new):
+    assert text.count(old) == 1, f"Champion runner changed near {old!r}"
+    return text.replace(old, new, 1)
+
+start = source.index("def pairwise_head(")
+end = source.index("def main()", start)
+source = source[:start] + '''GATE_FIELDS = ("velocity_score", "merchant_risk_score")
+INTERACTION_SCALE = 0.10
+
+
+def regime_head(Xtr, ytr, Xva, Xte, raw_train, raw_valid, raw_test):
+    low, median, high = np.quantile(raw_train, [0.25, 0.50, 0.75], axis=0)
+    spread = np.maximum(high - low, 1e-8)
+
+    def gates(raw):
+        return np.tanh((raw - median) / spread)
+
+    training_center = gates(raw_train).mean(axis=0)
+
+    def expand(stream_scores, raw):
+        centered = gates(raw) - training_center
+        return np.column_stack([
+            stream_scores,
+            *(INTERACTION_SCALE * stream_scores * centered[:, index:index + 1]
+              for index in range(len(GATE_FIELDS))),
+        ])
+
+    head = LogisticRegression(C=C, solver="lbfgs", max_iter=2000)
+    head.fit(expand(Xtr, raw_train), ytr)
+    assert head.n_iter_.max() < head.max_iter
+    return (
+        head.predict_proba(expand(Xva, raw_valid))[:, 1],
+        head.predict_proba(expand(Xte, raw_test))[:, 1],
+        head.coef_.ravel().tolist(),
+    )
+
+
+''' + source[end:]
+
+source = replace_once(
+    source,
+    '    y = tr["is_fraud"].to_numpy(int)\n',
+    '''    y = tr["is_fraud"].to_numpy(int)
+    gate_train = tr.loc[:, list(GATE_FIELDS)].to_numpy(dtype=float)
+    test_frame = pd.read_csv(step1.DATA / "test.csv", usecols=["id", *GATE_FIELDS])
+    gate_test = test_frame.loc[:, list(GATE_FIELDS)].to_numpy(dtype=float)
+    assert test_frame["id"].is_unique and len(test_frame) == 299984
+    assert np.isfinite(gate_train).all() and np.isfinite(gate_test).all()
+''',
+)
+source = replace_once(
+    source,
+    "        va_scores, te_scores, coef = pairwise_head(Xtr, y[trm], Xva, Xte)",
+    '''        va_scores, te_scores, coef = regime_head(
+            Xtr, y[trm], Xva, Xte, gate_train[trm], gate_train[va], gate_test,
+        )''',
+)
+source = replace_once(
+    source,
+    "    print(f\"control vs saved z0 max|Δ|={repro_delta:.3e}\", flush=True)",
+    '''    np.testing.assert_array_equal(control, champ_saved)
+    assert np.isfinite(candidate).all() and np.isfinite(te_candidate).all()
+    print(f"control vs saved z0 max|Δ|={repro_delta:.3e}", flush=True)''',
+)
+source = replace_once(source, "        folds=folds,", '''        folds=folds,
+        test_ids=test_frame["id"].to_numpy(),''')
+
+for old, new in {
+    '"CHAMP_PAIRWISE_HEAD_DIAGNOSTIC.json"': '"CHAMP_REGIME_INTERACTION_HEAD_DIAGNOSTIC.json"',
+    '"champ_pairwise_head_diagnostic.npz"': '"champ_regime_interaction_head_diagnostic.npz"',
+    '"champion_14stream_pairwise_head_swap_matched"': '"champion_14stream_rowwise_regime_interaction_matched"',
+    '"pairwise_head": {"seed": PAIR_SEED, "pairs_per_fraud": PAIRS_PER_FRAUD, "C": C},': (
+        '"regime_head": {"fields": list(GATE_FIELDS), '
+        '"interaction_scale": INTERACTION_SCALE, "C": C},'
+    ),
+    '"pairwise_coef": coef,': '"regime_coef": coef,',
+    '"DEV_ADVANCE_CHAMP_PAIRWISE"': '"DEV_ADVANCE_CHAMP_REGIME"',
+    '"note": "Char-ngram excluded by design. B2037 not retuned.",': (
+        '"note": "Historical development only. Legacy champion provenance applies. B2037 frozen.",\n'
+        '        "SUBMIT_ARMED": False,'
+    ),
+    "## Champion 14-stream pairwise head diagnostic": "## Champion 14-stream regime-interaction head diagnostic",
+}.items():
+    source = replace_once(source, old, new)
+
+exec(compile(source, str(path), "exec"), {"__name__": "__main__", "__file__": str(path)})
+PY
+```

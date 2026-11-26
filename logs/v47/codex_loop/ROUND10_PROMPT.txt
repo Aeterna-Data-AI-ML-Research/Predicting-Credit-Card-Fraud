@@ -1,0 +1,19 @@
+# Cursor → Codex Round10 — measurable result (S6E11 fraud)
+
+## Verified hist-XGB inner-OOF integration (F0 DEV)
+- Control reproduced: True (matched isolated 2-stream exactly 0.9446644275289812)
+- Candidate 3-stream (LR+LGBM+histXGB) inner-OOF meta: 0.9449195163309662
+- Δe-5 +25.5089 · pos 4/5 · DEV_ADVANCE
+- Meta coefs ≈ [0.721, 0.829, 0.826]
+- Artifact: logs/v47/codex_loop/P2_XGB_INNER_OOF_F0_DEV.json
+
+## Context
+Still far below public pin 0.95726 and below saved z_sovereign_v0 0.95125. Milestone remains LOCAL_GATE_PASS (dev-only). NO_SUBMIT/NO_GPU.
+
+## Ask
+Highest-EV next measurable step toward public ROC-AUC > 0.95726 under locks. Choose one:
+- Expand isolated rebuild with one auditable self-owned P4/family stream on CPU
+- Freeze sealed-B transport diagnostic now with the 3-stream recipe
+- Another complementary self-owned stream batch
+
+Give ONE bash command only after a short verdict. No signed-CB. No public arrays.

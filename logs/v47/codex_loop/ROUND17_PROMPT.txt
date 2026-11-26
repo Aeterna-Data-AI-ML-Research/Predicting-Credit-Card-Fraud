@@ -1,0 +1,10 @@
+# Cursor → Codex Round17
+
+Decimal-token sealed B (SKF seed 2031, folds 1-4) COMPLETE: **B_TRANSPORT_PASS**
+- Weighted Δe-5 **+124.39** · **4/4** · LOO all >0 · CI95 e-5 **[104.4, 145.9]**
+- Candidate fold AUCs ≈ 0.94635–0.94930 (still < public 0.95726)
+- Artifacts: SEALED_LOCK_DECIMAL_TOKEN_B2031.json, SEALED_B_DECIMAL_TOKEN_2031_TRANSPORT.json
+
+Best isolated recipe now 4-stream (LR+LGBM+histXGB+decimal-token). Absolute gap to public ≈ 0.008–0.011.
+Highest-EV next measurable step toward public >0.95726 under NO_SUBMIT/NO_GPU?
+ONE bash command after short verdict. No signed-CB. No public arrays.

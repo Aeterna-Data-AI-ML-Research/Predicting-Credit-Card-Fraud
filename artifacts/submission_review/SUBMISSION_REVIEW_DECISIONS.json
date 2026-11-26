@@ -1,0 +1,66 @@
+{
+  "NO_SUBMIT": true,
+  "auto_submit": false,
+  "public_champion_pin": 0.95726,
+  "rank": "69/3246",
+  "b2037": {
+    "verdict": "B_TRANSPORT_PASS",
+    "weighted_delta_e5": 17.58198793087862,
+    "frozen": true
+  },
+  "champion_compat_f0_blends_gate_clears": 0,
+  "candidates": [
+    {
+      "name": "CAND1_z_sovereign_v0",
+      "path": "artifacts/submission_review/CAND1_z_sovereign_v0.csv",
+      "sha256_csv": "74b77eaf0c9749e391b2a7e6a32dce2f73f55e09a2523f793b1db2d2e5553d5c",
+      "sha256_scores": "ad44d90a0f1143279c9fa686b9b626a3e19f5cf1096f0187e6f46ab894cf1119",
+      "n_rows": 299984,
+      "score_min": 1.8938539970241355e-11,
+      "score_max": 0.9999889268745968,
+      "notes": "14-stream Deotte nested LR; local OOF 0.952251 / F0 0.951251. Has matched OOF. No new char-ngram/pairwise. Public pin 0.95726 unexplained vs this OOF.",
+      "decision": "HOLD",
+      "NO_SUBMIT": true,
+      "SUBMIT_ARMED": false,
+      "rank": 1,
+      "expected_benefit": "unestablished public lift vs pin 0.95726",
+      "downside_risk": "burns slot on uncalibrated local-to-public comparison; no new char/pairwise content"
+    },
+    {
+      "name": "CAND2_z_sovereign_v1",
+      "path": "artifacts/submission_review/CAND2_z_sovereign_v1.csv",
+      "sha256_csv": "2e9cb107bd3f5c997ea2c12a93e3fbb631d58a23befdefe41fc141f7db356d72",
+      "sha256_scores": "3855514f4eae70f8d37b6bb942372377681a6e320272a041a90b6bb0effb7891",
+      "n_rows": 299984,
+      "score_min": 1.574377913299432e-11,
+      "score_max": 0.9999883884358245,
+      "notes": "z_v1 peer residual variant; previously NOT promoted vs z0 (negative fold deltas). Corr(z0,z1)~0.99995 \u2014 near-duplicate. Included for diversity check only.",
+      "decision": "HOLD",
+      "NO_SUBMIT": true,
+      "SUBMIT_ARMED": false,
+      "rank": 2,
+      "expected_benefit": "none expected; weaker F0 than v0; corr~0.99995",
+      "downside_risk": "near-duplicate slot waste"
+    }
+  ],
+  "codex_verdict": "HOLD_BOTH_ZERO_SLOTS",
+  "isolated_pairwise_char_ngram": "MISSING_TEST_TEST_ARRAYS",
+  "b2037_frozen": true,
+  "b2037_weighted_delta_e5": 17.58198793087862,
+  "champion_compat_f0_blend_gate_clears": 0,
+  "next_experiment": "champ_14stream_pairwise_head_swap",
+  "champ_pairwise_head_diagnostic": {
+    "verdict": "NO-GO",
+    "weighted_delta_e5_folds1_4": 4.544253308996771,
+    "positive_folds_1_4": 3,
+    "loo_delta_e5": [
+      2.444109164349377,
+      7.304466430010001,
+      5.3895103176548895,
+      3.0389273239728176
+    ],
+    "overall_candidate_auc": 0.952337008105044,
+    "control_repro_max_abs_delta_vs_saved_z0": 0.0,
+    "note": "Below +8e-5 gate on folds1-4; fold0 +17e-5 not used for promotion"
+  }
+}

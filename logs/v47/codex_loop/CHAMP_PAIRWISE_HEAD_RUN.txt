@@ -1,0 +1,40 @@
+loading train + assembling 14 streams…
+[   6.1s]   + P_super_v4p_hc
+[   6.3s]   + P_super_v5_harvest
+[   6.6s]   + P4_L4.2_pure5f
+[   6.8s]   + P4_L4.3_pure5f
+[   7.0s]   + P4_L4.5_pure5f
+[   7.2s]   + B_xgb_llr
+[   7.8s]   + delta1_v4
+[  17.2s]   + l7_mean10
+[  17.2s]   + l7_curv
+[  17.2s]   + l7_R5
+[  17.2s]   + l7_U5_gini10
+[  20.8s]   + gpt2_med_4ep_mean
+[  20.8s]   + gpt2_med_4ep_shrink
+[  22.9s]   zone fold0: train_zone_n=31203 train_zone_fraud=0 thr_r1=13.100
+[  23.0s]   zone fold1: train_zone_n=31395 train_zone_fraud=0 thr_r1=13.100
+[  23.0s]   zone fold2: train_zone_n=31202 train_zone_fraud=0 thr_r1=13.100
+[  23.1s]   zone fold3: train_zone_n=31563 train_zone_fraud=0 thr_r1=13.100
+[  23.1s]   zone fold4: train_zone_n=31233 train_zone_fraud=0 thr_r1=13.100
+[  23.1s]   + zone_honest
+fold0: base=0.951251 cand=0.951421 Δe-5=+17.015
+fold1: base=0.952438 cand=0.952546 Δe-5=+10.845
+fold2: base=0.957075 cand=0.957037 Δe-5=-3.736
+fold3: base=0.952647 cand=0.952667 Δe-5=+2.008
+fold4: base=0.947987 cand=0.948078 Δe-5=+9.060
+control vs saved z0 max|Δ|=0.000e+00
+{
+  "verdict": "NO-GO",
+  "weighted_delta_e5_folds1_4": 4.544253308996771,
+  "positive_folds_1_4": 3,
+  "loo_delta_e5": [
+    2.444109164349377,
+    7.304466430010001,
+    5.3895103176548895,
+    3.0389273239728176
+  ],
+  "overall_base_auc": 0.952251033980826,
+  "overall_candidate_auc": 0.952337008105044,
+  "control_repro_max_abs_delta_vs_saved_z0": 0.0
+}

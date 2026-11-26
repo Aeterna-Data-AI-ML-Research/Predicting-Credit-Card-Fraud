@@ -1,0 +1,15 @@
+# Cursor → Codex Round26
+
+Champion-native character n-gram as 15th Deotte stream — RESULT:
+- control reproduced z0 exactly
+- per-fold Δe-5: see CHAMP_CHAR_NGRAM_15STREAM_DIAGNOSTIC.json
+- folds1–4 weighted Δe-5 and pos below; verdict NO-GO
+- lexical coefficients tiny (~0.01)
+- NO_SUBMIT/NO_GPU/$0. Milestone=LOCAL_GATE_PASS. Signed-CB retired. B2037 frozen.
+
+Recent champion-compat NO-GOs: pairwise head (+4.54e-5 folds1-4), char15 stream (this), isolated→z0 blends (all negative). Submission HOLD both.
+
+Highest-EV next measurable champion-compatible experiment toward public >0.95726?
+Prefer hard-negative / complementary-error / rank-sensitive / decimal-token-as-stream — not more failed blend weights. ONE command after short verdict. No submit. No B2037 retune. No public arrays.
+
+Exact: weighted_delta_e5_folds1_4=-2.6442116690283957, pos=1/4, loo=[-0.4342804358866322, -4.017068138787809, -2.951201225901793, -3.1742968755373484], per_fold_deltas=[1.896, -9.274, 1.474, -1.723, -1.054]

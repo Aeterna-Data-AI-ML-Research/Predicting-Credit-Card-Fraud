@@ -1,0 +1,299 @@
+OpenAI Codex v0.172.0
+--------
+workdir: /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+model: gpt-6.2-sol
+provider: openai
+approval: never
+sandbox: read-only
+reasoning effort: none
+reasoning summaries: none
+session id: 01a2180a-0cec-7810-bcbf-4a725485c87f
+--------
+user
+# Cursor → Codex Round11
+
+P4 L4.3 step-grid 4th stream vs matched 3-stream control on F0:
+- base 0.9449195163309662 → cand 0.9449231812391763
+- Δe-5 +0.366 · pos 3/5 · NO-GO
+- Artifact: P2_P4_STEPGRID_INNER_OOF_F0_DEV.json
+
+Best isolated recipe remains 3-stream LR+LGBM+histXGB at 0.94492 (DEV_ADVANCE vs 2-stream). Still far from public 0.95726.
+
+Highest-EV next measurable step under NO_SUBMIT/NO_GPU? Prefer either:
+- freeze sealed-B transport diagnostic for the 3-stream recipe, OR
+- one more self-owned CPU stream with higher expected diversity than stepgrid.
+
+ONE bash command after short verdict. No signed-CB. No public arrays.
+codex
+**Spend sealed B on the frozen three-stream recipe.** Step-grid added only **+0.366e-5** on historical Fold-0. The more informative next measurement is whether hist-XGB’s **+25.51e-5** survives a different split. Freeze the two-stream control and three-stream candidate, then run SKF seed 2027 folds 1–4 once. This measures split sensitivity on previously examined rows. Independent holdout verification remains pending.
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python -u - <<'PY'
+import hashlib
+import importlib.metadata
+import json
+import platform
+import sys
+from pathlib import Path
+
+source_path = Path("/tmp/s6e11_isol/p2_xgb_inner.py")
+protocol_path = Path("artifacts/research_loop/SEALED_EVAL_PROTOCOL_DRAFT.md")
+lock_path = Path("artifacts/research_loop/SEALED_LOCK.json")
+report_path = Path("logs/v47/codex_loop/SEALED_B_XGB_TRANSPORT.json")
+scores_path = Path("preds/v47_sovereign/sealed_b_xgb_transport.npz")
+assert not report_path.exists() and not scores_path.exists(), "B has already produced artifacts"
+
+source = source_path.read_text()
+runner, marker, _ = source.partition("\ncontrol, _ = stack(2)")
+assert marker, "Round 10 runner boundary changed"
+data_start = runner.index('frame = pd.read_csv(')
+fit_start = runner.index('categories = frame.select_dtypes(')
+runner = runner[:data_start] + """train, valid = panel_train, panel_valid
+assert np.intersect1d(train, valid).size == 0
+""" + runner[fit_start:]
+assert 'device="cpu"' in runner, "Confirm Round 10 XGB device before freezing"
+runner += "\ncontrol, _ = stack(2)\ncandidate, coefficients = stack(3)\n"
+
+def sha256(path):
+    checksum = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1 << 20), b""):
+            checksum.update(chunk)
+    return checksum.hexdigest()
+
+train_path = Path("data/train.csv")
+study = {
+    "scope": "B_transport_diagnostic_previously_examined_rows",
+    "outer_split": {"n_splits": 5, "shuffle": True, "seed": 2027, "evaluation_folds": [1, 2, 3, 4]},
+    "inner_split": {"n_splits": 3, "shuffle": True, "seed": 2026},
+    "baseline": "Round 10 raw LR + LGBM",
+    "candidate": "Round 10 raw LR + LGBM + CPU hist-XGB",
+    "runner_sha256": hashlib.sha256(runner.encode()).hexdigest(),
+    "source_sha256": sha256(source_path),
+    "data_sha256": sha256(train_path),
+    "protocol_sha256": sha256(protocol_path),
+    "python": sys.version,
+    "platform": platform.platform(),
+    "packages": {
+        name: importlib.metadata.version(name)
+        for name in ("numpy", "pandas", "scipy", "scikit-learn", "lightgbm", "xgboost")
+    },
+    "primary": "fold-size-weighted mean of within-fold paired AUC differences",
+    "bootstrap": {"unit": "paired row within fold and class", "replicates": 1000, "seed": 2027},
+    "gate": {"min_delta": 8e-5, "min_positive_folds": 3, "min_loo": 0, "min_ci95_lower": 0},
+    "NO_SUBMIT": True, "SUBMIT_ARMED": False, "NO_GPU": True,
+    "cloud_spend_usd": 0, "tip_csvs": 0,
+}
+with lock_path.open("x") as handle:
+    handle.write(json.dumps(study, indent=2) + "\n")
+
+import numpy as np
+import pandas as pd
+from sklearn.metrics import roc_auc_score
+from sklearn.model_selection import StratifiedKFold
+
+frame = pd.read_csv(train_path, low_memory=False)
+labels = frame.pop("is_fraud").to_numpy()
+ids = frame.pop("id").to_numpy()
+panels = list(StratifiedKFold(5, shuffle=True, random_state=2027).split(frame, labels))
+code = compile(runner, str(source_path), "exec")
+results, paired = [], []
+for fold in (1, 2, 3, 4):
+    print(f"Frozen B fold {fold}/4", flush=True)
+    train, valid = panels[fold]
+    namespace = {"__name__": "__sealed_b__", "frame": frame, "labels": labels,
+                 "panel_train": train, "panel_valid": valid}
+    exec(code, namespace)
+    control, candidate = namespace["control"], namespace["candidate"]
+    observed = labels[valid]
+    assert np.isfinite(control).all() and np.isfinite(candidate).all()
+    base_auc = roc_auc_score(observed, control)
+    cand_auc = roc_auc_score(observed, candidate)
+    results.append({"fold": fold, "n": len(valid), "base_auc": base_auc,
+                    "candidate_auc": cand_auc, "delta_e5": (cand_auc - base_auc) * 1e5})
+    paired.append((valid, observed, control, candidate))
+    del namespace
+
+weights = np.array([item["n"] for item in results], dtype=float)
+deltas = np.array([item["delta_e5"] for item in results])
+weighted = float(np.average(deltas, weights=weights))
+loo = [
+    float(np.average(np.delete(deltas, index), weights=np.delete(weights, index)))
+    for index in range(len(deltas))
+]
+rng = np.random.default_rng(2027)
+bootstrap = np.zeros(1000)
+for weight, (_, observed, control, candidate) in zip(weights / weights.sum(), paired):
+    negative, positive = (np.flatnonzero(observed == label) for label in (0, 1))
+    for draw in range(len(bootstrap)):
+        sample = np.concatenate([rng.choice(negative, len(negative)), rng.choice(positive, len(positive))])
+        bootstrap[draw] += weight * (
+            roc_auc_score(observed[sample], candidate[sample])
+            - roc_auc_score(observed[sample], control[sample])
+        ) * 1e5
+ci = np.quantile(bootstrap, [0.025, 0.975]).tolist()
+wins = int(np.count_nonzero(deltas > 0))
+passed = weighted >= 8 and wins >= 3 and min(loo) > 0 and ci[0] > 0
+result = {
+    "scope": study["scope"], "lock_sha256": sha256(lock_path), "per_fold": results,
+    "weighted_delta_e5": weighted, "positive_folds": wins, "loo_delta_e5": loo,
+    "paired_ci95_e5": ci, "verdict": "B_TRANSPORT_PASS" if passed else "B_TRANSPORT_FAIL",
+    "milestone": "LOCAL_GATE_PASS", "NO_SUBMIT": True, "NO_GPU": True,
+}
+np.savez(
+    scores_path,
+    row_indices=np.concatenate([part[0] for part in paired]),
+    ids=np.concatenate([ids[part[0]] for part in paired]),
+    fold=np.concatenate([np.full(len(part[0]), item["fold"]) for item, part in zip(results, paired)]),
+    control=np.concatenate([part[2] for part in paired]),
+    candidate=np.concatenate([part[3] for part in paired]),
+)
+payload = json.dumps(result, indent=2)
+report_path.write_text(payload + "\n")
+with Path("logs/v47/CODEX_DS_REVIEW_NEXT.md").open("a") as handle:
+    handle.write(
+        "\n## Frozen B transport diagnostic\n\n"
+        f"{result['verdict']}. Weighted within-fold Δe-5 {weighted:+.8f}, "
+        f"{wins}/4 positive, leave-one-fold-out Δe-5 {loo}, paired 95% interval {ci}. "
+        "Historical rows under SKF seed 2027. Independent holdout verification remains pending.\n"
+    )
+print(payload)
+PY
+```
+tokens used
+186,562
+**Spend sealed B on the frozen three-stream recipe.** Step-grid added only **+0.366e-5** on historical Fold-0. The more informative next measurement is whether hist-XGB’s **+25.51e-5** survives a different split. Freeze the two-stream control and three-stream candidate, then run SKF seed 2027 folds 1–4 once. This measures split sensitivity on previously examined rows. Independent holdout verification remains pending.
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python -u - <<'PY'
+import hashlib
+import importlib.metadata
+import json
+import platform
+import sys
+from pathlib import Path
+
+source_path = Path("/tmp/s6e11_isol/p2_xgb_inner.py")
+protocol_path = Path("artifacts/research_loop/SEALED_EVAL_PROTOCOL_DRAFT.md")
+lock_path = Path("artifacts/research_loop/SEALED_LOCK.json")
+report_path = Path("logs/v47/codex_loop/SEALED_B_XGB_TRANSPORT.json")
+scores_path = Path("preds/v47_sovereign/sealed_b_xgb_transport.npz")
+assert not report_path.exists() and not scores_path.exists(), "B has already produced artifacts"
+
+source = source_path.read_text()
+runner, marker, _ = source.partition("\ncontrol, _ = stack(2)")
+assert marker, "Round 10 runner boundary changed"
+data_start = runner.index('frame = pd.read_csv(')
+fit_start = runner.index('categories = frame.select_dtypes(')
+runner = runner[:data_start] + """train, valid = panel_train, panel_valid
+assert np.intersect1d(train, valid).size == 0
+""" + runner[fit_start:]
+assert 'device="cpu"' in runner, "Confirm Round 10 XGB device before freezing"
+runner += "\ncontrol, _ = stack(2)\ncandidate, coefficients = stack(3)\n"
+
+def sha256(path):
+    checksum = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1 << 20), b""):
+            checksum.update(chunk)
+    return checksum.hexdigest()
+
+train_path = Path("data/train.csv")
+study = {
+    "scope": "B_transport_diagnostic_previously_examined_rows",
+    "outer_split": {"n_splits": 5, "shuffle": True, "seed": 2027, "evaluation_folds": [1, 2, 3, 4]},
+    "inner_split": {"n_splits": 3, "shuffle": True, "seed": 2026},
+    "baseline": "Round 10 raw LR + LGBM",
+    "candidate": "Round 10 raw LR + LGBM + CPU hist-XGB",
+    "runner_sha256": hashlib.sha256(runner.encode()).hexdigest(),
+    "source_sha256": sha256(source_path),
+    "data_sha256": sha256(train_path),
+    "protocol_sha256": sha256(protocol_path),
+    "python": sys.version,
+    "platform": platform.platform(),
+    "packages": {
+        name: importlib.metadata.version(name)
+        for name in ("numpy", "pandas", "scipy", "scikit-learn", "lightgbm", "xgboost")
+    },
+    "primary": "fold-size-weighted mean of within-fold paired AUC differences",
+    "bootstrap": {"unit": "paired row within fold and class", "replicates": 1000, "seed": 2027},
+    "gate": {"min_delta": 8e-5, "min_positive_folds": 3, "min_loo": 0, "min_ci95_lower": 0},
+    "NO_SUBMIT": True, "SUBMIT_ARMED": False, "NO_GPU": True,
+    "cloud_spend_usd": 0, "tip_csvs": 0,
+}
+with lock_path.open("x") as handle:
+    handle.write(json.dumps(study, indent=2) + "\n")
+
+import numpy as np
+import pandas as pd
+from sklearn.metrics import roc_auc_score
+from sklearn.model_selection import StratifiedKFold
+
+frame = pd.read_csv(train_path, low_memory=False)
+labels = frame.pop("is_fraud").to_numpy()
+ids = frame.pop("id").to_numpy()
+panels = list(StratifiedKFold(5, shuffle=True, random_state=2027).split(frame, labels))
+code = compile(runner, str(source_path), "exec")
+results, paired = [], []
+for fold in (1, 2, 3, 4):
+    print(f"Frozen B fold {fold}/4", flush=True)
+    train, valid = panels[fold]
+    namespace = {"__name__": "__sealed_b__", "frame": frame, "labels": labels,
+                 "panel_train": train, "panel_valid": valid}
+    exec(code, namespace)
+    control, candidate = namespace["control"], namespace["candidate"]
+    observed = labels[valid]
+    assert np.isfinite(control).all() and np.isfinite(candidate).all()
+    base_auc = roc_auc_score(observed, control)
+    cand_auc = roc_auc_score(observed, candidate)
+    results.append({"fold": fold, "n": len(valid), "base_auc": base_auc,
+                    "candidate_auc": cand_auc, "delta_e5": (cand_auc - base_auc) * 1e5})
+    paired.append((valid, observed, control, candidate))
+    del namespace
+
+weights = np.array([item["n"] for item in results], dtype=float)
+deltas = np.array([item["delta_e5"] for item in results])
+weighted = float(np.average(deltas, weights=weights))
+loo = [
+    float(np.average(np.delete(deltas, index), weights=np.delete(weights, index)))
+    for index in range(len(deltas))
+]
+rng = np.random.default_rng(2027)
+bootstrap = np.zeros(1000)
+for weight, (_, observed, control, candidate) in zip(weights / weights.sum(), paired):
+    negative, positive = (np.flatnonzero(observed == label) for label in (0, 1))
+    for draw in range(len(bootstrap)):
+        sample = np.concatenate([rng.choice(negative, len(negative)), rng.choice(positive, len(positive))])
+        bootstrap[draw] += weight * (
+            roc_auc_score(observed[sample], candidate[sample])
+            - roc_auc_score(observed[sample], control[sample])
+        ) * 1e5
+ci = np.quantile(bootstrap, [0.025, 0.975]).tolist()
+wins = int(np.count_nonzero(deltas > 0))
+passed = weighted >= 8 and wins >= 3 and min(loo) > 0 and ci[0] > 0
+result = {
+    "scope": study["scope"], "lock_sha256": sha256(lock_path), "per_fold": results,
+    "weighted_delta_e5": weighted, "positive_folds": wins, "loo_delta_e5": loo,
+    "paired_ci95_e5": ci, "verdict": "B_TRANSPORT_PASS" if passed else "B_TRANSPORT_FAIL",
+    "milestone": "LOCAL_GATE_PASS", "NO_SUBMIT": True, "NO_GPU": True,
+}
+np.savez(
+    scores_path,
+    row_indices=np.concatenate([part[0] for part in paired]),
+    ids=np.concatenate([ids[part[0]] for part in paired]),
+    fold=np.concatenate([np.full(len(part[0]), item["fold"]) for item, part in zip(results, paired)]),
+    control=np.concatenate([part[2] for part in paired]),
+    candidate=np.concatenate([part[3] for part in paired]),
+)
+payload = json.dumps(result, indent=2)
+report_path.write_text(payload + "\n")
+with Path("logs/v47/CODEX_DS_REVIEW_NEXT.md").open("a") as handle:
+    handle.write(
+        "\n## Frozen B transport diagnostic\n\n"
+        f"{result['verdict']}. Weighted within-fold Δe-5 {weighted:+.8f}, "
+        f"{wins}/4 positive, leave-one-fold-out Δe-5 {loo}, paired 95% interval {ci}. "
+        "Historical rows under SKF seed 2027. Independent holdout verification remains pending.\n"
+    )
+print(payload)
+PY
+```

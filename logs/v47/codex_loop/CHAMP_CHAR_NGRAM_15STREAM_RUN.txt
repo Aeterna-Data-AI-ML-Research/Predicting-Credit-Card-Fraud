@@ -1,0 +1,82 @@
+[  10.0s]   + P_super_v4p_hc
+[  10.3s]   + P_super_v5_harvest
+[  10.6s]   + P4_L4.2_pure5f
+[  10.9s]   + P4_L4.3_pure5f
+[  11.2s]   + P4_L4.5_pure5f
+[  11.4s]   + B_xgb_llr
+[  12.0s]   + delta1_v4
+[  21.6s]   + l7_mean10
+[  21.7s]   + l7_curv
+[  21.7s]   + l7_R5
+[  21.7s]   + l7_U5_gini10
+[  25.0s]   + gpt2_med_4ep_mean
+[  25.0s]   + gpt2_med_4ep_shrink
+[  28.7s]   zone fold0: train_zone_n=31203 train_zone_fraud=0 thr_r1=13.100
+[  28.8s]   zone fold1: train_zone_n=31395 train_zone_fraud=0 thr_r1=13.100
+[  28.9s]   zone fold2: train_zone_n=31202 train_zone_fraud=0 thr_r1=13.100
+[  28.9s]   zone fold3: train_zone_n=31563 train_zone_fraud=0 thr_r1=13.100
+[  29.0s]   zone fold4: train_zone_n=31233 train_zone_fraud=0 thr_r1=13.100
+[  29.0s]   + zone_honest
+{"fold": 0, "n": 139992, "base_auc": 0.9512507991341679, "candidate_auc": 0.9512697640238965, "delta_e5": 1.8964889728634304, "lexical_coefficient": 0.014087064180367792}
+{"fold": 1, "n": 139992, "base_auc": 0.9524377475204286, "candidate_auc": 0.9523450074667441, "delta_e5": -9.274005368453686, "lexical_coefficient": 0.039410522848917745}
+{"fold": 2, "n": 139992, "base_auc": 0.9570745047372902, "candidate_auc": 0.9570892483146927, "delta_e5": 1.4743577402498431, "lexical_coefficient": 0.00908550780399352}
+{"fold": 3, "n": 139992, "base_auc": 0.9526470472830909, "candidate_auc": 0.9526298148531068, "delta_e5": -1.7232429984082032, "lexical_coefficient": 0.01044058285147088}
+{"fold": 4, "n": 139992, "base_auc": 0.9479874584947322, "candidate_auc": 0.9479769189342372, "delta_e5": -1.0539560495015365, "lexical_coefficient": 0.028769285206843572}
+{
+  "scope": "historical_champion_matched_diagnostic",
+  "per_fold": [
+    {
+      "fold": 0,
+      "n": 139992,
+      "base_auc": 0.9512507991341679,
+      "candidate_auc": 0.9512697640238965,
+      "delta_e5": 1.8964889728634304,
+      "lexical_coefficient": 0.014087064180367792
+    },
+    {
+      "fold": 1,
+      "n": 139992,
+      "base_auc": 0.9524377475204286,
+      "candidate_auc": 0.9523450074667441,
+      "delta_e5": -9.274005368453686,
+      "lexical_coefficient": 0.039410522848917745
+    },
+    {
+      "fold": 2,
+      "n": 139992,
+      "base_auc": 0.9570745047372902,
+      "candidate_auc": 0.9570892483146927,
+      "delta_e5": 1.4743577402498431,
+      "lexical_coefficient": 0.00908550780399352
+    },
+    {
+      "fold": 3,
+      "n": 139992,
+      "base_auc": 0.9526470472830909,
+      "candidate_auc": 0.9526298148531068,
+      "delta_e5": -1.7232429984082032,
+      "lexical_coefficient": 0.01044058285147088
+    },
+    {
+      "fold": 4,
+      "n": 139992,
+      "base_auc": 0.9479874584947322,
+      "candidate_auc": 0.9479769189342372,
+      "delta_e5": -1.0539560495015365,
+      "lexical_coefficient": 0.028769285206843572
+    }
+  ],
+  "weighted_delta_e5_folds1_4": -2.6442116690283957,
+  "positive_folds_1_4": 1,
+  "loo_delta_e5": [
+    -0.4342804358866322,
+    -4.017068138787809,
+    -2.951201225901793,
+    -3.1742968755373484
+  ],
+  "control_reproduced_exactly": true,
+  "verdict": "NO-GO",
+  "NO_SUBMIT": true,
+  "SUBMIT_ARMED": false,
+  "NO_GPU": true
+}

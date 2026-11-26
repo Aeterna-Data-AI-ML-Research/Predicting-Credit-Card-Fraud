@@ -1,0 +1,710 @@
+OpenAI Codex v0.172.0
+--------
+workdir: /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+model: gpt-6.2-sol
+provider: openai
+approval: never
+sandbox: read-only
+reasoning effort: none
+reasoning summaries: none
+session id: 01a2180a-0cec-7810-bcbf-4a725485c87f
+--------
+user
+# Cursor → Codex Round25
+
+Continue S6E11 fraud research. Objective: public ROC-AUC > 0.95726. NO_SUBMIT/NO_GPU/$0. Milestone=LOCAL_GATE_PASS. Signed-CB retired. Session must remain 01a2180a-0cec-7810-bcbf-4a725485c87f.
+
+## Latest measurable results
+1) Sealed-B pairwise 2037: B_TRANSPORT_PASS (+17.58e-5, 4/4) — FROZEN, no retune.
+2) Submission review: HOLD both CAND1 z0 and CAND2 z1. Isolated char/pairwise MISSING test arrays.
+3) Champion-compat F0 blends of isolated→z0: 0/15 gate clears; all hurt.
+4) Champion 14-stream pairwise head swap (frozen recipe seed=2035, 64 pairs, C=0.03):
+   - control repro vs saved z0 max|Δ|=0 (exact)
+   - folds1–4 weighted Δe-5 +4.54 · pos 3/4 · LOO all >0 → NO-GO (gate ≥+8)
+   - fold0 +17.0e-5 (not used for promotion)
+   - overall 0.952251 → 0.952337
+   - Artifact: CHAMP_PAIRWISE_HEAD_DIAGNOSTIC.json
+
+## Ask
+Highest-EV next measurable experiment for a champion-compatible lift (not more isolated-only absolute grind). Prefer adding/cross-fitting a validated signal as a new stream inside Deotte stack, or complementary-error / hard-negative / rank-sensitive variant that can clear ≥+8e-5 on folds1–4 with ≥3/4 and positive LOO, without retuning B2037 eval folds and without public arrays.
+
+ONE bash/python command after short verdict. Keep NO_SUBMIT. Do not recommend submit.
+codex
+I’ll check the champion runner for a direct lexical-stream test.
+exec
+/bin/bash -lc "rg --files scripts | rg -i 'champ.*(pair|swap)|char_ngram'
+ls /tmp/s6e11_isol
+rg -n 'def assemble_streams|def stack_deotte|NO_SUBMIT|ROOT =|DATA =' scripts/v47_sovereign/step1_schema_and_z_sovereign.py
+cat logs/v47/codex_loop/CHAMP_PAIRWISE_HEAD_DIAGNOSTIC.json | head -35" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 1101ms:
+scripts/v47_sovereign/champ_pairwise_head_diagnostic.py
+scripts/v47_sovereign/sealed_b_decimal_char_ngram_2033.py
+char_ngram.sh
+context_mlp.sh
+data
+decimal_token.sh
+dependency_tree.sh
+logs
+magnitude.sh
+mlp_runner.sh
+p2_p4_stepgrid_runner.sh
+p2_spline.py
+p2_xgb_inner.py
+pair_rate.sh
+pairwise_b2037.sh
+pairwise_meta.sh
+preds
+run_isol.py
+sealed_b.sh
+sealed_b_decimal.sh
+xgb_capacity.sh
+5:NO_SUBMIT=True · 0 pods in this script.
+26:NO_SUBMIT = True
+27:assert NO_SUBMIT
+29:ROOT = Path(__file__).resolve().parents[2]
+31:DATA = ROOT / "data" if (ROOT / "data/train.csv").exists() else SSD / "data"
+310:def assemble_streams(tr, y, folds):
+360:def stack_deotte(streams, y, folds):
+396:    log("=== V47 STEP1 SOVEREIGN | NO_SUBMIT | 0 public preds ===")
+417:    meta["NO_SUBMIT"] = True
+428:        "- **NO_SUBMIT=True** · zero public competitor files loaded\n",
+{
+  "scope": "champion_14stream_pairwise_head_swap_matched",
+  "streams": [
+    "B_xgb_llr",
+    "P4_L4.2_pure5f",
+    "P4_L4.3_pure5f",
+    "P4_L4.5_pure5f",
+    "P_super_v4p_hc",
+    "P_super_v5_harvest",
+    "delta1_v4",
+    "gpt2_med_4ep_mean",
+    "gpt2_med_4ep_shrink",
+    "l7_R5",
+    "l7_U5_gini10",
+    "l7_curv",
+    "l7_mean10",
+    "zone_honest"
+  ],
+  "pairwise_head": {
+    "seed": 2035,
+    "pairs_per_fraud": 64,
+    "C": 0.03
+  },
+  "control_repro_max_abs_delta_vs_saved_z0": 0.0,
+  "per_fold": [
+    {
+      "fold": 0,
+      "n": 139992,
+      "base_auc": 0.9512507991341679,
+      "candidate_auc": 0.9514209484816641,
+      "delta_e5": 17.01493474962623,
+      "control_coef": [
+        0.67156067927181,
+        -0.015088880917368456,
+        -0.012225380080712323,
+
+exec
+/bin/bash -lc "cat scripts/v47_sovereign/champ_pairwise_head_diagnostic.py
+sed -n '310,394p' scripts/v47_sovereign/step1_schema_and_z_sovereign.py" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 17ms:
+#!/usr/bin/env python3
+"""Champion-compatible pairwise meta swap on z_sovereign_v0's 14 streams.
+
+Reproduce row-wise Deotte stack, then swap only the meta head to frozen
+pairwise recipe (seed=2035, pairs_per_fraud=64, C=0.03). Screen on folds 1–4.
+NO_SUBMIT / NO_GPU. Does not retune B2037.
+"""
+from __future__ import annotations
+
+import hashlib
+import importlib.util
+import json
+import sys
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import roc_auc_score
+from sklearn.model_selection import StratifiedKFold
+
+PROJ = Path("/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud")
+LOGS = PROJ / "logs/v47/codex_loop"
+PRED = PROJ / "preds/v47_sovereign"
+REPORT = LOGS / "CHAMP_PAIRWISE_HEAD_DIAGNOSTIC.json"
+SCORES = PRED / "champ_pairwise_head_diagnostic.npz"
+PAIR_SEED = 2035
+PAIRS_PER_FRAUD = 64
+C = 0.03
+
+
+def load_step1():
+    path = PROJ / "scripts/v47_sovereign/step1_schema_and_z_sovereign.py"
+    spec = importlib.util.spec_from_file_location("step1_z", path)
+    mod = importlib.util.module_from_spec(spec)
+    assert spec.loader is not None
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def pairwise_head(Xtr, ytr, Xva, Xte):
+    fraud = np.flatnonzero(ytr == 1)
+    legitimate = np.flatnonzero(ytr == 0)
+    rng = np.random.default_rng(PAIR_SEED)
+    fraud_rows = np.repeat(fraud, PAIRS_PER_FRAUD)
+    legitimate_rows = rng.choice(legitimate, size=len(fraud_rows), replace=True)
+    pair_design = Xtr[fraud_rows] - Xtr[legitimate_rows]
+    pair_labels = rng.integers(0, 2, size=len(pair_design))
+    pair_design = pair_design * (2 * pair_labels - 1)[:, None]
+    head = LogisticRegression(
+        C=C, solver="lbfgs", fit_intercept=False, max_iter=2000,
+    ).fit(pair_design, pair_labels)
+    assert np.max(head.n_iter_) < head.max_iter
+    return head.decision_function(Xva), head.decision_function(Xte), head.coef_.ravel().tolist()
+
+
+def main() -> None:
+    assert not REPORT.exists(), "diagnostic already exists"
+    step1 = load_step1()
+    print("loading train + assembling 14 streams…", flush=True)
+    tr = pd.read_csv(step1.DATA / "train.csv")
+    y = tr["is_fraud"].to_numpy(int)
+    folds = np.zeros(len(y), int)
+    for k, (_, va) in enumerate(StratifiedKFold(5, shuffle=True, random_state=42).split(y, y)):
+        folds[va] = k
+    saved = np.load(PRED / "folds_skf42.npy")
+    np.testing.assert_array_equal(folds, saved)
+
+    streams = step1.assemble_streams(tr, y, folds)
+    names = sorted(streams.keys())
+    assert len(names) == 14, names
+
+    oof_z = np.zeros((len(y), len(names)), np.float64)
+    te_z = np.zeros((299984, len(names)), np.float64)
+    for j, n in enumerate(names):
+        o, t = streams[n]
+        oof_z[:, j] = step1.to_logit_cal(o)
+        te_z[:, j] = step1.to_logit_cal(t)
+
+    champ_saved = np.load(PRED / "z_sovereign_v0_oof.npy").ravel()
+    control = np.zeros(len(y), np.float64)
+    candidate = np.zeros(len(y), np.float64)
+    te_control = np.zeros(299984, np.float64)
+    te_candidate = np.zeros(299984, np.float64)
+    fold_rows = []
+    coefs = []
+
+    for k in range(5):
+        trm, va = folds != k, folds == k
+        mu = oof_z[trm].mean(0)
+        sd = oof_z[trm].std(0) + 1e-8
+        Xtr = (oof_z[trm] - mu) / sd
+        Xva = (oof_z[va] - mu) / sd
+        Xte = (te_z - mu) / sd
+        lr = LogisticRegression(C=0.03, solver="lbfgs", max_iter=2000)
+        lr.fit(Xtr, y[trm])
+        control[va] = lr.predict_proba(Xva)[:, 1]
+        te_control += lr.predict_proba(Xte)[:, 1] / 5
+        va_scores, te_scores, coef = pairwise_head(Xtr, y[trm], Xva, Xte)
+        candidate[va] = va_scores
+        te_candidate += te_scores / 5
+        coefs.append(coef)
+        base = roc_auc_score(y[va], control[va])
+        cand = roc_auc_score(y[va], candidate[va])
+        fold_rows.append(
+            {
+                "fold": k,
+                "n": int(va.sum()),
+                "base_auc": float(base),
+                "candidate_auc": float(cand),
+                "delta_e5": float((cand - base) * 1e5),
+                "control_coef": lr.coef_.ravel().tolist(),
+                "pairwise_coef": coef,
+            }
+        )
+        print(
+            f"fold{k}: base={base:.6f} cand={cand:.6f} Δe-5={(cand-base)*1e5:+.3f}",
+            flush=True,
+        )
+
+    # Reproduce saved champion control on all rows
+    repro_delta = float(np.max(np.abs(control - champ_saved)))
+    print(f"control vs saved z0 max|Δ|={repro_delta:.3e}", flush=True)
+
+    # Screen on historical folds 1–4 (leave fold0 as previously heavily examined)
+    eval_folds = [r for r in fold_rows if r["fold"] in (1, 2, 3, 4)]
+    weights = np.array([r["n"] for r in eval_folds], dtype=float)
+    deltas = np.array([r["delta_e5"] for r in eval_folds])
+    weighted = float(np.average(deltas, weights=weights))
+    wins = int(np.count_nonzero(deltas > 0))
+    loo = [
+        float(np.average(np.delete(deltas, i), weights=np.delete(weights, i)))
+        for i in range(len(deltas))
+    ]
+    passed = weighted >= 8 and wins >= 3 and min(loo) > 0
+    verdict = "DEV_ADVANCE_CHAMP_PAIRWISE" if passed else "NO-GO"
+
+    overall_base = float(roc_auc_score(y, control))
+    overall_cand = float(roc_auc_score(y, candidate))
+    result = {
+        "scope": "champion_14stream_pairwise_head_swap_matched",
+        "streams": names,
+        "pairwise_head": {"seed": PAIR_SEED, "pairs_per_fraud": PAIRS_PER_FRAUD, "C": C},
+        "control_repro_max_abs_delta_vs_saved_z0": repro_delta,
+        "per_fold": fold_rows,
+        "eval_folds": [1, 2, 3, 4],
+        "weighted_delta_e5_folds1_4": weighted,
+        "positive_folds_1_4": wins,
+        "loo_delta_e5": loo,
+        "overall_base_auc": overall_base,
+        "overall_candidate_auc": overall_cand,
+        "verdict": verdict,
+        "gate": {"min_delta_e5": 8.0, "min_positive_folds": 3, "min_loo": 0},
+        "NO_SUBMIT": True,
+        "NO_GPU": True,
+        "note": "Char-ngram excluded by design. B2037 not retuned.",
+    }
+    np.savez(
+        SCORES,
+        control_oof=control,
+        candidate_oof=candidate,
+        control_test=te_control,
+        candidate_test=te_candidate,
+        folds=folds,
+        stream_names=np.array(names),
+    )
+    REPORT.write_text(json.dumps(result, indent=2) + "\n")
+    with (PROJ / "logs/v47/CODEX_DS_REVIEW_NEXT.md").open("a") as handle:
+        handle.write(
+            "\n## Champion 14-stream pairwise head diagnostic\n\n"
+            f"{verdict}. Folds1–4 weighted Δe-5 {weighted:+.8f}, {wins}/4 positive, "
+            f"LOO {loo}. Control repro max|Δ| vs saved z0 = {repro_delta:.3e}. "
+            "NO_SUBMIT.\n"
+        )
+    print(json.dumps({k: result[k] for k in (
+        "verdict", "weighted_delta_e5_folds1_4", "positive_folds_1_4",
+        "loo_delta_e5", "overall_base_auc", "overall_candidate_auc",
+        "control_repro_max_abs_delta_vs_saved_z0",
+    )}, indent=2))
+
+
+if __name__ == "__main__":
+    main()
+def assemble_streams(tr, y, folds):
+    streams = {}  # name -> (oof, test)
+
+    def add(name, o, t):
+        assert len(o) == 699960 and len(t) == 299984, (name, o.shape, t.shape)
+        streams[name] = (np.asarray(o, np.float64).ravel(), np.asarray(t, np.float64).ravel())
+        log(f"  + {name}")
+
+    add("P_super_v4p_hc", load_npy(PRED / "P_super_v4p_hc_oof.npy"), load_npy(PRED / "P_super_v4p_hc_test.npy"))
+    add("P_super_v5_harvest", load_npy(PRED / "P_super_v5_harvest_oof.npy"), load_npy(PRED / "P_super_v5_harvest_test.npy"))
+    add("P4_L4.2_pure5f", load_npy(PRED / "matrix_v2/P4_L4.2_pure5f_oof.npy"), load_npy(PRED / "matrix_v2/P4_L4.2_pure5f_test.npy"))
+    add("P4_L4.3_pure5f", load_npy(PRED / "matrix_v2/P4_L4.3_pure5f_oof.npy"), load_npy(PRED / "matrix_v2/P4_L4.3_pure5f_test.npy"))
+    add("P4_L4.5_pure5f", load_npy(PRED / "matrix_v2/P4_L4.5_pure5f_oof.npy"), load_npy(PRED / "matrix_v2/P4_L4.5_pure5f_test.npy"))
+    add("B_xgb_llr", load_npy(PRED / "paradigm_B/xgb_llr_oof.npy"), load_npy(PRED / "paradigm_B/xgb_llr_test.npy"))
+    add("delta1_v4", load_npy(PRED / "gm_v4_polish/d1_v4_oof.npy"), load_npy(PRED / "gm_v4_polish/d1_v4_test.npy"))
+
+    # l7
+    l7o = load_npy(PRED / "l7_s2026_5f/l7_s2026_oof_5fold_raw.npy")
+    l7t = load_npy(PRED / "l7_s2026_5f/l7_s2026_test_5fold_raw.npy")
+    for n, (o, t) in l7_features(l7o, l7t, folds).items():
+        add(n, o, t)
+
+    # gpt2 med 4ep — assemble OOF by fold files
+    gpt_o = np.zeros(699960, np.float64)
+    gpt_d = np.zeros(699960, np.float64)  # dispersion
+    gpt_t_folds = []
+    gpt_td = []
+    for k in range(5):
+        a = load_npy(PRED / "gpt2_med_4ep" / f"oof_{k}.npy")
+        b = load_npy(PRED / "gpt2_med_4ep" / f"test_{k}.npy")
+        llr = a[:, :, 1] - a[:, :, 0]
+        gpt_o[folds == k] = llr.mean(1)
+        gpt_d[folds == k] = llr.std(1)
+        tllr = b[:, :, 1] - b[:, :, 0]
+        gpt_t_folds.append(tllr.mean(1))
+        gpt_td.append(tllr.std(1))
+    gpt_t = np.mean(gpt_t_folds, 0)
+    # 8-order dispersion shrinkage
+    kord = 8
+    gpt_shrink_o = gpt_o / np.sqrt(1.0 + (np.pi / 8.0) * kord * (gpt_d ** 2) + 1e-12)
+    gpt_shrink_t = gpt_t / np.sqrt(1.0 + (np.pi / 8.0) * kord * (np.mean(gpt_td, 0) ** 2) + 1e-12)
+    add("gpt2_med_4ep_mean", gpt_o, gpt_t)
+    add("gpt2_med_4ep_shrink", gpt_shrink_o, gpt_shrink_t)
+
+    # honest zone
+    zo, zt = fold_honest_zone_indicator(tr, y, folds)
+    add("zone_honest", zo, zt)
+    return streams
+
+
+def stack_deotte(streams, y, folds):
+    """Chris Deotte S6E10-style: logit-calibrate each stream, standardize fold-train, nest LR C=0.03."""
+    names = sorted(streams.keys())
+    log(f"stacking {len(names)} sovereign streams: {names}")
+    # Build OOF design
+    oof_z = np.zeros((len(y), len(names)), np.float64)
+    te_z = np.zeros((299984, len(names)), np.float64)
+    for j, n in enumerate(names):
+        o, t = streams[n]
+        # convert to calibrated log-odds via rank-logit (no y leakage)
+        oof_z[:, j] = to_logit_cal(o)
+        te_z[:, j] = to_logit_cal(t)
+
+    oof_pred = np.zeros(len(y), np.float64)
+    te_pred = np.zeros(299984, np.float64)
+    fold_aucs = []
+    for k in range(5):
+        trm, va = folds != k, folds == k
+        mu = oof_z[trm].mean(0)
+        sd = oof_z[trm].std(0) + 1e-8
+        Xtr = (oof_z[trm] - mu) / sd
+        Xva = (oof_z[va] - mu) / sd
+        Xte = (te_z - mu) / sd
+        lr = LogisticRegression(C=0.03, solver="lbfgs", max_iter=2000)
+        lr.fit(Xtr, y[trm])
+        oof_pred[va] = lr.predict_proba(Xva)[:, 1]
+        te_pred += lr.predict_proba(Xte)[:, 1] / 5
+        fa = float(roc_auc_score(y[va], oof_pred[va]))
+        fold_aucs.append(fa)
+        log(f"  stack fold{k} AUC={fa:.6f}")
+    overall = float(roc_auc_score(y, oof_pred))
+    f0 = fold_aucs[0]
+    return oof_pred, te_pred, {"names": names, "overall_auc": overall, "fold_aucs": fold_aucs, "fold0_auc": f0, "n_streams": len(names)}
+
+
+
+codex
+**Add character n-gram LR directly to the 14-stream Deotte stack.** The pairwise swap missed the champion gate, and blending the isolated stack imports signals the champion already has. Test the lexical stream by itself as a fifteenth input. Rebuild its inner OOF scores separately inside each champion outer fold, keep the row-wise Deotte head, and require exact champion reproduction. This is a matched historical screen. The original 14 streams retain their provenance caveat, and B2037 stays frozen.
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python -u - <<'PY'
+import hashlib
+import json
+import sys
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+from scipy.special import logit
+from scipy.sparse import hstack
+from sklearn.feature_extraction.text import HashingVectorizer
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import roc_auc_score
+from sklearn.model_selection import StratifiedKFold
+
+sys.path.insert(0, str(Path("scripts/v47_sovereign").resolve()))
+from champ_pairwise_head_diagnostic import load_step1
+
+step1 = load_step1()
+pred = Path("preds/v47_sovereign")
+logs = Path("logs/v47/codex_loop")
+report = logs / "CHAMP_CHAR_NGRAM_15STREAM_DIAGNOSTIC.json"
+assert not report.exists(), "Diagnostic already exists"
+train = pd.read_csv(step1.DATA / "train.csv", low_memory=False)
+labels = train["is_fraud"].to_numpy(int)
+folds = np.load(pred / "folds_skf42.npy")
+for fold, (_, held) in enumerate(StratifiedKFold(5, shuffle=True, random_state=42).split(labels, labels)):
+    np.testing.assert_array_equal(held, np.flatnonzero(folds == fold))
+
+streams = step1.assemble_streams(train, labels, folds)
+names = sorted(streams)
+assert len(names) == 14
+legacy = np.column_stack([step1.to_logit_cal(streams[name][0]) for name in names])
+legacy_test = np.column_stack([step1.to_logit_cal(streams[name][1]) for name in names])
+del streams
+
+fields = [
+    "amount_usd", "hours_since_last_txn", "distance_from_home_km",
+    "account_balance_usd", "velocity_score", "merchant_risk_score",
+]
+read_options = {"usecols": ["id", *fields], "dtype": {field: "string" for field in fields}}
+raw = pd.read_csv("/tmp/s6e11_isol/data/train.csv", **read_options)
+raw_test = pd.read_csv(step1.DATA / "test.csv", **read_options)
+np.testing.assert_array_equal(raw["id"].to_numpy(), train["id"].to_numpy())
+assert len(raw_test) == legacy_test.shape[0] and raw_test["id"].is_unique
+hasher = HashingVectorizer(
+    analyzer="char", ngram_range=(2, 4), n_features=2**14,
+    alternate_sign=False, binary=True, norm=None, lowercase=False, dtype=np.float64,
+)
+
+def lexical_matrix(frame, rows=None):
+    selected = frame if rows is None else frame.iloc[rows]
+    return hstack([
+        hasher.transform("^" + selected[field].fillna("<missing>") + "$")
+        for field in fields
+    ], format="csr")
+
+def rank_reference(reference, scores):
+    ordered = np.sort(reference)
+    lo = np.searchsorted(ordered, scores, side="left")
+    hi = np.searchsorted(ordered, scores, side="right")
+    eps = 0.5 / len(ordered)
+    return logit(np.clip((lo + hi) / (2 * len(ordered)), eps, 1 - eps))
+
+test_matrix = lexical_matrix(raw_test)
+control = np.empty(len(labels))
+candidate = np.empty(len(labels))
+candidate_test = np.zeros(len(raw_test))
+rows = []
+for fold in range(5):
+    fit = np.flatnonzero(folds != fold)
+    held = np.flatnonzero(folds == fold)
+    mean = legacy[fit].mean(axis=0)
+    sd = legacy[fit].std(axis=0) + 1e-8
+    design = (legacy[fit] - mean) / sd
+    held_design = (legacy[held] - mean) / sd
+    test_design = (legacy_test - mean) / sd
+    baseline = LogisticRegression(C=0.03, solver="lbfgs", max_iter=2000).fit(design, labels[fit])
+    control[held] = baseline.predict_proba(held_design)[:, 1]
+
+    inner_scores = np.full(len(fit), np.nan)
+    outer_margins, test_margins = [], []
+    held_matrix = lexical_matrix(raw, held)
+    inner = StratifiedKFold(3, shuffle=True, random_state=2026)
+    for inner_train, inner_held in inner.split(fit, labels[fit]):
+        model = LogisticRegression(C=0.1, solver="liblinear", max_iter=200, random_state=42)
+        model.fit(lexical_matrix(raw, fit[inner_train]), labels[fit[inner_train]])
+        assert model.n_iter_.max() < model.max_iter
+        inner_scores[inner_held] = model.decision_function(lexical_matrix(raw, fit[inner_held]))
+        outer_margins.append(model.decision_function(held_matrix))
+        test_margins.append(model.decision_function(test_matrix))
+    del held_matrix
+    assert np.isfinite(inner_scores).all()
+    ranked_inner = rank_reference(inner_scores, inner_scores)
+    center, scale = ranked_inner.mean(), ranked_inner.std() + 1e-8
+    augmented = LogisticRegression(C=0.03, solver="lbfgs", max_iter=2000).fit(
+        np.column_stack([design, (ranked_inner - center) / scale]), labels[fit],
+    )
+    assert augmented.n_iter_.max() < augmented.max_iter
+
+    def score_augmented(base_design, margins):
+        return np.mean([
+            augmented.predict_proba(np.column_stack([
+                base_design, (rank_reference(inner_scores, margin) - center) / scale,
+            ]))[:, 1]
+            for margin in margins
+        ], axis=0)
+
+    candidate[held] = score_augmented(held_design, outer_margins)
+    candidate_test += score_augmented(test_design, test_margins) / 5
+    base_auc = roc_auc_score(labels[held], control[held])
+    cand_auc = roc_auc_score(labels[held], candidate[held])
+    row = {
+        "fold": fold, "n": len(held), "base_auc": base_auc, "candidate_auc": cand_auc,
+        "delta_e5": (cand_auc - base_auc) * 1e5,
+        "lexical_coefficient": float(augmented.coef_[0, -1]),
+    }
+    rows.append(row)
+    print(json.dumps(row), flush=True)
+
+np.testing.assert_array_equal(control, np.load(pred / "z_sovereign_v0_oof.npy").ravel())
+assert np.isfinite(candidate).all() and np.isfinite(candidate_test).all()
+evaluation = rows[1:]
+weights = np.array([item["n"] for item in evaluation])
+deltas = np.array([item["delta_e5"] for item in evaluation])
+weighted = float(np.average(deltas, weights=weights))
+loo = [
+    float(np.average(np.delete(deltas, index), weights=np.delete(weights, index)))
+    for index in range(4)
+]
+wins = int(np.count_nonzero(deltas > 0))
+passed = weighted >= 8 and wins >= 3 and min(loo) > 0
+result = {
+    "scope": "historical_champion_matched_diagnostic",
+    "per_fold": rows, "weighted_delta_e5_folds1_4": weighted,
+    "positive_folds_1_4": wins, "loo_delta_e5": loo,
+    "control_reproduced_exactly": True,
+    "verdict": "DEV_ADVANCE_CHAMP_LEXICAL" if passed else "NO-GO",
+    "NO_SUBMIT": True, "SUBMIT_ARMED": False, "NO_GPU": True,
+}
+np.savez(pred / "champ_char_ngram_15stream_diagnostic.npz",
+         control_oof=control, candidate_oof=candidate, candidate_test=candidate_test,
+         test_ids=raw_test["id"].to_numpy(), folds=folds)
+if passed:
+    review_csv = Path("artifacts/submission_review/CAND3_z0_char_ngram.csv")
+    with review_csv.open("x") as handle:
+        pd.DataFrame({"id": raw_test["id"], "is_fraud": candidate_test}).to_csv(handle, index=False)
+    result["review_csv"] = str(review_csv)
+    result["review_csv_sha256"] = hashlib.sha256(review_csv.read_bytes()).hexdigest()
+payload = json.dumps(result, indent=2)
+report.write_text(payload + "\n")
+with Path("logs/v47/CODEX_DS_REVIEW_NEXT.md").open("a") as handle:
+    handle.write(
+        "\n## Champion-native character n-gram stream\n\n"
+        f"{result['verdict']}. Historical folds 1–4 weighted Δe-5 {weighted:+.8f}, "
+        f"{wins}/4 positive, LOO {loo}. Saved control reproduced exactly. "
+        "Legacy champion provenance caveat applies. NO_SUBMIT.\n"
+    )
+print(payload)
+PY
+```
+tokens used
+259,535
+**Add character n-gram LR directly to the 14-stream Deotte stack.** The pairwise swap missed the champion gate, and blending the isolated stack imports signals the champion already has. Test the lexical stream by itself as a fifteenth input. Rebuild its inner OOF scores separately inside each champion outer fold, keep the row-wise Deotte head, and require exact champion reproduction. This is a matched historical screen. The original 14 streams retain their provenance caveat, and B2037 stays frozen.
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python -u - <<'PY'
+import hashlib
+import json
+import sys
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+from scipy.special import logit
+from scipy.sparse import hstack
+from sklearn.feature_extraction.text import HashingVectorizer
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import roc_auc_score
+from sklearn.model_selection import StratifiedKFold
+
+sys.path.insert(0, str(Path("scripts/v47_sovereign").resolve()))
+from champ_pairwise_head_diagnostic import load_step1
+
+step1 = load_step1()
+pred = Path("preds/v47_sovereign")
+logs = Path("logs/v47/codex_loop")
+report = logs / "CHAMP_CHAR_NGRAM_15STREAM_DIAGNOSTIC.json"
+assert not report.exists(), "Diagnostic already exists"
+train = pd.read_csv(step1.DATA / "train.csv", low_memory=False)
+labels = train["is_fraud"].to_numpy(int)
+folds = np.load(pred / "folds_skf42.npy")
+for fold, (_, held) in enumerate(StratifiedKFold(5, shuffle=True, random_state=42).split(labels, labels)):
+    np.testing.assert_array_equal(held, np.flatnonzero(folds == fold))
+
+streams = step1.assemble_streams(train, labels, folds)
+names = sorted(streams)
+assert len(names) == 14
+legacy = np.column_stack([step1.to_logit_cal(streams[name][0]) for name in names])
+legacy_test = np.column_stack([step1.to_logit_cal(streams[name][1]) for name in names])
+del streams
+
+fields = [
+    "amount_usd", "hours_since_last_txn", "distance_from_home_km",
+    "account_balance_usd", "velocity_score", "merchant_risk_score",
+]
+read_options = {"usecols": ["id", *fields], "dtype": {field: "string" for field in fields}}
+raw = pd.read_csv("/tmp/s6e11_isol/data/train.csv", **read_options)
+raw_test = pd.read_csv(step1.DATA / "test.csv", **read_options)
+np.testing.assert_array_equal(raw["id"].to_numpy(), train["id"].to_numpy())
+assert len(raw_test) == legacy_test.shape[0] and raw_test["id"].is_unique
+hasher = HashingVectorizer(
+    analyzer="char", ngram_range=(2, 4), n_features=2**14,
+    alternate_sign=False, binary=True, norm=None, lowercase=False, dtype=np.float64,
+)
+
+def lexical_matrix(frame, rows=None):
+    selected = frame if rows is None else frame.iloc[rows]
+    return hstack([
+        hasher.transform("^" + selected[field].fillna("<missing>") + "$")
+        for field in fields
+    ], format="csr")
+
+def rank_reference(reference, scores):
+    ordered = np.sort(reference)
+    lo = np.searchsorted(ordered, scores, side="left")
+    hi = np.searchsorted(ordered, scores, side="right")
+    eps = 0.5 / len(ordered)
+    return logit(np.clip((lo + hi) / (2 * len(ordered)), eps, 1 - eps))
+
+test_matrix = lexical_matrix(raw_test)
+control = np.empty(len(labels))
+candidate = np.empty(len(labels))
+candidate_test = np.zeros(len(raw_test))
+rows = []
+for fold in range(5):
+    fit = np.flatnonzero(folds != fold)
+    held = np.flatnonzero(folds == fold)
+    mean = legacy[fit].mean(axis=0)
+    sd = legacy[fit].std(axis=0) + 1e-8
+    design = (legacy[fit] - mean) / sd
+    held_design = (legacy[held] - mean) / sd
+    test_design = (legacy_test - mean) / sd
+    baseline = LogisticRegression(C=0.03, solver="lbfgs", max_iter=2000).fit(design, labels[fit])
+    control[held] = baseline.predict_proba(held_design)[:, 1]
+
+    inner_scores = np.full(len(fit), np.nan)
+    outer_margins, test_margins = [], []
+    held_matrix = lexical_matrix(raw, held)
+    inner = StratifiedKFold(3, shuffle=True, random_state=2026)
+    for inner_train, inner_held in inner.split(fit, labels[fit]):
+        model = LogisticRegression(C=0.1, solver="liblinear", max_iter=200, random_state=42)
+        model.fit(lexical_matrix(raw, fit[inner_train]), labels[fit[inner_train]])
+        assert model.n_iter_.max() < model.max_iter
+        inner_scores[inner_held] = model.decision_function(lexical_matrix(raw, fit[inner_held]))
+        outer_margins.append(model.decision_function(held_matrix))
+        test_margins.append(model.decision_function(test_matrix))
+    del held_matrix
+    assert np.isfinite(inner_scores).all()
+    ranked_inner = rank_reference(inner_scores, inner_scores)
+    center, scale = ranked_inner.mean(), ranked_inner.std() + 1e-8
+    augmented = LogisticRegression(C=0.03, solver="lbfgs", max_iter=2000).fit(
+        np.column_stack([design, (ranked_inner - center) / scale]), labels[fit],
+    )
+    assert augmented.n_iter_.max() < augmented.max_iter
+
+    def score_augmented(base_design, margins):
+        return np.mean([
+            augmented.predict_proba(np.column_stack([
+                base_design, (rank_reference(inner_scores, margin) - center) / scale,
+            ]))[:, 1]
+            for margin in margins
+        ], axis=0)
+
+    candidate[held] = score_augmented(held_design, outer_margins)
+    candidate_test += score_augmented(test_design, test_margins) / 5
+    base_auc = roc_auc_score(labels[held], control[held])
+    cand_auc = roc_auc_score(labels[held], candidate[held])
+    row = {
+        "fold": fold, "n": len(held), "base_auc": base_auc, "candidate_auc": cand_auc,
+        "delta_e5": (cand_auc - base_auc) * 1e5,
+        "lexical_coefficient": float(augmented.coef_[0, -1]),
+    }
+    rows.append(row)
+    print(json.dumps(row), flush=True)
+
+np.testing.assert_array_equal(control, np.load(pred / "z_sovereign_v0_oof.npy").ravel())
+assert np.isfinite(candidate).all() and np.isfinite(candidate_test).all()
+evaluation = rows[1:]
+weights = np.array([item["n"] for item in evaluation])
+deltas = np.array([item["delta_e5"] for item in evaluation])
+weighted = float(np.average(deltas, weights=weights))
+loo = [
+    float(np.average(np.delete(deltas, index), weights=np.delete(weights, index)))
+    for index in range(4)
+]
+wins = int(np.count_nonzero(deltas > 0))
+passed = weighted >= 8 and wins >= 3 and min(loo) > 0
+result = {
+    "scope": "historical_champion_matched_diagnostic",
+    "per_fold": rows, "weighted_delta_e5_folds1_4": weighted,
+    "positive_folds_1_4": wins, "loo_delta_e5": loo,
+    "control_reproduced_exactly": True,
+    "verdict": "DEV_ADVANCE_CHAMP_LEXICAL" if passed else "NO-GO",
+    "NO_SUBMIT": True, "SUBMIT_ARMED": False, "NO_GPU": True,
+}
+np.savez(pred / "champ_char_ngram_15stream_diagnostic.npz",
+         control_oof=control, candidate_oof=candidate, candidate_test=candidate_test,
+         test_ids=raw_test["id"].to_numpy(), folds=folds)
+if passed:
+    review_csv = Path("artifacts/submission_review/CAND3_z0_char_ngram.csv")
+    with review_csv.open("x") as handle:
+        pd.DataFrame({"id": raw_test["id"], "is_fraud": candidate_test}).to_csv(handle, index=False)
+    result["review_csv"] = str(review_csv)
+    result["review_csv_sha256"] = hashlib.sha256(review_csv.read_bytes()).hexdigest()
+payload = json.dumps(result, indent=2)
+report.write_text(payload + "\n")
+with Path("logs/v47/CODEX_DS_REVIEW_NEXT.md").open("a") as handle:
+    handle.write(
+        "\n## Champion-native character n-gram stream\n\n"
+        f"{result['verdict']}. Historical folds 1–4 weighted Δe-5 {weighted:+.8f}, "
+        f"{wins}/4 positive, LOO {loo}. Saved control reproduced exactly. "
+        "Legacy champion provenance caveat applies. NO_SUBMIT.\n"
+    )
+print(payload)
+PY
+```

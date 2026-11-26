@@ -1,0 +1,198 @@
+OpenAI Codex v0.172.0
+--------
+workdir: /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+model: gpt-6.2-sol
+provider: openai
+approval: never
+sandbox: read-only
+reasoning effort: none
+reasoning summaries: none
+session id: 01a2180a-0cec-7810-bcbf-4a725485c87f
+--------
+user
+# Cursor → Codex Round31
+
+Harvest ablation drop P_super_v5_harvest:
+- folds1–4 weighted Δe-5=-5.209889319335303 pos=0/4 → NO-GO
+- All folds negative. Stream is useful; do not drop.
+Artifact: CHAMP_HARVEST_ABLATION_DIAGNOSTIC.json
+
+Closest champ-compat remains hardneg +7.36 near-miss (frozen, no retune). B2037 PASS frozen. HOLD submissions. NO_SUBMIT.
+
+Next measurable champion-compatible experiment toward public >0.95726. ONE command after short verdict.
+codex
+I’ll check the champion’s rank transform for a clean calibration test.
+exec
+/bin/bash -lc "rg -A10 -n '"'^def to_logit_cal'"' scripts/v47_sovereign/step1_schema_and_z_sovereign.py
+rg -n 'oof_z|te_z|pairwise_head|np.savez|verdict' scripts/v47_sovereign/champ_pairwise_head_diagnostic.py" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 0ms:
+69:def to_logit_cal(v):
+70-    """Rank → (0,1) → logit float64."""
+71-    u = np.clip(U(v), 1e-6, 1 - 1e-6)
+72-    return logit(u).astype(np.float64)
+73-
+74-
+75-# ── Schema scan ──────────────────────────────────────────────
+76-def http_get_json(url: str, timeout=20):
+77-    req = urllib.request.Request(url, headers={"User-Agent": "v47-sovereign-scan/1.0"})
+78-    with urllib.request.urlopen(req, timeout=timeout) as r:
+79-        return json.loads(r.read().decode())
+26:SCORES = PRED / "champ_pairwise_head_diagnostic.npz"
+41:def pairwise_head(Xtr, ytr, Xva, Xte):
+73:    oof_z = np.zeros((len(y), len(names)), np.float64)
+74:    te_z = np.zeros((299984, len(names)), np.float64)
+77:        oof_z[:, j] = step1.to_logit_cal(o)
+78:        te_z[:, j] = step1.to_logit_cal(t)
+90:        mu = oof_z[trm].mean(0)
+91:        sd = oof_z[trm].std(0) + 1e-8
+92:        Xtr = (oof_z[trm] - mu) / sd
+93:        Xva = (oof_z[va] - mu) / sd
+94:        Xte = (te_z - mu) / sd
+99:        va_scores, te_scores, coef = pairwise_head(Xtr, y[trm], Xva, Xte)
+136:    verdict = "DEV_ADVANCE_CHAMP_PAIRWISE" if passed else "NO-GO"
+141:        "scope": "champion_14stream_pairwise_head_swap_matched",
+143:        "pairwise_head": {"seed": PAIR_SEED, "pairs_per_fraud": PAIRS_PER_FRAUD, "C": C},
+152:        "verdict": verdict,
+158:    np.savez(
+171:            f"{verdict}. Folds1–4 weighted Δe-5 {weighted:+.8f}, {wins}/4 positive, "
+176:        "verdict", "weighted_delta_e5_folds1_4", "positive_folds_1_4",
+
+codex
+**Keep harvest and test rank-Gaussian inputs for the 14-stream head.** Dropping harvest hurt every evaluation fold. The next experiment changes how the stack weights extreme ranks: map each stream’s existing percentile to a normal quantile, then refit the same row-wise LR with the same fold-local standardization. This can change the ensemble ranking while preserving each input stream’s ordering. Require exact `z0` OOF and test reproduction, then apply the **+8e-5, ≥3/4 positive, positive leave-one-out** gate on historical folds 1–4. The run saves matched OOF and test scores for review and leaves B2037 frozen.
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python -u - <<'PY'
+from pathlib import Path
+
+path = Path("scripts/v47_sovereign/champ_pairwise_head_diagnostic.py").resolve()
+source = path.read_text()
+
+def replace_once(text, old, new):
+    assert text.count(old) == 1, f"Champion runner changed near {old!r}"
+    return text.replace(old, new, 1)
+
+start = source.index("def pairwise_head(")
+end = source.index("def main()", start)
+source = source[:start] + '''def gaussian_head(oof_rank, test_rank, fit, held, labels):
+    mean = oof_rank[fit].mean(axis=0)
+    scale = oof_rank[fit].std(axis=0) + 1e-8
+    head = LogisticRegression(C=C, solver="lbfgs", max_iter=2000)
+    head.fit((oof_rank[fit] - mean) / scale, labels[fit])
+    assert head.n_iter_.max() < head.max_iter
+    return (
+        head.predict_proba((oof_rank[held] - mean) / scale)[:, 1],
+        head.predict_proba((test_rank - mean) / scale)[:, 1],
+        head.coef_.ravel().tolist(),
+    )
+
+
+''' + source[end:]
+
+source = replace_once(source, "import pandas as pd\n", "import pandas as pd\nfrom scipy.special import expit, ndtri\n")
+source = replace_once(source, "    champ_saved = ", '''    gaussian_oof = ndtri(expit(oof_z))
+    gaussian_test = ndtri(expit(te_z))
+    assert np.isfinite(gaussian_oof).all() and np.isfinite(gaussian_test).all()
+
+    champ_saved = ''')
+source = replace_once(
+    source,
+    "        va_scores, te_scores, coef = pairwise_head(Xtr, y[trm], Xva, Xte)",
+    "        va_scores, te_scores, coef = gaussian_head(gaussian_oof, gaussian_test, trm, va, y)",
+)
+source = replace_once(source, "    np.savez(\n", '''    np.testing.assert_array_equal(control, champ_saved)
+    np.testing.assert_array_equal(te_control, np.load(PRED / "z_sovereign_v0_test.npy").ravel())
+    assert np.isfinite(candidate).all() and np.isfinite(te_candidate).all()
+    np.savez(
+''')
+
+for old, new in {
+    '"CHAMP_PAIRWISE_HEAD_DIAGNOSTIC.json"': '"CHAMP_RANK_GAUSSIAN_DIAGNOSTIC.json"',
+    '"champ_pairwise_head_diagnostic.npz"': '"champ_rank_gaussian_diagnostic.npz"',
+    '"champion_14stream_pairwise_head_swap_matched"': '"champion_14stream_rank_gaussian_head_matched"',
+    '"pairwise_head": {"seed": PAIR_SEED, "pairs_per_fraud": PAIRS_PER_FRAUD, "C": C},': (
+        '"candidate_transform": "inverse_normal_cdf_of_existing_clipped_percentile",\n'
+        '        "rowwise_head_C": C,'
+    ),
+    '"pairwise_coef": coef,': '"gaussian_coef": coef,',
+    '"DEV_ADVANCE_CHAMP_PAIRWISE"': '"DEV_ADVANCE_CHAMP_RANK_GAUSSIAN"',
+    '"note": "Char-ngram excluded by design. B2037 not retuned.",': (
+        '"note": "Same 14 streams and row-wise head. Historical folds and inherited provenance. B2037 frozen.",\n'
+        '        "SUBMIT_ARMED": False,'
+    ),
+    "## Champion 14-stream pairwise head diagnostic": "## Champion 14-stream rank-Gaussian diagnostic",
+}.items():
+    source = replace_once(source, old, new)
+
+exec(compile(source, str(path), "exec"), {"__name__": "__main__", "__file__": str(path)})
+PY
+```
+tokens used
+291,570
+**Keep harvest and test rank-Gaussian inputs for the 14-stream head.** Dropping harvest hurt every evaluation fold. The next experiment changes how the stack weights extreme ranks: map each stream’s existing percentile to a normal quantile, then refit the same row-wise LR with the same fold-local standardization. This can change the ensemble ranking while preserving each input stream’s ordering. Require exact `z0` OOF and test reproduction, then apply the **+8e-5, ≥3/4 positive, positive leave-one-out** gate on historical folds 1–4. The run saves matched OOF and test scores for review and leaves B2037 frozen.
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python -u - <<'PY'
+from pathlib import Path
+
+path = Path("scripts/v47_sovereign/champ_pairwise_head_diagnostic.py").resolve()
+source = path.read_text()
+
+def replace_once(text, old, new):
+    assert text.count(old) == 1, f"Champion runner changed near {old!r}"
+    return text.replace(old, new, 1)
+
+start = source.index("def pairwise_head(")
+end = source.index("def main()", start)
+source = source[:start] + '''def gaussian_head(oof_rank, test_rank, fit, held, labels):
+    mean = oof_rank[fit].mean(axis=0)
+    scale = oof_rank[fit].std(axis=0) + 1e-8
+    head = LogisticRegression(C=C, solver="lbfgs", max_iter=2000)
+    head.fit((oof_rank[fit] - mean) / scale, labels[fit])
+    assert head.n_iter_.max() < head.max_iter
+    return (
+        head.predict_proba((oof_rank[held] - mean) / scale)[:, 1],
+        head.predict_proba((test_rank - mean) / scale)[:, 1],
+        head.coef_.ravel().tolist(),
+    )
+
+
+''' + source[end:]
+
+source = replace_once(source, "import pandas as pd\n", "import pandas as pd\nfrom scipy.special import expit, ndtri\n")
+source = replace_once(source, "    champ_saved = ", '''    gaussian_oof = ndtri(expit(oof_z))
+    gaussian_test = ndtri(expit(te_z))
+    assert np.isfinite(gaussian_oof).all() and np.isfinite(gaussian_test).all()
+
+    champ_saved = ''')
+source = replace_once(
+    source,
+    "        va_scores, te_scores, coef = pairwise_head(Xtr, y[trm], Xva, Xte)",
+    "        va_scores, te_scores, coef = gaussian_head(gaussian_oof, gaussian_test, trm, va, y)",
+)
+source = replace_once(source, "    np.savez(\n", '''    np.testing.assert_array_equal(control, champ_saved)
+    np.testing.assert_array_equal(te_control, np.load(PRED / "z_sovereign_v0_test.npy").ravel())
+    assert np.isfinite(candidate).all() and np.isfinite(te_candidate).all()
+    np.savez(
+''')
+
+for old, new in {
+    '"CHAMP_PAIRWISE_HEAD_DIAGNOSTIC.json"': '"CHAMP_RANK_GAUSSIAN_DIAGNOSTIC.json"',
+    '"champ_pairwise_head_diagnostic.npz"': '"champ_rank_gaussian_diagnostic.npz"',
+    '"champion_14stream_pairwise_head_swap_matched"': '"champion_14stream_rank_gaussian_head_matched"',
+    '"pairwise_head": {"seed": PAIR_SEED, "pairs_per_fraud": PAIRS_PER_FRAUD, "C": C},': (
+        '"candidate_transform": "inverse_normal_cdf_of_existing_clipped_percentile",\n'
+        '        "rowwise_head_C": C,'
+    ),
+    '"pairwise_coef": coef,': '"gaussian_coef": coef,',
+    '"DEV_ADVANCE_CHAMP_PAIRWISE"': '"DEV_ADVANCE_CHAMP_RANK_GAUSSIAN"',
+    '"note": "Char-ngram excluded by design. B2037 not retuned.",': (
+        '"note": "Same 14 streams and row-wise head. Historical folds and inherited provenance. B2037 frozen.",\n'
+        '        "SUBMIT_ARMED": False,'
+    ),
+    "## Champion 14-stream pairwise head diagnostic": "## Champion 14-stream rank-Gaussian diagnostic",
+}.items():
+    source = replace_once(source, old, new)
+
+exec(compile(source, str(path), "exec"), {"__name__": "__main__", "__file__": str(path)})
+PY
+```

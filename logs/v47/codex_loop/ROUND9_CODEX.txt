@@ -1,0 +1,673 @@
+OpenAI Codex v0.172.0
+--------
+workdir: /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+model: gpt-6.2-sol
+provider: openai
+approval: never
+sandbox: read-only
+reasoning effort: none
+reasoning summaries: none
+session id: 01a2180a-0cec-7810-bcbf-4a725485c87f
+--------
+user
+# Cursor → Codex (Sol / routine verification + next strategy) — S6E11 fraud ONLY
+
+## Persistence / P0 done
+- Stop-hook `.cursor/hooks/research_stop.sh` verified (emits followup_message; aborted→USER_STOP).
+- Research state reconciled (no await_user). Signed-CB permanently retired.
+- Isolated champion F0 diagnostic COMPLETE.
+
+## Astra-high strategy received & P2 batch executed (measurable)
+
+Isolated anchor F0 AUC = **0.9446644275289812**
+
+| Exp | Δe-5 vs isolated | pos/5 | verdict |
+|---|---:|---:|---|
+| P2.1 spline LR @15% | −11.50 | 1/5 | NO-GO |
+| P2.2 interaction LR @15% | −31.64 | 0/5 | NO-GO |
+| P2.3 hist XGB @15% | **+20.98** | **5/5** | **DEV_ADVANCE** |
+
+Artifacts: P2_SPLINE_F0_DEV.json, P2_BATCH_F0_DEV.json. Sealed protocol decision recorded: **B once** then **A** if unexposed cohort exists.
+
+## Ask
+1. Independently verify the hist-XGB DEV_ADVANCE numbers from saved arrays if present / describe exact verification checks.
+2. Next ONE command: properly fold the hist-XGB into the isolated stack with inner-OOF discipline (not just fixed 15% post-hoc), still F0-dev only OR prepare sealed B lock — pick highest EV toward public >0.95726 under NO_SUBMIT/NO_GPU.
+3. Do not revisit signed-CB or public-array blends.
+4. End with one bash command.
+
+NO_SUBMIT · NO_GPU · cloud $0 · tip CSVs 0.
+codex
+I’ll check the saved XGBoost scores and the Round 8 split before choosing the next run.
+exec
+/bin/bash -lc "find .. -name AGENTS.md -print -prune | head -20
+cat logs/v47/codex_loop/P2_BATCH_F0_DEV.json
+rg --files --hidden scripts/v47_sovereign preds/v47_sovereign artifacts/research_loop | rg -i 'p2|xgb|isolated|sealed'" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+exec
+/bin/bash -lc "pwd
+cat logs/v47/codex_loop/P2_BATCH_F0_DEV.json
+ls scripts/v47_sovereign
+ls -a preds/v47_sovereign | rg 'p2|xgb|isolated'
+ls -d AGENTS.md scripts/AGENTS.md scripts/v47_sovereign/AGENTS.md" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ exited 1 in 0ms:
+/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+{
+  "anchor_auc": 0.9446644275289812,
+  "experiments": [
+    {
+      "base_auc": 0.9446644275289812,
+      "solo_auc": 0.9405163047461014,
+      "candidate_auc": 0.9443480424377719,
+      "delta_e5": -31.638509120923697,
+      "positive_subfolds": 0,
+      "subfold_deltas_e5": [
+        -28.165607875763055,
+        -27.925008855600453,
+        -39.48828717668107,
+        -43.501672282675315,
+        -15.711313787059034
+      ],
+      "fixed_weight": 0.15,
+      "verdict": "NO-GO",
+      "experiment": "interaction_lr_fixed15"
+    },
+    {
+      "base_auc": 0.9446644275289812,
+      "solo_auc": 0.9448430754846596,
+      "candidate_auc": 0.9448741852398479,
+      "delta_e5": 20.975771086673145,
+      "positive_subfolds": 5,
+      "subfold_deltas_e5": [
+        11.991144714251778,
+        31.06831863505244,
+        38.98272509937905,
+        11.122365700744208,
+        16.372433426625754
+      ],
+      "fixed_weight": 0.15,
+      "verdict": "DEV_ADVANCE",
+      "experiment": "hist_xgb_fixed15"
+    }
+  ],
+  "NO_SUBMIT": true,
+  "milestone": "LOCAL_GATE_PASS"
+}
+__pycache__
+adjudicate_crossfold_cb.py
+audit_unused_psuper_f0.py
+conditional_f0.py
+crossfold_signed_cb_resid.py
+hgdt_v2_mps_fold0.py
+isolated_champion_f0_diagnostic.py
+kaggle_hgdt_f0
+launch_f0_pod.py
+p2_batch_isolated_f0.py
+pod_f0
+step1_schema_and_z_sovereign.py
+step2_provenance_and_z_v1.py
+step3_f0_gate.py
+step4_f0_gate_report.py
+v47_3_f0_gate.py
+._isolated_champion_f0_diagnostic.npz
+._p2_spline_f0_dev.npz
+isolated_champion_f0_diagnostic.npz
+p2_spline_f0_dev.npz
+ls: AGENTS.md: No such file or directory
+ls: scripts/AGENTS.md: No such file or directory
+ls: scripts/v47_sovereign/AGENTS.md: No such file or directory
+
+exec
+/bin/bash -lc 'cat scripts/v47_sovereign/p2_batch_isolated_f0.py
+ls logs/v47/codex_loop/*P2*' in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 0ms:
+#!/usr/bin/env python3
+"""P2 batch vs isolated F0 anchor: interaction LR + histogram XGB (fixed recipes).
+
+Uses /tmp staged train if present. NO signed-CB. NO public arrays.
+"""
+from __future__ import annotations
+
+import hashlib
+import json
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+from scipy.special import logit
+from scipy.stats import rankdata
+from sklearn.compose import ColumnTransformer
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import roc_auc_score
+from sklearn.model_selection import StratifiedKFold
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
+
+try:
+    from xgboost import XGBClassifier
+except ImportError:  # pragma: no cover
+    XGBClassifier = None
+
+PROJ = Path("/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud")
+TMP = Path("/tmp/s6e11_isol")
+TRAIN = TMP / "data/train.csv" if (TMP / "data/train.csv").exists() else PROJ / "data/train.csv"
+PRED = PROJ / "preds/v47_sovereign"
+OUT = PROJ / "logs/v47/codex_loop"
+REVIEW = PROJ / "logs/v47/CODEX_DS_REVIEW_NEXT.md"
+
+
+def rank_logit(scores: np.ndarray) -> np.ndarray:
+    return logit((rankdata(scores) - 0.5) / len(scores))
+
+
+def eval_blend(anchor, stream, y, weight: float) -> dict:
+    cand = (1 - weight) * rank_logit(anchor) + weight * rank_logit(stream)
+    base = roc_auc_score(y, anchor)
+    solo = roc_auc_score(y, stream)
+    auc = roc_auc_score(y, cand)
+    d = auc - base
+    subs = [
+        (roc_auc_score(y[i], cand[i]) - roc_auc_score(y[i], anchor[i])) * 1e5
+        for _, i in StratifiedKFold(5, shuffle=True, random_state=7).split(anchor, y)
+    ]
+    pos = int(sum(s > 0 for s in subs))
+    return {
+        "base_auc": float(base),
+        "solo_auc": float(solo),
+        "candidate_auc": float(auc),
+        "delta_e5": float(d * 1e5),
+        "positive_subfolds": pos,
+        "subfold_deltas_e5": [float(s) for s in subs],
+        "fixed_weight": weight,
+        "verdict": "DEV_ADVANCE" if d >= 8e-5 and pos >= 4 else "NO-GO",
+    }
+
+
+def main() -> None:
+    print("loading", TRAIN, flush=True)
+    frame = pd.read_csv(TRAIN, low_memory=False)
+    labels = frame.pop("is_fraud").to_numpy()
+    row_ids = frame.pop("id").to_numpy()
+    folds = np.load(PRED / "folds_skf42.npy")
+    train, valid = next(StratifiedKFold(5, shuffle=True, random_state=42).split(frame, labels))
+    np.testing.assert_array_equal(valid, np.flatnonzero(folds == 0))
+
+    with np.load(PRED / "isolated_champion_f0_diagnostic.npz", allow_pickle=False) as saved:
+        np.testing.assert_array_equal(saved["row_indices"], valid)
+        anchor = saved["stack"]
+    manifest = json.loads((OUT / "ISOLATED_CHAMPION_F0_DIAGNOSTIC.json").read_text())
+    assert hashlib.sha256(np.ascontiguousarray(anchor).tobytes()).hexdigest() == manifest["candidate_sha256"]
+    y0 = labels[valid]
+    assert abs(roc_auc_score(y0, anchor) - manifest["isolated_stack_auc"]) < 1e-12
+
+    fit = frame.iloc[train]
+    score = frame.iloc[valid]
+    cats = fit.select_dtypes(include=["object", "str", "category"]).columns.tolist()
+
+    # --- Exp2: smoothed interactions ---
+    print("Exp2: interaction LR", flush=True)
+    x_fit = fit.copy()
+    x_score = score.copy()
+    pairs = [
+        ("auth_method", "channel"),
+        ("merchant_category", "card_type"),
+    ]
+    inter_cols = []
+    for a, b in pairs:
+        name = f"{a}__x__{b}"
+        x_fit[name] = x_fit[a].astype(str) + "|" + x_fit[b].astype(str)
+        x_score[name] = x_score[a].astype(str) + "|" + x_score[b].astype(str)
+        inter_cols.append(name)
+    # coarse velocity × merchant_risk grid
+    def coarse(s: pd.Series, q=(0.25, 0.5, 0.75)) -> pd.Series:
+        edges = np.unique(np.quantile(s.to_numpy(float), q))
+        # digitize into bins using train edges
+        return pd.Series(np.digitize(s.to_numpy(float), edges), index=s.index).astype(str)
+
+    vbin = coarse(x_fit["velocity_score"])
+    rbin = coarse(x_fit["merchant_risk_score"])
+    edges_v = np.unique(np.quantile(x_fit["velocity_score"].to_numpy(float), (0.25, 0.5, 0.75)))
+    edges_r = np.unique(np.quantile(x_fit["merchant_risk_score"].to_numpy(float), (0.25, 0.5, 0.75)))
+    x_fit["vel__x__risk"] = vbin + "|" + rbin
+    x_score["vel__x__risk"] = (
+        pd.Series(np.digitize(x_score["velocity_score"].to_numpy(float), edges_v), index=x_score.index).astype(str)
+        + "|"
+        + pd.Series(np.digitize(x_score["merchant_risk_score"].to_numpy(float), edges_r), index=x_score.index).astype(str)
+    )
+    inter_cols.append("vel__x__risk")
+    cat_all = cats + inter_cols
+    nums = [c for c in fit.columns if c not in cats]
+    pipe = make_pipeline(
+        ColumnTransformer(
+            [
+                ("num", StandardScaler(), nums),
+                ("cat", OneHotEncoder(handle_unknown="ignore", min_frequency=50), cat_all),
+            ]
+        ),
+        LogisticRegression(C=0.05, max_iter=1000),
+    )
+    pipe.fit(x_fit[nums + cat_all], labels[train])
+    stream2 = pipe.decision_function(x_score[nums + cat_all])
+    r2 = eval_blend(anchor, stream2, y0, weight=0.15)
+    r2["experiment"] = "interaction_lr_fixed15"
+    print(r2["verdict"], r2["delta_e5"], r2["positive_subfolds"], flush=True)
+
+    # --- Exp3: histogram XGB ---
+    print("Exp3: histogram XGB", flush=True)
+    if XGBClassifier is None:
+        r3 = {"experiment": "hist_xgb_fixed15", "verdict": "SKIP", "reason": "xgboost missing"}
+    else:
+        x_fit2 = fit.copy()
+        x_score2 = score.copy()
+        for c in cats:
+            x_fit2[c] = x_fit2[c].astype("category")
+            x_score2[c] = pd.Categorical(x_score2[c], categories=x_fit2[c].cat.categories)
+        # train-fitted frequency features
+        for c in cats:
+            freq = x_fit2[c].value_counts(dropna=False)
+            x_fit2[f"{c}_freq"] = x_fit2[c].map(freq).astype(float)
+            x_score2[f"{c}_freq"] = x_score2[c].astype(object).map(freq).fillna(0).astype(float)
+        model = XGBClassifier(
+            n_estimators=400,
+            learning_rate=0.05,
+            max_depth=4,
+            subsample=0.8,
+            colsample_bytree=0.8,
+            reg_lambda=5.0,
+            tree_method="hist",
+            enable_categorical=True,
+            n_jobs=4,
+            random_state=42,
+            eval_metric="auc",
+        )
+        model.fit(x_fit2, labels[train])
+        stream3 = model.predict(x_score2, output_margin=True)
+        r3 = eval_blend(anchor, stream3, y0, weight=0.15)
+        r3["experiment"] = "hist_xgb_fixed15"
+        print(r3["verdict"], r3["delta_e5"], r3["positive_subfolds"], flush=True)
+
+    out = {
+        "anchor_auc": float(manifest["isolated_stack_auc"]),
+        "experiments": [r2, r3],
+        "NO_SUBMIT": True,
+        "milestone": "LOCAL_GATE_PASS",
+    }
+    (OUT / "P2_BATCH_F0_DEV.json").write_text(json.dumps(out, indent=2) + "\n")
+    with REVIEW.open("a") as f:
+        f.write("\n## P2 batch vs isolated anchor (F0 DEV)\n\n")
+        for r in (r2, r3):
+            f.write(
+                f"- {r.get('experiment')}: Δe-5={r.get('delta_e5')} pos={r.get('positive_subfolds')}/5 "
+                f"{r.get('verdict')} solo={r.get('solo_auc')}\n"
+            )
+    print(json.dumps(out, indent=2))
+
+
+if __name__ == "__main__":
+    main()
+logs/v47/codex_loop/P2_BATCH_F0_DEV.json
+logs/v47/codex_loop/P2_BATCH_F0_RUN.txt
+logs/v47/codex_loop/P2_SPLINE_F0_DEV.json
+logs/v47/codex_loop/P2_SPLINE_F0_RUN.txt
+
+exec
+/bin/bash -lc "rg --files --hidden -g '"'!._*'"' preds artifacts logs/v47 | rg -i 'p2.*(xgb|batch)|hist_xgb'
+ls -d .venv/lib/python*/site-packages/xgboost /tmp/s6e11_isol/* 2>/dev/null
+head -12 logs/v47/codex_loop/P2_BATCH_F0_RUN.txt" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 1355ms:
+logs/v47/codex_loop/P2_BATCH_F0_DEV.json
+logs/v47/codex_loop/P2_BATCH_F0_RUN.txt
+.venv/lib/python3.14/site-packages/xgboost
+/tmp/s6e11_isol/data
+/tmp/s6e11_isol/logs
+/tmp/s6e11_isol/p2_spline.py
+/tmp/s6e11_isol/preds
+/tmp/s6e11_isol/run_isol.py
+loading /tmp/s6e11_isol/data/train.csv
+Exp2: interaction LR
+NO-GO -31.638509120923697 0
+Exp3: histogram XGB
+DEV_ADVANCE 20.975771086673145 5
+{
+  "anchor_auc": 0.9446644275289812,
+  "experiments": [
+    {
+      "base_auc": 0.9446644275289812,
+      "solo_auc": 0.9405163047461014,
+      "candidate_auc": 0.9443480424377719,
+
+exec
+/bin/bash -lc 'shasum -a 256 data/train.csv /tmp/s6e11_isol/data/train.csv
+ls -a /tmp/s6e11_isol/preds' in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 3455ms:
+87eaa10b8d17a7e4f657b8da1c66242431338bdd8b6ad45861521ac0c0e9fbd5  data/train.csv
+87eaa10b8d17a7e4f657b8da1c66242431338bdd8b6ad45861521ac0c0e9fbd5  /tmp/s6e11_isol/data/train.csv
+.
+..
+v47_sovereign
+
+exec
+/bin/bash -lc "ls -a /tmp/s6e11_isol/preds/v47_sovereign
+.venv/bin/python -S -c 'import hashlib,json; print(json.load(open(\"logs/v47/codex_loop/P2_BATCH_F0_DEV.json\"))[\"experiments\"][1][\"positive_subfolds\"])'" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 0ms:
+.
+..
+folds_skf42.npy
+isolated_champion_f0_diagnostic.npz
+z_sovereign_v0_oof.npy
+5
+
+codex
+**Hist-XGB’s reported result is internally consistent, but the row-level result remains unverified.** The P2 runner wrote metrics and did not persist the XGB margins or blended scores. The JSON reports **0.9446644275289812 → 0.9448741852398479**, **+20.975771e-5**, with all **5/5** subfold deltas positive. The staged training CSV and the repo copy have identical SHA-256 hashes. Exact reproduction would require the original full outer-train XGB fit, Fold-0 row and anchor-hash checks, and recomputing the fixed 85:15 rank-logit blend and all five rs=7 subfold deltas.
+
+**Integrate XGB before spending the one-shot B diagnostic.** The fixed blend used XGB trained on all outer-training rows, while the anchor averaged models from three inner fits. The next run gives all three streams the same inner splits and compares two- and three-stream meta-models on identical Fold-0 rows. It also checks that the two-stream control reproduces Round 8. The existing **+8e-5 and 4/5** gate applies to that paired comparison. A pass remains development evidence.
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python -u - <<'PY'
+import hashlib
+import json
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+from lightgbm import LGBMClassifier
+from scipy.special import logit
+from sklearn.compose import ColumnTransformer
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import roc_auc_score
+from sklearn.model_selection import StratifiedKFold
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
+from xgboost import XGBClassifier
+
+pred = Path("preds/v47_sovereign")
+logs = Path("logs/v47/codex_loop")
+frame = pd.read_csv("data/train.csv", low_memory=False)
+labels = frame.pop("is_fraud").to_numpy()
+ids = frame.pop("id").to_numpy()
+train, valid = next(StratifiedKFold(5, shuffle=True, random_state=42).split(frame, labels))
+np.testing.assert_array_equal(valid, np.flatnonzero(np.load(pred / "folds_skf42.npy") == 0))
+assert len(valid) == 139992
+manifest = json.loads((logs / "ISOLATED_CHAMPION_F0_DIAGNOSTIC.json").read_text())
+with np.load(pred / "isolated_champion_f0_diagnostic.npz", allow_pickle=False) as saved:
+    np.testing.assert_array_equal(saved["row_indices"], valid)
+    np.testing.assert_array_equal(saved["ids"], ids[valid])
+    saved_anchor = saved["stack"]
+assert hashlib.sha256(np.ascontiguousarray(saved_anchor).tobytes()).hexdigest() == manifest["candidate_sha256"]
+
+categories = frame.select_dtypes(include=["object", "str", "category"]).columns.tolist()
+numeric = [column for column in frame if column not in categories]
+inner_oof = np.full((len(train), 3), np.nan)
+outer_scores = []
+splits = StratifiedKFold(3, shuffle=True, random_state=2026)
+for fold, (fit, held) in enumerate(splits.split(frame.iloc[train], labels[train]), 1):
+    print(f"Inner fit {fold}/3", flush=True)
+    fit_rows, held_rows = train[fit], train[held]
+    np.testing.assert_equal(np.intersect1d(fit_rows, valid).size, 0)
+    fit_frame = frame.iloc[fit_rows]
+    score_frame = frame.iloc[np.concatenate([held_rows, valid])]
+    fit_labels = labels[fit_rows]
+
+    linear = make_pipeline(
+        ColumnTransformer([
+            ("numeric", StandardScaler(), numeric),
+            ("categorical", OneHotEncoder(handle_unknown="ignore"), categories),
+        ]),
+        LogisticRegression(C=0.1, max_iter=1000),
+    ).fit(fit_frame, fit_labels)
+    margins = [linear.decision_function(score_frame)]
+
+    tree_fit, tree_score = fit_frame.copy(), score_frame.copy()
+    for column in categories:
+        tree_fit[column] = tree_fit[column].astype("category")
+        tree_score[column] = pd.Categorical(
+            tree_score[column], categories=tree_fit[column].cat.categories,
+        )
+    lgbm = LGBMClassifier(
+        n_estimators=450, learning_rate=0.045, num_leaves=31,
+        min_child_samples=120, reg_lambda=5, n_jobs=4, verbosity=-1, random_state=42,
+    ).fit(tree_fit, fit_labels)
+    margins.append(lgbm.predict(tree_score, raw_score=True))
+
+    for column in categories:
+        freq = tree_fit[column].value_counts(dropna=False)
+        tree_fit[f"{column}_freq"] = tree_fit[column].map(freq).astype(float)
+        tree_score[f"{column}_freq"] = tree_score[column].astype(object).map(freq).fillna(0).astype(float)
+    xgb = XGBClassifier(
+        n_estimators=400, learning_rate=0.05, max_depth=4, subsample=0.8,
+        colsample_bytree=0.8, reg_lambda=5, tree_method="hist",
+        enable_categorical=True, device="cpu", n_jobs=4, random_state=42, eval_metric="auc",
+    ).fit(tree_fit, fit_labels)
+    margins.append(xgb.predict(tree_score, output_margin=True))
+
+    scores = np.column_stack(margins)
+    inner_oof[held] = scores[:len(held)]
+    outer_scores.append(scores[len(held):])
+
+assert np.isfinite(inner_oof).all() and np.isfinite(outer_scores).all()
+
+def rank_design(scores):
+    columns = []
+    for reference, values in zip(inner_oof.T, scores.T):
+        ordered = np.sort(reference)
+        left = np.searchsorted(ordered, values, side="left")
+        right = np.searchsorted(ordered, values, side="right")
+        eps = 0.5 / len(ordered)
+        columns.append(logit(np.clip((left + right) / (2 * len(ordered)), eps, 1 - eps)))
+    return np.column_stack(columns)
+
+inner_design = rank_design(inner_oof)
+outer_designs = [rank_design(scores) for scores in outer_scores]
+
+def stack(width):
+    scaler = StandardScaler().fit(inner_design[:, :width])
+    model = LogisticRegression(C=0.03, max_iter=2000).fit(
+        scaler.transform(inner_design[:, :width]), labels[train],
+    )
+    scores = [model.decision_function(scaler.transform(design[:, :width])) for design in outer_designs]
+    return np.mean(scores, axis=0), model.coef_.ravel().tolist()
+
+control, _ = stack(2)
+candidate, coefficients = stack(3)
+observed = labels[valid]
+base_auc = roc_auc_score(observed, control)
+saved_auc = roc_auc_score(observed, saved_anchor)
+control_reproduced = bool(
+    abs(base_auc - saved_auc) < 1e-12 and
+    np.allclose(control, saved_anchor, rtol=1e-8, atol=1e-8)
+)
+candidate_auc = roc_auc_score(observed, candidate)
+delta = candidate_auc - base_auc
+subfolds = StratifiedKFold(5, shuffle=True, random_state=7)
+sub_deltas = [
+    (roc_auc_score(observed[held], candidate[held]) - roc_auc_score(observed[held], control[held])) * 1e5
+    for _, held in subfolds.split(control, observed)
+]
+positive = sum(change > 0 for change in sub_deltas)
+verdict = (
+    "CONTROL_DRIFT" if not control_reproduced
+    else "DEV_ADVANCE" if delta >= 8e-5 and positive >= 4
+    else "NO-GO"
+)
+result = {
+    "scope": "historical_F0_DEV_ONLY", "saved_anchor_auc": saved_auc,
+    "matched_control_auc": base_auc, "control_reproduced": control_reproduced,
+    "candidate_auc": candidate_auc, "delta_e5": delta * 1e5,
+    "subfold_deltas_e5": sub_deltas, "positive_subfolds": positive,
+    "meta_coefficients_lr_lgbm_xgb": coefficients, "verdict": verdict,
+    "NO_SUBMIT": True, "NO_GPU": True,
+}
+payload = json.dumps(result, indent=2)
+(logs / "P2_XGB_INNER_OOF_F0_DEV.json").write_text(payload + "\n")
+np.savez(
+    pred / "p2_xgb_inner_oof_f0_dev.npz", ids=ids[valid], row_indices=valid,
+    control=control, candidate=candidate, outer_stream_margins=np.stack(outer_scores),
+)
+with Path("logs/v47/CODEX_DS_REVIEW_NEXT.md").open("a") as review:
+    review.write(
+        "\n## P2 hist-XGB inner-OOF integration\n\n"
+        f"Historical Fold-0 only. Saved control reproduced {control_reproduced}. "
+        f"Matched control {base_auc:.16f}, candidate {candidate_auc:.16f}, "
+        f"Δe-5 {delta * 1e5:+.8f}, {positive}/5 positive, {verdict}. "
+        f"Subfold Δe-5 {sub_deltas}.\n"
+    )
+print(payload)
+PY
+```
+2026-11-26T15:00:42.097293Z ERROR codex_core::session: failed to record rollout items: thread 01a2180a-0cec-7810-bcbf-4a725485c87f not found
+tokens used
+171,751
+**Hist-XGB’s reported result is internally consistent, but the row-level result remains unverified.** The P2 runner wrote metrics and did not persist the XGB margins or blended scores. The JSON reports **0.9446644275289812 → 0.9448741852398479**, **+20.975771e-5**, with all **5/5** subfold deltas positive. The staged training CSV and the repo copy have identical SHA-256 hashes. Exact reproduction would require the original full outer-train XGB fit, Fold-0 row and anchor-hash checks, and recomputing the fixed 85:15 rank-logit blend and all five rs=7 subfold deltas.
+
+**Integrate XGB before spending the one-shot B diagnostic.** The fixed blend used XGB trained on all outer-training rows, while the anchor averaged models from three inner fits. The next run gives all three streams the same inner splits and compares two- and three-stream meta-models on identical Fold-0 rows. It also checks that the two-stream control reproduces Round 8. The existing **+8e-5 and 4/5** gate applies to that paired comparison. A pass remains development evidence.
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python -u - <<'PY'
+import hashlib
+import json
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+from lightgbm import LGBMClassifier
+from scipy.special import logit
+from sklearn.compose import ColumnTransformer
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import roc_auc_score
+from sklearn.model_selection import StratifiedKFold
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
+from xgboost import XGBClassifier
+
+pred = Path("preds/v47_sovereign")
+logs = Path("logs/v47/codex_loop")
+frame = pd.read_csv("data/train.csv", low_memory=False)
+labels = frame.pop("is_fraud").to_numpy()
+ids = frame.pop("id").to_numpy()
+train, valid = next(StratifiedKFold(5, shuffle=True, random_state=42).split(frame, labels))
+np.testing.assert_array_equal(valid, np.flatnonzero(np.load(pred / "folds_skf42.npy") == 0))
+assert len(valid) == 139992
+manifest = json.loads((logs / "ISOLATED_CHAMPION_F0_DIAGNOSTIC.json").read_text())
+with np.load(pred / "isolated_champion_f0_diagnostic.npz", allow_pickle=False) as saved:
+    np.testing.assert_array_equal(saved["row_indices"], valid)
+    np.testing.assert_array_equal(saved["ids"], ids[valid])
+    saved_anchor = saved["stack"]
+assert hashlib.sha256(np.ascontiguousarray(saved_anchor).tobytes()).hexdigest() == manifest["candidate_sha256"]
+
+categories = frame.select_dtypes(include=["object", "str", "category"]).columns.tolist()
+numeric = [column for column in frame if column not in categories]
+inner_oof = np.full((len(train), 3), np.nan)
+outer_scores = []
+splits = StratifiedKFold(3, shuffle=True, random_state=2026)
+for fold, (fit, held) in enumerate(splits.split(frame.iloc[train], labels[train]), 1):
+    print(f"Inner fit {fold}/3", flush=True)
+    fit_rows, held_rows = train[fit], train[held]
+    np.testing.assert_equal(np.intersect1d(fit_rows, valid).size, 0)
+    fit_frame = frame.iloc[fit_rows]
+    score_frame = frame.iloc[np.concatenate([held_rows, valid])]
+    fit_labels = labels[fit_rows]
+
+    linear = make_pipeline(
+        ColumnTransformer([
+            ("numeric", StandardScaler(), numeric),
+            ("categorical", OneHotEncoder(handle_unknown="ignore"), categories),
+        ]),
+        LogisticRegression(C=0.1, max_iter=1000),
+    ).fit(fit_frame, fit_labels)
+    margins = [linear.decision_function(score_frame)]
+
+    tree_fit, tree_score = fit_frame.copy(), score_frame.copy()
+    for column in categories:
+        tree_fit[column] = tree_fit[column].astype("category")
+        tree_score[column] = pd.Categorical(
+            tree_score[column], categories=tree_fit[column].cat.categories,
+        )
+    lgbm = LGBMClassifier(
+        n_estimators=450, learning_rate=0.045, num_leaves=31,
+        min_child_samples=120, reg_lambda=5, n_jobs=4, verbosity=-1, random_state=42,
+    ).fit(tree_fit, fit_labels)
+    margins.append(lgbm.predict(tree_score, raw_score=True))
+
+    for column in categories:
+        freq = tree_fit[column].value_counts(dropna=False)
+        tree_fit[f"{column}_freq"] = tree_fit[column].map(freq).astype(float)
+        tree_score[f"{column}_freq"] = tree_score[column].astype(object).map(freq).fillna(0).astype(float)
+    xgb = XGBClassifier(
+        n_estimators=400, learning_rate=0.05, max_depth=4, subsample=0.8,
+        colsample_bytree=0.8, reg_lambda=5, tree_method="hist",
+        enable_categorical=True, device="cpu", n_jobs=4, random_state=42, eval_metric="auc",
+    ).fit(tree_fit, fit_labels)
+    margins.append(xgb.predict(tree_score, output_margin=True))
+
+    scores = np.column_stack(margins)
+    inner_oof[held] = scores[:len(held)]
+    outer_scores.append(scores[len(held):])
+
+assert np.isfinite(inner_oof).all() and np.isfinite(outer_scores).all()
+
+def rank_design(scores):
+    columns = []
+    for reference, values in zip(inner_oof.T, scores.T):
+        ordered = np.sort(reference)
+        left = np.searchsorted(ordered, values, side="left")
+        right = np.searchsorted(ordered, values, side="right")
+        eps = 0.5 / len(ordered)
+        columns.append(logit(np.clip((left + right) / (2 * len(ordered)), eps, 1 - eps)))
+    return np.column_stack(columns)
+
+inner_design = rank_design(inner_oof)
+outer_designs = [rank_design(scores) for scores in outer_scores]
+
+def stack(width):
+    scaler = StandardScaler().fit(inner_design[:, :width])
+    model = LogisticRegression(C=0.03, max_iter=2000).fit(
+        scaler.transform(inner_design[:, :width]), labels[train],
+    )
+    scores = [model.decision_function(scaler.transform(design[:, :width])) for design in outer_designs]
+    return np.mean(scores, axis=0), model.coef_.ravel().tolist()
+
+control, _ = stack(2)
+candidate, coefficients = stack(3)
+observed = labels[valid]
+base_auc = roc_auc_score(observed, control)
+saved_auc = roc_auc_score(observed, saved_anchor)
+control_reproduced = bool(
+    abs(base_auc - saved_auc) < 1e-12 and
+    np.allclose(control, saved_anchor, rtol=1e-8, atol=1e-8)
+)
+candidate_auc = roc_auc_score(observed, candidate)
+delta = candidate_auc - base_auc
+subfolds = StratifiedKFold(5, shuffle=True, random_state=7)
+sub_deltas = [
+    (roc_auc_score(observed[held], candidate[held]) - roc_auc_score(observed[held], control[held])) * 1e5
+    for _, held in subfolds.split(control, observed)
+]
+positive = sum(change > 0 for change in sub_deltas)
+verdict = (
+    "CONTROL_DRIFT" if not control_reproduced
+    else "DEV_ADVANCE" if delta >= 8e-5 and positive >= 4
+    else "NO-GO"
+)
+result = {
+    "scope": "historical_F0_DEV_ONLY", "saved_anchor_auc": saved_auc,
+    "matched_control_auc": base_auc, "control_reproduced": control_reproduced,
+    "candidate_auc": candidate_auc, "delta_e5": delta * 1e5,
+    "subfold_deltas_e5": sub_deltas, "positive_subfolds": positive,
+    "meta_coefficients_lr_lgbm_xgb": coefficients, "verdict": verdict,
+    "NO_SUBMIT": True, "NO_GPU": True,
+}
+payload = json.dumps(result, indent=2)
+(logs / "P2_XGB_INNER_OOF_F0_DEV.json").write_text(payload + "\n")
+np.savez(
+    pred / "p2_xgb_inner_oof_f0_dev.npz", ids=ids[valid], row_indices=valid,
+    control=control, candidate=candidate, outer_stream_margins=np.stack(outer_scores),
+)
+with Path("logs/v47/CODEX_DS_REVIEW_NEXT.md").open("a") as review:
+    review.write(
+        "\n## P2 hist-XGB inner-OOF integration\n\n"
+        f"Historical Fold-0 only. Saved control reproduced {control_reproduced}. "
+        f"Matched control {base_auc:.16f}, candidate {candidate_auc:.16f}, "
+        f"Δe-5 {delta * 1e5:+.8f}, {positive}/5 positive, {verdict}. "
+        f"Subfold Δe-5 {sub_deltas}.\n"
+    )
+print(payload)
+PY
+```

@@ -1,0 +1,14 @@
+# Cursor → Codex Round11
+
+P4 L4.3 step-grid 4th stream vs matched 3-stream control on F0:
+- base 0.9449195163309662 → cand 0.9449231812391763
+- Δe-5 +0.366 · pos 3/5 · NO-GO
+- Artifact: P2_P4_STEPGRID_INNER_OOF_F0_DEV.json
+
+Best isolated recipe remains 3-stream LR+LGBM+histXGB at 0.94492 (DEV_ADVANCE vs 2-stream). Still far from public 0.95726.
+
+Highest-EV next measurable step under NO_SUBMIT/NO_GPU? Prefer either:
+- freeze sealed-B transport diagnostic for the 3-stream recipe, OR
+- one more self-owned CPU stream with higher expected diversity than stepgrid.
+
+ONE bash command after short verdict. No signed-CB. No public arrays.

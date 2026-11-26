@@ -1,0 +1,50 @@
+{
+  "scope": "B_transport_diagnostic_previously_examined_rows",
+  "lock_sha256": "347d52980a571e1e7e5a8be15320f3d5b1986b96391bedbbb3f1a0c39416c2d7",
+  "per_fold": [
+    {
+      "fold": 1,
+      "n": 139992,
+      "base_auc": 0.9466384631093568,
+      "candidate_auc": 0.9469850039827233,
+      "delta_e5": 34.65408733664965
+    },
+    {
+      "fold": 2,
+      "n": 139992,
+      "base_auc": 0.9448333303359387,
+      "candidate_auc": 0.9452100574800036,
+      "delta_e5": 37.67271440648923
+    },
+    {
+      "fold": 3,
+      "n": 139992,
+      "base_auc": 0.9465311410517211,
+      "candidate_auc": 0.9469264056421051,
+      "delta_e5": 39.52645903839702
+    },
+    {
+      "fold": 4,
+      "n": 139992,
+      "base_auc": 0.9432713096769832,
+      "candidate_auc": 0.9437149779446645,
+      "delta_e5": 44.366826768127424
+    }
+  ],
+  "weighted_delta_e5": 39.05502188741583,
+  "positive_folds": 4,
+  "loo_delta_e5": [
+    40.52200007100455,
+    39.5157910477247,
+    38.8978761704221,
+    37.284420260511965
+  ],
+  "paired_ci95_e5": [
+    28.699695908202397,
+    48.532718555475626
+  ],
+  "verdict": "B_TRANSPORT_PASS",
+  "milestone": "LOCAL_GATE_PASS",
+  "NO_SUBMIT": true,
+  "NO_GPU": true
+}

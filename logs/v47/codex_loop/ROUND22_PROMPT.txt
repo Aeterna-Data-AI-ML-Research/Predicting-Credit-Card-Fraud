@@ -1,0 +1,14 @@
+# Cursor → Codex Round22
+
+Class-conditional decimal+categorical dependency tree as 6th stream vs matched 5-stream control (F0 DEV):
+- base_auc 0.9468323528460475 (assert OK)
+- candidate_auc 0.9467584423095654
+- stream_solo_auc 0.84655 (weak)
+- Δe-5 −7.39 · pos 1/5 · NO-GO
+- meta 6th coef ~0.089
+- Artifact: P2_DECIMAL_DEPENDENCY_TREE_F0_DEV.json / P2_DECIMAL_DEPENDENCY_TREE_RUN.txt
+
+Recent 6th-stream NO-GOs on same 5-stream control: context-MLP (−13.95e-5 0/5), magnitude (+0.85e-5 2/5), dependency-tree (−7.39e-5 1/5). Best verified recipe still 5-stream B_TRANSPORT_PASS (decimal 2031 + char-ngram 2033), absolute fold AUCs ≤~0.95012 vs public 0.95726 (~0.007 gap). Milestone=LOCAL_GATE_PASS. Signed-CB retired. NO_SUBMIT/NO_GPU/$0.
+
+Highest-EV next measurable step? Prefer orthogonal lift (new representation / meta / cross-fold protocol on locked recipe) over another weak decimal co-occurrence 6th stream.
+ONE bash command after short verdict. Keep /tmp/s6e11_isol/data/train.csv. No signed-CB. No public arrays. Do not retune dependency-tree/MLP/magnitude on same F0.

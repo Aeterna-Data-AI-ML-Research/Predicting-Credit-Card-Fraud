@@ -1,0 +1,327 @@
+OpenAI Codex v0.172.0
+--------
+workdir: /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+model: gpt-6.2-sol
+provider: openai
+approval: never
+sandbox: read-only
+reasoning effort: none
+reasoning summaries: none
+session id: 01a2180a-0cec-7810-bcbf-4a725485c87f
+--------
+user
+# Cursor → Codex Round6 EXECUTION RESULTS (S6E11 fraud ONLY)
+
+Adversarial protocol appended to logs/v47/CODEX_DS_REVIEW_NEXT.md.
+Artifacts: ROUND6_CROSSFOLD_SIGNED_CB.json, ROUND6_CROSSFOLD_ADJUDICATION.json, preds/v47_sovereign/catboost_outer_oof.npy, champ_cb_signed_resid_oof_w-0.10.npy
+
+## Frozen w=−0.10 · CatBoost outer-fold OOF · no retune on eval
+
+| fold | role | base AUC | cand AUC | Δe-5 | CB solo |
+|---:|---|---:|---:|---:|---:|
+| 0 | DEV | 0.9512508 | 0.9513363 | **+8.554** | 0.943521 |
+| 1 | EVAL | 0.9524377 | 0.9522367 | **−20.104** | 0.946871 |
+| 2 | EVAL | 0.9570745 | 0.9571149 | +4.043 | 0.950504 |
+| 3 | EVAL | 0.9526470 | 0.9526582 | +1.115 | 0.945880 |
+| 4 | EVAL | 0.9479875 | 0.9479278 | **−5.966** | 0.941379 |
+
+Strict adjudication (your protocol):
+- Weighted mean Δe-5 folds1–4 = **−5.228** (need ≥ +8) → FAIL
+- pos = **2/4** (need ≥3) → FAIL
+- LOO weighted means all **negative** → FAIL
+- Fold-level diagnostic CI95 e-5 ≈ [−14.80, +2.58] LB ≯ 0 → FAIL
+- F0 CB vs prior solo corr = 1.000; F0 local gate reproduced exactly
+- Verdict: **CROSS_FOLD_FAIL — remain at LOCAL_GATE_PASS**
+- Milestone: still **LOCAL_GATE_PASS** (NOT CROSS_FOLD_VERIFIED)
+
+## F0-only sensitivity (cannot change frozen eval w)
+−0.05→+5.62 · −0.075→+7.33 · −0.10→+8.55 · −0.125→+9.07 · −0.15→+8.50 (peak −0.125 on DEV only)
+
+## Eval error analysis (proxy)
+fraud_frac_score_up≈0.497 · legit_frac_down≈0.492 · mean_move_fraud≈−2e-4 (wrong direction on average)
+
+## Ask (adversarial DS reviewer)
+1. Criticize these results — is LOCAL_GATE_PASS now demoted / overfit confirmed?
+2. Rank next feasible experiments under locks that can still reach CROSS_FOLD_VERIFIED without contaminating a future sealed holdout.
+3. Prefer: complementary self-owned residual developed ONLY on Fold-0, OR champion provenance / isolated rebuild diagnostic, OR abandon signed-CB family.
+4. EXECUTE next experiment or give ONE bash command.
+5. Update CODEX_DS_REVIEW_NEXT.md. End with next milestone criteria check.
+
+NO_SUBMIT · $0 RunPod · 0 tip CSVs.
+codex
+I’ll check the adjudication artifact and trace the champion’s training inputs. The failed transfer test makes provenance the next priority before another Fold-0 residual search.
+exec
+/bin/bash -lc "ls logs/v47/codex_loop/*ROUND6*
+cat logs/v47/codex_loop/ROUND6_CROSSFOLD_ADJUDICATION.json
+rg -n 'assemble_streams|stack_deotte|lr.fit|oof_z\\[trm\\]|init_a|fit_lever_Direct_and_Ridge|Pick the track|F_B_oof\\[a\\]|evals=|wide_stack_nested' scripts/v47_sovereign/step1_schema_and_z_sovereign.py scripts/p4_pure_5fold.py scripts/paradigm_abc_cuda_campaign.py scripts/build_psuper_v4p_bank.py scripts/harvest_v5_finalize.py" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 69ms:
+logs/v47/codex_loop/ROUND6_ADJUDICATION_RUN.txt
+logs/v47/codex_loop/ROUND6_CODEX_CRITIQUE.txt
+logs/v47/codex_loop/ROUND6_CODEX_PROTOCOL.txt
+logs/v47/codex_loop/ROUND6_CROSSFOLD_ADJUDICATION.json
+logs/v47/codex_loop/ROUND6_CROSSFOLD_RUN.txt
+logs/v47/codex_loop/ROUND6_CROSSFOLD_SIGNED_CB.json
+{
+  "verdict": "CROSS_FOLD_FAIL \u2014 remain at LOCAL_GATE_PASS",
+  "milestone_achieved": "LOCAL_GATE_PASS",
+  "numeric_pass": false,
+  "champion_isolation_resolved": false,
+  "fixed_w": -0.1,
+  "per_fold_delta_e5": {
+    "0": 8.55362843242835,
+    "1": -20.103776638968895,
+    "2": 4.043064892744752,
+    "3": 1.115478248159274,
+    "4": -5.966099677656711
+  },
+  "loo": [
+    {
+      "leave_fold": 1,
+      "weighted_mean_delta_e5": -0.269185512250895,
+      "positive": false
+    },
+    {
+      "leave_fold": 2,
+      "weighted_mean_delta_e5": -8.318132689488777,
+      "positive": false
+    },
+    {
+      "leave_fold": 3,
+      "weighted_mean_delta_e5": -7.342270474626952,
+      "positive": false
+    },
+    {
+      "leave_fold": 4,
+      "weighted_mean_delta_e5": -4.981744499354957,
+      "positive": false
+    }
+  ],
+  "criteria": {
+    "weighted_mean_delta_e5": -5.227833293930395,
+    "weighted_mean_ge_8e5": false,
+    "pos_eval_folds": 2,
+    "pos_ge_3_of_4": false,
+    "loo_all_positive": false,
+    "fold_delta_bootstrap_ci95_e5": [
+      -14.798962917186852,
+      2.579271570452013
+    ],
+    "bootstrap_lb_gt_0": false,
+    "note": "Primary CI deferred; fold-level resample shown as diagnostic only. Per-row within-fold CI unnecessary for FAIL given pos=2/4 and negative weighted mean."
+  },
+  "sensitivity_f0_only": [
+    {
+      "w": -0.05,
+      "delta_e5": 5.620458468791334
+    },
+    {
+      "w": -0.075,
+      "delta_e5": 7.325464536045434
+    },
+    {
+      "w": -0.1,
+      "delta_e5": 8.55362843242835
+    },
+    {
+      "w": -0.125,
+      "delta_e5": 9.071813503358506
+    },
+    {
+      "w": -0.15,
+      "delta_e5": 8.496121390955125
+    }
+  ],
+  "error_analysis_eval": {
+    "fraud_frac_up": 0.4974337040205304,
+    "legit_frac_down": 0.49209612506719747,
+    "mean_move_fraud": -0.00019820935581312576,
+    "mean_move_legit": 3.301130220325681e-06
+  },
+  "NO_SUBMIT": true
+}scripts/p4_pure_5fold.py:29:    per_feature_ks_filter, fit_lever_Direct_and_Ridge, residual_context_init_score,
+scripts/p4_pure_5fold.py:69:    Pick the track that maximizes 5-fold OOF Test-1 ΔAUC vs v4p_hc!
+scripts/p4_pure_5fold.py:95:        # Track 2 & 3: Ridge(500) + shallow depth=2 CUDA XGB via verified fit_lever_Direct_and_Ridge
+scripts/p4_pure_5fold.py:96:        init_a = residual_context_init_score(ctx.z_champ_o[a], ctx.z_glm_o[a])
+scripts/p4_pure_5fold.py:99:        d_r_b, d_r_te, d_x_b, d_x_te = fit_lever_Direct_and_Ridge(
+scripts/p4_pure_5fold.py:100:            Fa, ctx.y[a], Fb, ctx.y[b], Fte, init_a, init_b, init_te, seed=42 + fi
+scripts/p4_pure_5fold.py:103:        p_a = expit(init_a)
+scripts/v47_sovereign/step1_schema_and_z_sovereign.py:310:def assemble_streams(tr, y, folds):
+scripts/v47_sovereign/step1_schema_and_z_sovereign.py:360:def stack_deotte(streams, y, folds):
+scripts/v47_sovereign/step1_schema_and_z_sovereign.py:378:        mu = oof_z[trm].mean(0)
+scripts/v47_sovereign/step1_schema_and_z_sovereign.py:379:        sd = oof_z[trm].std(0) + 1e-8
+scripts/v47_sovereign/step1_schema_and_z_sovereign.py:380:        Xtr = (oof_z[trm] - mu) / sd
+scripts/v47_sovereign/step1_schema_and_z_sovereign.py:384:        lr.fit(Xtr, y[trm])
+scripts/v47_sovereign/step1_schema_and_z_sovereign.py:411:    streams = assemble_streams(tr, y, folds)
+scripts/v47_sovereign/step1_schema_and_z_sovereign.py:413:    oof, te, meta = stack_deotte(streams, y, folds)
+scripts/paradigm_abc_cuda_campaign.py:529:            init_a = (0.85 * data.z_champ_o[a] + 0.15 * data.z_glm_o[a]).astype(np.float32)
+scripts/paradigm_abc_cuda_campaign.py:543:                    pred = model(x, nx, yr) + torch.as_tensor(init_a[sel], device=DEVICE)
+scripts/paradigm_abc_cuda_campaign.py:617:            bst = xgb.train(params, dtrain, num_boost_round=150, evals=[(dval, "v")], verbose_eval=50)
+scripts/paradigm_abc_cuda_campaign.py:721:                dtr = xgb.DMatrix(F_B_oof[a], label=data.y[a], base_margin=bm_a)
+scripts/paradigm_abc_cuda_campaign.py:724:                bst = xgb.train(params, dtr, num_boost_round=150, evals=[(dva, "v")], verbose_eval=50)
+scripts/paradigm_abc_cuda_campaign.py:948:            dtr = xgb.DMatrix(F_B_oof[a], label=data.y[a], base_margin=bm_a)
+scripts/paradigm_abc_cuda_campaign.py:951:            bst = xgb.train(params, dtr, num_boost_round=150, evals=[(dva, "v")], verbose_eval=50)
+scripts/paradigm_abc_cuda_campaign.py:1215:        bst = xgb.train(params, dtr, num_boost_round=200, evals=[(dva, "v")], verbose_eval=False)
+
+exec
+/bin/bash -lc "sed -n '126,146p' scripts/p4_pure_5fold.py
+sed -n '360,389p' scripts/v47_sovereign/step1_schema_and_z_sovereign.py
+rg -n 'wide_stack|goodpjw|np.load|read_csv' scripts/build_psuper_v4p_bank.py scripts/harvest_v5_finalize.py | head -38
+tail -10 logs/v47/CODEX_DS_REVIEW_NEXT.md" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 0ms:
+        "z_plus_0.03_fraw": (z_base_o + 0.03 * (oof_fraw / (oof_fraw.std() + 1e-12)),
+                             z_base_t + 0.03 * (te_fraw / (oof_fraw.std() + 1e-12))),
+        "z_plus_0.03_ridge": (z_base_o + 0.03 * (oof_ridge / (oof_ridge.std() + 1e-12)),
+                              z_base_t + 0.03 * (te_ridge / (oof_ridge.std() + 1e-12))),
+        "z_plus_0.03_xgb": (z_base_o + 0.03 * (oof_xgb / (oof_xgb.std() + 1e-12)),
+                            z_base_t + 0.03 * (te_xgb / (oof_xgb.std() + 1e-12))),
+    }
+    best_tname, best_res, best_o, best_t = None, None, None, None
+    for tname, (co, ct) in tracks.items():
+        ev = score_candidate_vs_v4p_hc(ctx.y, v4p_o, co, ctx.folds)
+        ks = float(ks_2samp(rk(co), rk(ct)).statistic)
+        drho = abs(float(spearmanr(rk(co), rk(v4p_o)).statistic) - float(spearmanr(rk(ct), rk(v4p_t)).statistic))
+        log(f"  [{key}] track={tname:18s} Test1Δ={ev['delta_auc']:+.3e} ᾱ={ev['stack_mean_alpha']:+.4f} solo={ev['cand_solo_auc']:.6f} KS={ks:.4f} |Δρ|={drho:.5f}")
+        if best_res is None or ev["delta_auc"] > best_res["delta_auc"]:
+            best_tname = tname
+            best_res = {**ev, "ks": ks, "drho": drho, "track": tname, "elapsed_s": round(time.time() - t0, 1)}
+            best_o, best_t = co, ct
+
+    np.save(PRED / f"matrix_v2/{key}_pure5f_oof.npy", best_o.astype(np.float64))
+    np.save(PRED / f"matrix_v2/{key}_pure5f_test.npy", best_t.astype(np.float64))
+    log(f"==> [{key}] BEST track={best_tname} 5-Fold Test1Δ={best_res['delta_auc']:+.3e} (t={best_res['elapsed_s']}s)")
+def stack_deotte(streams, y, folds):
+    """Chris Deotte S6E10-style: logit-calibrate each stream, standardize fold-train, nest LR C=0.03."""
+    names = sorted(streams.keys())
+    log(f"stacking {len(names)} sovereign streams: {names}")
+    # Build OOF design
+    oof_z = np.zeros((len(y), len(names)), np.float64)
+    te_z = np.zeros((299984, len(names)), np.float64)
+    for j, n in enumerate(names):
+        o, t = streams[n]
+        # convert to calibrated log-odds via rank-logit (no y leakage)
+        oof_z[:, j] = to_logit_cal(o)
+        te_z[:, j] = to_logit_cal(t)
+
+    oof_pred = np.zeros(len(y), np.float64)
+    te_pred = np.zeros(299984, np.float64)
+    fold_aucs = []
+    for k in range(5):
+        trm, va = folds != k, folds == k
+        mu = oof_z[trm].mean(0)
+        sd = oof_z[trm].std(0) + 1e-8
+        Xtr = (oof_z[trm] - mu) / sd
+        Xva = (oof_z[va] - mu) / sd
+        Xte = (te_z - mu) / sd
+        lr = LogisticRegression(C=0.03, solver="lbfgs", max_iter=2000)
+        lr.fit(Xtr, y[trm])
+        oof_pred[va] = lr.predict_proba(Xva)[:, 1]
+        te_pred += lr.predict_proba(Xte)[:, 1] / 5
+        fa = float(roc_auc_score(y[va], oof_pred[va]))
+        fold_aucs.append(fa)
+        log(f"  stack fold{k} AUC={fa:.6f}")
+scripts/build_psuper_v4p_bank.py:28:    y = pd.read_csv(ROOT / "data" / "train.csv", usecols=["is_fraud"])["is_fraud"].to_numpy()
+scripts/build_psuper_v4p_bank.py:29:    sub_ids = pd.read_csv(ROOT / "data" / "sample_submission.csv", usecols=["id"])["id"].to_numpy()
+scripts/build_psuper_v4p_bank.py:35:        z = np.load(cache_path, allow_pickle=False)
+scripts/build_psuper_v4p_bank.py:56:    gb5_o = np.load(ART / "gb_bag5_oof.npy").ravel().astype(float)
+scripts/build_psuper_v4p_bank.py:57:    gb5_t_bag = np.load(ART / "gb_testbag_full.npy").ravel().astype(float)
+scripts/build_psuper_v4p_bank.py:58:    bag_o = np.load(ROOT / "preds" / "gb_gpt2_bag5_oof.npy").ravel().astype(float)
+scripts/build_psuper_v4p_bank.py:59:    bag_t = np.load(ROOT / "preds" / "gb_gpt2_bag5_full.npy").ravel().astype(float)
+scripts/build_psuper_v4p_bank.py:66:    z_cnn = np.load(ROOT / "external_bank/fresh_ds/queyrusi_cnn/predictions.npz")
+scripts/build_psuper_v4p_bank.py:67:    z_gen = np.load(ROOT / "external_bank/fresh_ds/queyrusi_cnn/gen_predictions.npz")
+scripts/build_psuper_v4p_bank.py:71:        + [rk(np.load(o).ravel()) for _, o, _ in l1_pairs]
+scripts/build_psuper_v4p_bank.py:76:        + [rk(np.load(t).ravel()) for _, _, t in l1_pairs]
+scripts/build_psuper_v4p_bank.py:96:    v4_o = np.load(ROOT / "preds/P_super_v4_oof.npy").ravel()
+scripts/build_psuper_v4p_bank.py:97:    v4_t = np.load(ROOT / "preds/P_super_v4_test.npy").ravel()
+scripts/build_psuper_v4p_bank.py:115:    ref_v4p_o = np.load(ROOT / "preds/P_super_v4p_oof.npy").ravel()
+scripts/harvest_v5_finalize.py:81:    bank = np.load(PRED / "v4p_bank_cache.npz", allow_pickle=True)
+scripts/harvest_v5_finalize.py:82:    y = pd.read_csv(ROOT / "data/train.csv", usecols=["is_fraud"])["is_fraud"].to_numpy(np.int32)
+scripts/harvest_v5_finalize.py:83:    test_ids = pd.read_csv(ROOT / "data/test.csv", usecols=["id"])["id"].to_numpy()
+scripts/harvest_v5_finalize.py:92:        "B_xgb_llr": (np.load(PRED/"paradigm_B/xgb_llr_oof.npy").ravel(),
+scripts/harvest_v5_finalize.py:93:                      np.load(PRED/"paradigm_B/xgb_llr_test.npy").ravel()),
+scripts/harvest_v5_finalize.py:94:        "A_tabr": (np.load(PRED/"paradigm_A/tabr_oof.npy").ravel(),
+scripts/harvest_v5_finalize.py:95:                   np.load(PRED/"paradigm_A/tabr_test.npy").ravel()),
+scripts/harvest_v5_finalize.py:96:        "B_llm_solo": (np.load(PRED/"paradigm_B/llm_solo_oof.npy").ravel(),
+scripts/harvest_v5_finalize.py:97:                       np.load(PRED/"paradigm_B/llm_solo_test.npy").ravel()),
+scripts/harvest_v5_finalize.py:98:        "A_combo": (np.load(PRED/"paradigm_A/combo_oof.npy").ravel(),
+scripts/harvest_v5_finalize.py:99:                    np.load(PRED/"paradigm_A/combo_test.npy").ravel()),
+scripts/harvest_v5_finalize.py:145:        d = np.load(PRED/f"matrix_v2/{k}_fold0.npz")["delta_fold0"].astype(np.float64)
+scripts/harvest_v5_finalize.py:160:    p4_o = np.load(PRED/"matrix_v2/harvest_p4_cuda_xgb_oof.npy").ravel()
+scripts/harvest_v5_finalize.py:161:    p4_t = np.load(PRED/"matrix_v2/harvest_p4_cuda_xgb_test.npy").ravel()
+scripts/harvest_v5_finalize.py:225:        ev4 = pd.read_csv(ev4_path).set_index("id").loc[test_ids, "is_fraud"].to_numpy(np.float64)
+Adjudicate frozen candidate first. Complementary residuals (e.g. signed digit LGBM) only in Fold-0/dev nested fits. Any design prompted by folds 1–4 needs a fresh sealed evaluator.
+
+## Round6 strict adjudication
+
+Verdict: **CROSS_FOLD_FAIL — remain at LOCAL_GATE_PASS**
+
+Per-fold Δe-5 (w=−0.10 frozen): [8.5536, -20.1038, 4.0431, 1.1155, -5.9661]
+Weighted mean Δe-5 folds1-4 = -5.2278; pos=2/4; LOO all positive=False; numeric_pass=False.
+F0 sensitivity peak at w=−0.125 (+9.07e-5) but cannot change frozen eval coefficient.
+Milestone remains LOCAL_GATE_PASS. CROSS_FOLD_VERIFIED not achieved.
+
+exec
+/bin/bash -lc "PYTHONDONTWRITEBYTECODE=1 python3 -c 'import numpy as np; f=np.load(\"preds/v47_sovereign/folds_skf42.npy\"); assert f.ndim==1 and set(f)==set(range(5)); n=np.bincount(f); print(\"fold, scored rows, reused OOF meta-training rows, meta-training rows whose ordinary upstream fit includes the scored fold\"); print(*[(k,int(n[k]),int(len(f)-n[k]),int(sum(n[j] for j in range(5) if j"'!=k and np.all(f[f==k]!=j)))) for k in range(5)],sep="'"\\n\")'
+rg -n 'BEST track=' logs/overnight/p4_pure_5fold.log
+rg -n 'P_super_v4p_hc_oof.npy|v4p_bank_cache.npz' scripts | head -18" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 3382ms:
+fold, scored rows, reused OOF meta-training rows, meta-training rows whose ordinary upstream fit includes the scored fold
+(0, 139992, 559968, 559968)
+(1, 139992, 559968, 559968)
+(2, 139992, 559968, 559968)
+(3, 139992, 559968, 559968)
+(4, 139992, 559968, 559968)
+8:[2026-11-07T18:02:25Z] ==> [P4_L4.3] BEST track=ridge_resid 5-Fold Test1Δ=+1.553e-05 (t=37.8s)
+15:[2026-11-07T18:03:59Z] ==> [P4_L4.2] BEST track=ridge_resid 5-Fold Test1Δ=+1.508e-05 (t=42.3s)
+22:[2026-11-07T18:05:56Z] ==> [P4_L4.5] BEST track=xgb_resid 5-Fold Test1Δ=+3.340e-06 (t=80.0s)
+scripts/nov07_wave2_research_submit.py:150:            ("v4p_hc", "P_super_v4p_hc_oof.npy"),
+scripts/forensic_audit_3min.py:93:    bank = np.load(ROOT / "preds/v4p_bank_cache.npz", allow_pickle=True)
+scripts/paradigm_abc_cuda_campaign.py:205:        bank = np.load(ROOT / "preds/v4p_bank_cache.npz", allow_pickle=True)
+scripts/post_gpt2_3ep_campaign.py:221:        bank_p = PRED / "v4p_bank_cache.npz"
+scripts/post_gpt2_3ep_campaign.py:705:    v4p_o = np.load(PRED / "P_super_v4p_hc_oof.npy").ravel()
+scripts/post_gpt2_3ep_campaign.py:962:    v4p_o = np.load(PRED / "P_super_v4p_hc_oof.npy").ravel().astype(np.float64)
+scripts/nov07_local_research_submit.py:398:        "v4p_hc": npy("P_super_v4p_hc_oof.npy"),
+scripts/harvest_v5_finalize.py:81:    bank = np.load(PRED / "v4p_bank_cache.npz", allow_pickle=True)
+scripts/paradigm_stack_delta_eval.py:221:    bank = np.load(ROOT / "preds/v4p_bank_cache.npz", allow_pickle=True)
+scripts/build_v7_sovereign_cpu.py:76:    v4p_hc_o = np.load(PRED / "P_super_v4p_hc_oof.npy").astype(np.float64).ravel()
+scripts/build_v6_grandmaster_fusion.py:57:    v4p_hc_o = np.load(PRED / "P_super_v4p_hc_oof.npy").astype(np.float64).ravel()
+scripts/audit_v5p5_clean_blend.py:83:    v4p_o = np.load(PRED / "P_super_v4p_hc_oof.npy").ravel().astype(np.float64)
+scripts/build_v8_part12_rect_slot2.py:126:        ("v4p_hc", np.load(PRED / "P_super_v4p_hc_oof.npy").ravel(), np.load(PRED / "P_super_v4p_hc_test.npy").ravel()),
+scripts/v47_sovereign/step2_provenance_and_z_v1.py:105:        "P_super_v4p_hc": {"oof": PRED / "P_super_v4p_hc_oof.npy"},
+scripts/build_v9_frontier_slot3.py:149:        ("v4p_hc", np.load(PRED / "P_super_v4p_hc_oof.npy").ravel(), np.load(PRED / "P_super_v4p_hc_test.npy").ravel(), 1.0),
+scripts/ds_slot1_ks_rect_submit.py:124:    v4p_o = np.load(PRED / "P_super_v4p_hc_oof.npy").ravel().astype(np.float64)
+scripts/restack_wide_own.py:96:        "our:v4p_hc": ("P_super_v4p_hc_oof.npy", "P_super_v4p_hc_test.npy"),
+scripts/build_psuper_v4p_bank.py:27:    cache_path = ROOT / "preds" / "v4p_bank_cache.npz"
+
+codex
+**CROSS_FOLD_FAIL.** `LOCAL_GATE_PASS` remains a reproducible historical result, but I would retire frozen **−0.10 signed CatBoost** as a promotion candidate. Fold-0 reproduced at **+8.553628e-5**. Folds 1–4 averaged **−5.227833e-5**, only **2/4** improved, and every leave-one-fold-out mean was negative. Even dropping the worst fold leaves **−0.269186e-5**. The frozen recipe failed to transfer. That supports a Fold-0 selection or heterogeneity explanation without establishing which caused the failure. The Fold-0 peak at −0.125 supplies no basis for a retune.
+
+### Executed provenance diagnostic
+
+I inspected the champion builder, the P4 track-selection code and logs, and counted the affected rows from the saved fold assignments. The champion LR reuses a **single global OOF matrix**. In each outer split, all **559,968 meta-training rows** belong to other folds whose ordinary supervised base-model fits can include the **139,992 scored outer rows**. That is an indirect evaluation-label path wherever a stream uses that training pattern. Separately, the three P4 builders selected winning tracks by labeled performance across all five folds before saving the streams. These findings establish why the saved champion cannot certify strict isolation. They do not quantify how much either path affected the signed-CB delta.
+
+### Ranked next experiments
+
+1. **Build an isolated champion diagnostic.** Start with a small self-owned manifest whose training lineage can be reproduced. For each diagnostic outer split, regenerate inner OOF inputs solely inside its training partition, select tracks and fit the LR there, then score the outer rows. Measure the rebuilt baseline’s AUC as well as any paired residual gain. A gain against a weaker rebuild alone does not establish improvement over the saved champion.
+2. **Test one complementary residual on Fold-0 dev only.** Use the digit LightGBM direction against the isolated anchor with a predeclared signed grid and held-out weight fits. Advance it only if the gain survives paired rank evaluation inside dev. Folds 1–4 are already exposed and should remain diagnostic for any recipe developed now.
+3. **Drop the signed-CB family from the near-term queue.** Revisit it only if an isolated dev test shows repeatable incremental signal against the rebuilt anchor. Skip coefficient sweeps prompted by Round 6.
+
+I attempted to append the provenance finding to [CODEX_DS_REVIEW_NEXT.md](/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/logs/v47/CODEX_DS_REVIEW_NEXT.md). The read-only workspace rejected the write. No submissions, RunPod use, paid API calls, or tip CSV reads.
+
+**Next milestone criteria check:** On a fresh sealed evaluator, require a frozen recipe and audited outer isolation for both arms, weighted within-fold **ΔAUC ≥ +8e-5**, **at least 3/4 positive folds**, all leave-one-fold-out means positive, and a paired **95% lower bound above zero** for the same weighted statistic. Round 6 fails the effect, consistency, and leave-one-fold-out criteria. `CROSS_FOLD_VERIFIED` remains pending.
+tokens used
+116,452
+**CROSS_FOLD_FAIL.** `LOCAL_GATE_PASS` remains a reproducible historical result, but I would retire frozen **−0.10 signed CatBoost** as a promotion candidate. Fold-0 reproduced at **+8.553628e-5**. Folds 1–4 averaged **−5.227833e-5**, only **2/4** improved, and every leave-one-fold-out mean was negative. Even dropping the worst fold leaves **−0.269186e-5**. The frozen recipe failed to transfer. That supports a Fold-0 selection or heterogeneity explanation without establishing which caused the failure. The Fold-0 peak at −0.125 supplies no basis for a retune.
+
+### Executed provenance diagnostic
+
+I inspected the champion builder, the P4 track-selection code and logs, and counted the affected rows from the saved fold assignments. The champion LR reuses a **single global OOF matrix**. In each outer split, all **559,968 meta-training rows** belong to other folds whose ordinary supervised base-model fits can include the **139,992 scored outer rows**. That is an indirect evaluation-label path wherever a stream uses that training pattern. Separately, the three P4 builders selected winning tracks by labeled performance across all five folds before saving the streams. These findings establish why the saved champion cannot certify strict isolation. They do not quantify how much either path affected the signed-CB delta.
+
+### Ranked next experiments
+
+1. **Build an isolated champion diagnostic.** Start with a small self-owned manifest whose training lineage can be reproduced. For each diagnostic outer split, regenerate inner OOF inputs solely inside its training partition, select tracks and fit the LR there, then score the outer rows. Measure the rebuilt baseline’s AUC as well as any paired residual gain. A gain against a weaker rebuild alone does not establish improvement over the saved champion.
+2. **Test one complementary residual on Fold-0 dev only.** Use the digit LightGBM direction against the isolated anchor with a predeclared signed grid and held-out weight fits. Advance it only if the gain survives paired rank evaluation inside dev. Folds 1–4 are already exposed and should remain diagnostic for any recipe developed now.
+3. **Drop the signed-CB family from the near-term queue.** Revisit it only if an isolated dev test shows repeatable incremental signal against the rebuilt anchor. Skip coefficient sweeps prompted by Round 6.
+
+I attempted to append the provenance finding to [CODEX_DS_REVIEW_NEXT.md](/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/logs/v47/CODEX_DS_REVIEW_NEXT.md). The read-only workspace rejected the write. No submissions, RunPod use, paid API calls, or tip CSV reads.
+
+**Next milestone criteria check:** On a fresh sealed evaluator, require a frozen recipe and audited outer isolation for both arms, weighted within-fold **ΔAUC ≥ +8e-5**, **at least 3/4 positive folds**, all leave-one-fold-out means positive, and a paired **95% lower bound above zero** for the same weighted statistic. Round 6 fails the effect, consistency, and leave-one-fold-out criteria. `CROSS_FOLD_VERIFIED` remains pending.

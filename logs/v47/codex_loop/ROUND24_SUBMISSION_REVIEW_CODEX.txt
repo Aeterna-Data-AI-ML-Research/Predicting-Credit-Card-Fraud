@@ -1,0 +1,491 @@
+OpenAI Codex v0.172.0
+--------
+workdir: /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+model: gpt-6.2-sol
+provider: openai
+approval: never
+sandbox: read-only
+reasoning effort: none
+reasoning summaries: none
+session id: 01a2180a-0cec-7810-bcbf-4a725485c87f
+--------
+user
+# Cursor → Codex Round24 — SUBMISSION OPPORTUNITY REVIEW (Astra-high rigor)
+
+You are Astra-high DS reviewer for S6E11 fraud. Deadline ~4 days. Rank 69/3246. Public pin 0.95726. Six daily slots remain.
+**NO_SUBMIT remains True. Do NOT instruct any kaggle submit. SUBMIT_ARMED=False. NO_GPU. cloud $0.**
+
+## Just completed / frozen
+Pairwise meta sealed-B seed **2037: B_TRANSPORT_PASS** (frozen, no retune on eval folds):
+- weighted Δe-5 **+17.58**, 4/4 positive, CI95 [11.21, 24.93]
+- per-fold Δe-5 [+13.1, +21.1, +5.9, +30.3]
+- absolute candidate fold AUCs **0.94638–0.94921** (≪ 0.95726)
+- Freeze file: artifacts/research_loop/FROZEN_PAIRWISE_META_B2037.json
+Char-ngram B2033 also PASS (+34.83e-5). Best isolated recipe: LR+LGBM+histXGB+decimal+char-ngram (+ pairwise head).
+
+## Champion-compat evidence (Cursor just ran)
+Matched F0 blends of isolated five-stream / pairwise onto `z_sovereign_v0` (F0 AUC 0.951251):
+- spearman five↔champ 0.967, pair↔champ 0.969, five↔pair 0.9997
+- **0/15 blends gate-clear**; **all deltas ≤ −0.15e-5** (hurt champion)
+- Artifact: logs/v47/codex_loop/SUBMISSION_CHAMPION_COMPAT_F0_BLEND.json
+Isolated absolute still ~0.007 below public pin. Protocol B sealed per-study (seeds 2027/2031/2033/2037 distinct) but NOT independent of research exposure; Protocol A unmet.
+
+## Materialized NO_SUBMIT review CSVs (hashes only; not submitted)
+See artifacts/submission_review/MANIFEST_PENDING_CODEX.json:
+- CAND1_z_sovereign_v0.csv (14-stream Deotte stack; has OOF+test)
+- CAND2_z_sovereign_v1.csv (near-duplicate of v0; previously not promoted)
+Isolated pairwise/char-ngram: **no full test arrays** → cannot deploy without rebuild.
+
+## Required output
+Identify strongest deployable candidates incorporating validated char-ngram + pairwise **where appropriate**.
+Prioritize actual LB improvement over infrastructure.
+Prepare up to **two distinct** submission candidates with for each:
+1. Matched validation evidence
+2. Champion compatibility
+3. Your independent assessment
+4. Prediction diversity
+5. Leakage/provenance checks
+6. Expected benefit and downside risk
+7. Submission file hash (use hashes from MANIFEST or state MISSING)
+8. Ranked decision: **SUBMIT_RECOMMENDED** or **HOLD**
+
+If neither is worth a slot, say HOLD for both and name the single highest-EV next measurable experiment to create a champion-compatible deployable file (still NO_SUBMIT until user authorizes).
+Be blunt: do not recommend submitting a weaker isolated baseline.
+codex
+I’ll check the candidate manifest, matched blend results, and pairwise freeze.
+exec
+/bin/bash -lc 'cat artifacts/submission_review/MANIFEST_PENDING_CODEX.json
+cat logs/v47/codex_loop/SUBMISSION_CHAMPION_COMPAT_F0_BLEND.json
+cat artifacts/research_loop/FROZEN_PAIRWISE_META_B2037.json' in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 0ms:
+{
+  "NO_SUBMIT": true,
+  "auto_submit": false,
+  "public_champion_pin": 0.95726,
+  "rank": "69/3246",
+  "b2037": {
+    "verdict": "B_TRANSPORT_PASS",
+    "weighted_delta_e5": 17.58198793087862,
+    "frozen": true
+  },
+  "champion_compat_f0_blends_gate_clears": 0,
+  "candidates": [
+    {
+      "name": "CAND1_z_sovereign_v0",
+      "path": "artifacts/submission_review/CAND1_z_sovereign_v0.csv",
+      "sha256_csv": "74b77eaf0c9749e391b2a7e6a32dce2f73f55e09a2523f793b1db2d2e5553d5c",
+      "sha256_scores": "ad44d90a0f1143279c9fa686b9b626a3e19f5cf1096f0187e6f46ab894cf1119",
+      "n_rows": 299984,
+      "score_min": 1.8938539970241355e-11,
+      "score_max": 0.9999889268745968,
+      "notes": "14-stream Deotte nested LR; local OOF 0.952251 / F0 0.951251. Has matched OOF. No new char-ngram/pairwise. Public pin 0.95726 unexplained vs this OOF.",
+      "decision": "PENDING_CODEX",
+      "NO_SUBMIT": true,
+      "SUBMIT_ARMED": false
+    },
+    {
+      "name": "CAND2_z_sovereign_v1",
+      "path": "artifacts/submission_review/CAND2_z_sovereign_v1.csv",
+      "sha256_csv": "2e9cb107bd3f5c997ea2c12a93e3fbb631d58a23befdefe41fc141f7db356d72",
+      "sha256_scores": "3855514f4eae70f8d37b6bb942372377681a6e320272a041a90b6bb0effb7891",
+      "n_rows": 299984,
+      "score_min": 1.574377913299432e-11,
+      "score_max": 0.9999883884358245,
+      "notes": "z_v1 peer residual variant; previously NOT promoted vs z0 (negative fold deltas). Corr(z0,z1)~0.99995 \u2014 near-duplicate. Included for diversity check only.",
+      "decision": "PENDING_CODEX",
+      "NO_SUBMIT": true,
+      "SUBMIT_ARMED": false
+    }
+  ]
+}
+{
+  "scope": "historical_F0_champion_compat_blend_diagnostic",
+  "champion_f0_auc": 0.9512507991341679,
+  "isolated_five_f0_auc": 0.9468323528460475,
+  "pairwise_f0_auc": 0.946929365670755,
+  "spearman": {
+    "five_vs_champ": 0.9667120601420747,
+    "pair_vs_champ": 0.9685430335435838,
+    "five_vs_pair": 0.999655734022703
+  },
+  "blends": [
+    {
+      "name": "pair_minus_five",
+      "w": 0.02,
+      "auc": 0.9512493163850445,
+      "delta_e5": -0.14827491233715406,
+      "pos5": 1,
+      "subfold_deltas_e5": [
+        -0.28716657243244015,
+        -0.23671839082251012,
+        0.16333544033964031,
+        -0.2450031605594205,
+        -0.14777968414536602
+      ],
+      "spearman_vs_champ": 0.9999998634602781,
+      "spearman_add_vs_champ": 0.9685430335435838
+    },
+    {
+      "name": "pair_minus_five",
+      "w": 0.05,
+      "auc": 0.9512484755388437,
+      "delta_e5": -0.23235953241496077,
+      "pos5": 2,
+      "subfold_deltas_e5": [
+        -0.16298643300549642,
+        -0.3259728660220951,
+        0.7038979691564862,
+        -1.06168036234644,
+        0.0777787811268027
+      ],
+      "spearman_vs_champ": 0.9999991453102073,
+      "spearman_add_vs_champ": 0.9685430335435838
+    },
+    {
+      "name": "pair_minus_five",
+      "w": 0.1,
+      "auc": 0.9512457742621392,
+      "delta_e5": -0.5024872028691618,
+      "pos5": 1,
+      "subfold_deltas_e5": [
+        -0.45403363481133496,
+        -0.5394074806819305,
+        1.3144614009696909,
+        -1.295016705726848,
+        -0.12444604979844343
+      ],
+      "spearman_vs_champ": 0.9999965842808881,
+      "spearman_add_vs_champ": 0.9685430335435838
+    },
+    {
+      "name": "five_stream_rowwise",
+      "w": 0.02,
+      "auc": 0.9512428196436032,
+      "delta_e5": -0.7979490564635761,
+      "pos5": 2,
+      "subfold_deltas_e5": [
+        -1.0865762200662488,
+        -2.7901725079382267,
+        -1.8550239298198434,
+        2.7455909736739947,
+        1.2172379245778409
+      ],
+      "spearman_vs_champ": 0.999986959495409,
+      "spearman_add_vs_champ": 0.9667120601420747
+    },
+    {
+      "name": "pair_minus_five",
+      "w": 0.15,
+      "auc": 0.9512427947756935,
+      "delta_e5": -0.8004358474367201,
+      "pos5": 1,
+      "subfold_deltas_e5": [
+        -0.9352316751143341,
+        -0.8226934237742789,
+        1.765578331502926,
+        -1.5361309272043933,
+        -0.7738988721861517
+      ],
+      "spearman_vs_champ": 0.9999923141177184,
+      "spearman_add_vs_champ": 0.9685430335435838
+    },
+    {
+      "name": "pairwise_head",
+      "w": 0.02,
+      "auc": 0.9512417068046388,
+      "delta_e5": -0.9092329529059029,
+      "pos5": 2,
+      "subfold_deltas_e5": [
+        -1.1370244017094855,
+        -2.8406206895925656,
+        -1.4933525975924233,
+        2.3683638852078914,
+        0.9877905202682058
+      ],
+      "spearman_vs_champ": 0.9999876617172997,
+      "spearman_add_vs_champ": 0.9685430335435838
+    },
+    {
+      "name": "pair_minus_five",
+      "w": 0.2,
+      "auc": 0.9512393023886079,
+      "delta_e5": -1.1496745560002353,
+      "pos5": 1,
+      "subfold_deltas_e5": [
+        -1.2029951007797024,
+        -1.5056841906724294,
+        2.6755900706554314,
+        -2.119471785633209,
+        -1.3650176087232069
+      ],
+      "spearman_vs_champ": 0.9999863388526687,
+      "spearman_add_vs_champ": 0.9685430335435838
+    },
+    {
+      "name": "five_stream_rowwise",
+      "w": 0.05,
+      "auc": 0.9512224792476127,
+      "delta_e5": -2.831988655516149,
+      "pos5": 2,
+      "subfold_deltas_e5": [
+        -2.88330761251121,
+        -7.617675428517323,
+        -4.550058695762527,
+        4.324500230479256,
+        0.5172288944699233
+      ],
+      "spearman_vs_champ": 0.9999182773867797,
+      "spearman_add_vs_champ": 0.9667120601420747
+    },
+    {
+      "name": "pairwise_head",
+      "w": 0.05,
+      "auc": 0.9512208441825418,
+      "delta_e5": -2.995495162605444,
+      "pos5": 2,
+      "subfold_deltas_e5": [
+        -3.1549516675388745,
+        -8.444249481642796,
+        -4.184498424486538,
+        4.133942216733022,
+        0.8477887142643858
+      ],
+      "spearman_vs_champ": 0.9999226939324035,
+      "spearman_add_vs_champ": 0.9685430335435838
+    },
+    {
+      "name": "five_stream_rowwise",
+      "w": 0.1,
+      "auc": 0.9511738795805971,
+      "delta_e5": -7.691955357080893,
+      "pos5": 1,
+      "subfold_deltas_e5": [
+        -8.975895703589032,
+        -17.52880280722069,
+        -12.747942226254416,
+        5.14506637134815,
+        -1.9522474062005912
+      ],
+      "spearman_vs_champ": 0.9996718763019828,
+      "spearman_add_vs_champ": 0.9667120601420747
+    },
+    {
+      "name": "pairwise_head",
+      "w": 0.1,
+      "auc": 0.9511702675166953,
+      "delta_e5": -8.053161747256787,
+      "pos5": 1,
+      "subfold_deltas_e5": [
+        -9.166046542097295,
+        -18.642543432800807,
+        -11.577371570337114,
+        3.8772722390167935,
+        -2.492809935017437
+      ],
+      "spearman_vs_champ": 0.9996896830984067,
+      "spearman_add_vs_champ": 0.9685430335435838
+    },
+    {
+      "name": "five_stream_rowwise",
+      "w": 0.15,
+      "auc": 0.9511049395175909,
+      "delta_e5": -14.58596165769821,
+      "pos5": 1,
+      "subfold_deltas_e5": [
+        -15.448785471672277,
+        -30.334879686544358,
+        -22.252509279607757,
+        4.336167047658268,
+        -7.400651023958815
+      ],
+      "spearman_vs_champ": 0.9992590004688424,
+      "spearman_add_vs_champ": 0.9667120601420747
+    },
+    {
+      "name": "pairwise_head",
+      "w": 0.15,
+      "auc": 0.9511008269870038,
+      "delta_e5": -14.997214716405693,
+      "pos5": 1,
+      "subfold_deltas_e5": [
+        -15.922222253261786,
+        -30.905332202058045,
+        -20.381929593571435,
+        2.1583611761633037,
+        -7.746766599958654
+      ],
+      "spearman_vs_champ": 0.9992993633011743,
+      "spearman_add_vs_champ": 0.9685430335435838
+    },
+    {
+      "name": "five_stream_rowwise",
+      "w": 0.2,
+      "auc": 0.9510171169398073,
+      "delta_e5": -23.3682194360596,
+      "pos5": 1,
+      "subfold_deltas_e5": [
+        -23.116909081821735,
+        -44.03350131803041,
+        -34.05543931518373,
+        0.23333634336930587,
+        -13.665731843504059
+      ],
+      "spearman_vs_champ": 0.9986781826655646,
+      "spearman_add_vs_champ": 0.9667120601420747
+    },
+    {
+      "name": "pairwise_head",
+      "w": 0.2,
+      "auc": 0.9510133074868713,
+      "delta_e5": -23.74916472965838,
+      "pos5": 0,
+      "subfold_deltas_e5": [
+        -24.106469567941602,
+        -44.08394949967365,
+        -31.309848341498636,
+        -1.9366916499952147,
+        -14.229628006656725
+      ],
+      "spearman_vs_champ": 0.9987502730868142,
+      "spearman_add_vs_champ": 0.9685430335435838
+    }
+  ],
+  "caveat": "F0 adaptive; not sealed; no test arrays for isolated streams; NO_SUBMIT",
+  "NO_SUBMIT": true
+}
+{
+  "frozen_at": "2026-11-26T16:49:15.055813+00:00",
+  "policy": "NO_RETUNE_ON_EVAL_FOLDS_SEED_2037",
+  "verdict": "B_TRANSPORT_PASS",
+  "weighted_delta_e5": 17.58198793087862,
+  "positive_folds": 4,
+  "paired_ci95_e5": [
+    11.207188985734444,
+    24.934166431320598
+  ],
+  "loo_delta_e5": [
+    19.073435170750365,
+    16.420316247378608,
+    21.481811744979613,
+    13.352388560405883
+  ],
+  "lock_sha256": "b70be42bb031a3ddbf6cb0a0e84c82854e71fe679574e55482311318ad1b94ab",
+  "lock_path": "artifacts/research_loop/SEALED_LOCK_FIVE_STREAM_PAIRWISE_B2037.json",
+  "report_path": "logs/v47/codex_loop/SEALED_B_FIVE_STREAM_PAIRWISE_2037_TRANSPORT.json",
+  "scores_path": "preds/v47_sovereign/sealed_b_five_stream_pairwise_2037_transport.npz",
+  "script_path": "scripts/v47_sovereign/sealed_b_five_stream_pairwise_2037.py",
+  "pairwise_head": {
+    "seed": 2035,
+    "pairs_per_fraud": 64,
+    "C": 0.03
+  },
+  "NO_SUBMIT": true,
+  "note": "Frozen after B_TRANSPORT_PASS. Do not retune pairwise head on SKF 2037 evaluation folds."
+}
+
+exec
+/bin/bash -lc "shasum -a 256 artifacts/submission_review/CAND{1_z_sovereign_v0,2_z_sovereign_v1}.csv
+cat logs/v47/STEP2_Z_SOVEREIGN_V1.json
+ls artifacts/submission_review
+rg -n '0\\.95726' artifacts/research_loop artifacts/submission_review" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 109ms:
+74b77eaf0c9749e391b2a7e6a32dce2f73f55e09a2523f793b1db2d2e5553d5c  artifacts/submission_review/CAND1_z_sovereign_v0.csv
+2e9cb107bd3f5c997ea2c12a93e3fbb631d58a23befdefe41fc141f7db356d72  artifacts/submission_review/CAND2_z_sovereign_v1.csv
+{
+  "names": [
+    "B_xgb_llr",
+    "P4_L4.2_pure5f",
+    "P4_L4.3_pure5f",
+    "P4_L4.5_pure5f",
+    "P_super_v4p_hc",
+    "P_super_v5_harvest",
+    "delta1_v4",
+    "gpt2_med_4ep_mean",
+    "gpt2_med_4ep_shrink",
+    "inner_hgb_sov",
+    "l7_R5",
+    "l7_U5_gini10",
+    "l7_curv",
+    "l7_mean10",
+    "zone_honest"
+  ],
+  "overall_auc": 0.9522487222917878,
+  "fold_aucs": [
+    0.9512469819100099,
+    0.9524120821991758,
+    0.9571062042055009,
+    0.9526417775028434,
+    0.9479947790149349
+  ],
+  "fold0_auc": 0.9512469819100099,
+  "n_streams": 15,
+  "peer": {
+    "hygiene": {
+      "disp_raw": 1.0021027773786997,
+      "KS_raw": 0.005069886676791258,
+      "pass": true
+    },
+    "pos5": 0,
+    "sf25": 1,
+    "promote": false,
+    "lgbm_oof_auc": 0.9306999492898481
+  },
+  "NO_SUBMIT": true,
+  "extras": [
+    "inner_hgb_sov"
+  ],
+  "hgb_hygiene": {
+    "disp_raw": 0.9982298305307021,
+    "KS_raw": 0.0027250800957818178,
+    "pass": true
+  }
+}CAND1_z_sovereign_v0.csv
+CAND2_z_sovereign_v1.csv
+MANIFEST_PENDING_CODEX.json
+MISSING_DEPLOYABLE.txt
+artifacts/submission_review/MANIFEST_PENDING_CODEX.json:4:  "public_champion_pin": 0.95726,
+artifacts/submission_review/MANIFEST_PENDING_CODEX.json:21:      "notes": "14-stream Deotte nested LR; local OOF 0.952251 / F0 0.951251. Has matched OOF. No new char-ngram/pairwise. Public pin 0.95726 unexplained vs this OOF.",
+artifacts/research_loop/CURRENT_RESEARCH.json:7:  "objective": "genuinely generalizing public ROC-AUC > 0.95726",
+artifacts/research_loop/CURRENT_RESEARCH.json:8:  "public_champion_pin": 0.95726,
+artifacts/research_loop/CURRENT_RESEARCH.json:59:  "notes": "B2037 pairwise PASS frozen. Absolute still ~0.946\u20130.947 << public 0.95726. Submission review under NO_SUBMIT.",
+artifacts/research_loop/CURRENT_RESEARCH.json:93:    "note": "Incremental hist-XGB vs 2-stream control on SKF rs=2027 folds1-4; previously examined rows; absolute AUC~0.945 << public 0.95726",
+artifacts/research_loop/CURRENT_RESEARCH.json:122:    "vs_public_0.95726": "still_below"
+artifacts/research_loop/CURRENT_RESEARCH.json:194:    "objective": "improve_public_champion_pin_0.95726_not_isolated_baseline_alone",
+artifacts/research_loop/CURRENT_RESEARCH.json:207:    "public_champion": 0.95726,
+artifacts/research_loop/SEALED_EVAL_PROTOCOL_DRAFT.md:22:Requires explicit user arm of SUBMIT. Counts as `PUBLIC_LB_VERIFIED` iff COMPLETE publicScore > 0.95726.
+artifacts/research_loop/SEALED_EVAL_PROTOCOL_DRAFT.md:35:Preserve actual public pin **0.95726**. Local `z_sovereign_v0` remains the OOF research baseline, not the public claim.
+artifacts/research_loop/SEALED_EVAL_PROTOCOL_DRAFT.md:40:**Use B once** as frozen transport diagnostic. **Reserve A** for true independent verification when unexposed cohort+keys exist. **C** only after authorized submit with publicScore > 0.95726.
+
+codex
+**HOLD both. Zero slots recommended.** Char n-gram and pairwise ranking improved the isolated stack, but all **15** matched Fold-0 attempts to transfer that gain to `z_sovereign_v0` lost AUC. The closest lost **0.1483e-5** and improved **1/5** subfolds. Neither review CSV incorporates those streams, and neither isolated recipe has a full test array. The isolated submission hash is **MISSING**. [Champion compatibility report](/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/logs/v47/codex_loop/SUBMISSION_CHAMPION_COMPAT_F0_BLEND.json)
+
+| Rank | Candidate | Matched validation and champion compatibility | Diversity, provenance, and slot risk | Decision |
+|---|---|---|---|---|
+| 1 | `CAND1_z_sovereign_v0.csv` | **0.952251 OOF**, **0.9512507991 F0**. Strongest materialized local reference. No evidence ties these exact scores to the **0.95726** public pin. | This is the reference ranking. Global OOF reuse and all-fold P4 track selection leave strict isolation unresolved. Expected public lift is unestablished. Spending a slot would test an uncalibrated local-to-public comparison. | **HOLD** |
+| 2 | `CAND2_z_sovereign_v1.csv` | **0.9522487223 OOF**, **0.9512469819 F0**, about **−0.38e-5** on F0 versus v0. It beat v0 on **2/5** outer folds. | The manifest reports correlation of about **0.99995** with v0. Step 2 lists `inner_hgb_sov` as the added stream and records the peer probe separately as rejected. The small diversity, weaker matched result, and inherited provenance give no reason to expect public lift. | **HOLD** |
+
+I recomputed both CSV hashes and matched them to the manifest. These hashes verify file identity. [Review manifest](/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/artifacts/submission_review/MANIFEST_PENDING_CODEX.json), [Step 2 v1 metrics](/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/logs/v47/STEP2_Z_SOVEREIGN_V1.json)
+
+- `CAND1` SHA-256 `74b77eaf0c9749e391b2a7e6a32dce2f73f55e09a2523f793b1db2d2e5553d5c`
+- `CAND2` SHA-256 `2e9cb107bd3f5c997ea2c12a93e3fbb631d58a23befdefe41fc141f7db356d72`
+
+**Single next experiment — test the pairwise head on the champion’s own 14 streams.** Reproduce the saved row-wise champion from its existing OOF and test inputs. Then swap only the meta-objective to the frozen Round 23 pairwise recipe (`seed=2035`, `64` pairs per fraud, `C=0.03`). This tests whether the objective that transferred in B2037 improves the stronger ranking when fitted directly on champion inputs. The failed blends already tested transferring the isolated output scores. Keep char n-grams out of this comparison so the head swap is attributable. [Frozen pairwise result](/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/artifacts/research_loop/FROZEN_PAIRWISE_META_B2037.json)
+
+Use **≥+8e-5 mean within-fold AUC on historical folds 1–4, ≥3/4 wins, and positive leave-one-fold-out means** as the screen. Those folds and the inherited feature matrix make this a matched diagnostic. If it passes, materialize **one** review CSV from the same fold heads and matched test streams, verify ID order and score finiteness, and hash it. A passing file returns to review under `NO_SUBMIT=True` and `SUBMIT_ARMED=False`.
+tokens used
+250,857
+**HOLD both. Zero slots recommended.** Char n-gram and pairwise ranking improved the isolated stack, but all **15** matched Fold-0 attempts to transfer that gain to `z_sovereign_v0` lost AUC. The closest lost **0.1483e-5** and improved **1/5** subfolds. Neither review CSV incorporates those streams, and neither isolated recipe has a full test array. The isolated submission hash is **MISSING**. [Champion compatibility report](/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/logs/v47/codex_loop/SUBMISSION_CHAMPION_COMPAT_F0_BLEND.json)
+
+| Rank | Candidate | Matched validation and champion compatibility | Diversity, provenance, and slot risk | Decision |
+|---|---|---|---|---|
+| 1 | `CAND1_z_sovereign_v0.csv` | **0.952251 OOF**, **0.9512507991 F0**. Strongest materialized local reference. No evidence ties these exact scores to the **0.95726** public pin. | This is the reference ranking. Global OOF reuse and all-fold P4 track selection leave strict isolation unresolved. Expected public lift is unestablished. Spending a slot would test an uncalibrated local-to-public comparison. | **HOLD** |
+| 2 | `CAND2_z_sovereign_v1.csv` | **0.9522487223 OOF**, **0.9512469819 F0**, about **−0.38e-5** on F0 versus v0. It beat v0 on **2/5** outer folds. | The manifest reports correlation of about **0.99995** with v0. Step 2 lists `inner_hgb_sov` as the added stream and records the peer probe separately as rejected. The small diversity, weaker matched result, and inherited provenance give no reason to expect public lift. | **HOLD** |
+
+I recomputed both CSV hashes and matched them to the manifest. These hashes verify file identity. [Review manifest](/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/artifacts/submission_review/MANIFEST_PENDING_CODEX.json), [Step 2 v1 metrics](/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/logs/v47/STEP2_Z_SOVEREIGN_V1.json)
+
+- `CAND1` SHA-256 `74b77eaf0c9749e391b2a7e6a32dce2f73f55e09a2523f793b1db2d2e5553d5c`
+- `CAND2` SHA-256 `2e9cb107bd3f5c997ea2c12a93e3fbb631d58a23befdefe41fc141f7db356d72`
+
+**Single next experiment — test the pairwise head on the champion’s own 14 streams.** Reproduce the saved row-wise champion from its existing OOF and test inputs. Then swap only the meta-objective to the frozen Round 23 pairwise recipe (`seed=2035`, `64` pairs per fraud, `C=0.03`). This tests whether the objective that transferred in B2037 improves the stronger ranking when fitted directly on champion inputs. The failed blends already tested transferring the isolated output scores. Keep char n-grams out of this comparison so the head swap is attributable. [Frozen pairwise result](/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/artifacts/research_loop/FROZEN_PAIRWISE_META_B2037.json)
+
+Use **≥+8e-5 mean within-fold AUC on historical folds 1–4, ≥3/4 wins, and positive leave-one-fold-out means** as the screen. Those folds and the inherited feature matrix make this a matched diagnostic. If it passes, materialize **one** review CSV from the same fold heads and matched test streams, verify ID order and score finiteness, and hash it. A passing file returns to review under `NO_SUBMIT=True` and `SUBMIT_ARMED=False`.

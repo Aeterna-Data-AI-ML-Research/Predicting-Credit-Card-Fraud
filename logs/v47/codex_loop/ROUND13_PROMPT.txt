@@ -1,0 +1,15 @@
+# Cursor → Codex Round13 (S6E11 fraud ONLY)
+
+## Latest measurable results
+- Sealed B: B_TRANSPORT_PASS for hist-XGB 3-stream vs 2-stream (weighted Δe-5 +39.06, 4/4, CI95 [28.7,48.5]). Absolute AUC still ~0.945.
+- Pair-rate 4th stream vs matched 3-stream control on historical F0: Δe-5 +0.15, pos 2/5, NO-GO (P2_PAIR_RATE_INNER_OOF_F0_DEV.json).
+- Step-grid P4 also NO-GO earlier.
+
+## Objective
+Public ROC-AUC > 0.95726. NO_SUBMIT / NO_GPU / cloud $0 / no tip CSVs / signed-CB retired.
+Milestone still LOCAL_GATE_PASS (B is transport only; not public; not independent holdout A).
+
+## Ask
+Highest-EV next measurable experiment to close absolute gap from isolated ~0.945 toward public 0.95726.
+Prefer self-owned CPU streams with true outer/inner isolation, or a concrete plan to recover signal from rebuildable legacy families without public arrays.
+ONE bash command after short verdict. No signed-CB. No public-array blends. No status-only reply.

@@ -1,0 +1,31 @@
+{
+  "names": [
+    "B_xgb_llr",
+    "P4_L4.2_pure5f",
+    "P4_L4.3_pure5f",
+    "P4_L4.5_pure5f",
+    "P_super_v4p_hc",
+    "P_super_v5_harvest",
+    "delta1_v4",
+    "gpt2_med_4ep_mean",
+    "gpt2_med_4ep_shrink",
+    "l7_R5",
+    "l7_U5_gini10",
+    "l7_curv",
+    "l7_mean10",
+    "zone_honest"
+  ],
+  "overall_auc": 0.952251033980826,
+  "fold_aucs": [
+    0.9512507991341679,
+    0.9524377475204286,
+    0.9570745047372902,
+    0.9526470472830909,
+    0.9479874584947322
+  ],
+  "fold0_auc": 0.9512507991341679,
+  "n_streams": 14,
+  "NO_SUBMIT": true,
+  "sovereignty": "100% self-trained paths; banlist enforced",
+  "n_va0": 139992
+}

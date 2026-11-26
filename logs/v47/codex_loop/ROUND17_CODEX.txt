@@ -1,0 +1,253 @@
+OpenAI Codex v0.172.0
+--------
+workdir: /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+model: gpt-6.2-sol
+provider: openai
+approval: never
+sandbox: read-only
+reasoning effort: none
+reasoning summaries: none
+session id: 01a2180a-0cec-7810-bcbf-4a725485c87f
+--------
+user
+# Cursor → Codex Round17
+
+Decimal-token sealed B (SKF seed 2031, folds 1-4) COMPLETE: **B_TRANSPORT_PASS**
+- Weighted Δe-5 **+124.39** · **4/4** · LOO all >0 · CI95 e-5 **[104.4, 145.9]**
+- Candidate fold AUCs ≈ 0.94635–0.94930 (still < public 0.95726)
+- Artifacts: SEALED_LOCK_DECIMAL_TOKEN_B2031.json, SEALED_B_DECIMAL_TOKEN_2031_TRANSPORT.json
+
+Best isolated recipe now 4-stream (LR+LGBM+histXGB+decimal-token). Absolute gap to public ≈ 0.008–0.011.
+Highest-EV next measurable step toward public >0.95726 under NO_SUBMIT/NO_GPU?
+ONE bash command after short verdict. No signed-CB. No public arrays.
+codex
+I’ll check the decimal runner for a clean way to add a lexical challenger.
+exec
+/bin/bash -lc "rg -n 'inner_oof|raw_strings|decimal_fields|scores =|"'^evaluation|''^exec'"' /tmp/s6e11_isol/decimal_token.sh /tmp/s6e11_isol/p2_xgb_inner.py
+ls preds/v47_sovereign/*decimal*" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 0ms:
+/tmp/s6e11_isol/decimal_token.sh:18:runner = replace_once(runner, "outer_scores = []", """outer_scores = []
+/tmp/s6e11_isol/decimal_token.sh:23:decimal_fields = [column for group in decimal_groups for column in group]
+/tmp/s6e11_isol/decimal_token.sh:24:raw_strings = pd.read_csv(
+/tmp/s6e11_isol/decimal_token.sh:25:    "/tmp/s6e11_isol/data/train.csv", usecols=["id", *decimal_fields],
+/tmp/s6e11_isol/decimal_token.sh:26:    dtype={column: "string" for column in decimal_fields},
+/tmp/s6e11_isol/decimal_token.sh:28:np.testing.assert_array_equal(raw_strings.pop("id").to_numpy(), ids)
+/tmp/s6e11_isol/decimal_token.sh:30:for column in decimal_fields:
+/tmp/s6e11_isol/decimal_token.sh:31:    parts = raw_strings[column].str.partition(".")
+/tmp/s6e11_isol/decimal_token.sh:34:del raw_strings
+/tmp/s6e11_isol/decimal_token.sh:66:runner = replace_once(runner, "    scores = np.column_stack(margins)", """    rate_parts = []
+/tmp/s6e11_isol/decimal_token.sh:79:    scores = np.column_stack(margins)""")
+/tmp/s6e11_isol/decimal_token.sh:81:evaluation = """
+/tmp/s6e11_isol/decimal_token.sh:84:with np.load(pred / "p2_xgb_inner_oof_f0_dev.npz", allow_pickle=False) as saved:
+/tmp/s6e11_isol/decimal_token.sh:100:decimal_scores = np.mean([design[:, 3] for design in outer_designs], axis=0)
+/tmp/s6e11_isol/decimal_token.sh:112:np.savez(pred / "p2_decimal_token_inner_oof_f0_dev.npz",
+/tmp/s6e11_isol/decimal_token.sh:124:exec(compile(runner + "\n" + evaluation, str(source_path), "exec"), {"__name__": "__main__"})
+/tmp/s6e11_isol/p2_xgb_inner.py:34:inner_oof = np.full((len(train), 3), np.nan)
+/tmp/s6e11_isol/p2_xgb_inner.py:35:outer_scores = []
+/tmp/s6e11_isol/p2_xgb_inner.py:77:    scores = np.column_stack(margins)
+/tmp/s6e11_isol/p2_xgb_inner.py:78:    inner_oof[held] = scores[:len(held)]
+/tmp/s6e11_isol/p2_xgb_inner.py:81:assert np.isfinite(inner_oof).all() and np.isfinite(outer_scores).all()
+/tmp/s6e11_isol/p2_xgb_inner.py:85:    for reference, values in zip(inner_oof.T, scores.T):
+/tmp/s6e11_isol/p2_xgb_inner.py:93:inner_design = rank_design(inner_oof)
+/tmp/s6e11_isol/p2_xgb_inner.py:101:    scores = [model.decision_function(scaler.transform(design[:, :width])) for design in outer_designs]
+/tmp/s6e11_isol/p2_xgb_inner.py:137:    pred / "p2_xgb_inner_oof_f0_dev.npz", ids=ids[valid], row_indices=valid,
+preds/v47_sovereign/p2_decimal_token_inner_oof_f0_dev.npz
+preds/v47_sovereign/sealed_b_decimal_token_2031_transport.npz
+
+codex
+**Keep the four-stream stack and test one character n-gram challenger.** The decimal-token gain survived the seed-2031 transport test. The next hypothesis is that recurring fragments within the original numeric strings carry signal beyond exact suffix and prefix–suffix rates. A sparse CPU logistic model tests that hypothesis with a different learner. The run must reproduce **0.9461443510** before it can advance at **≥+8e-5 and ≥4/5 positive** on historical Fold-0. The target of **0.95726 public AUC** still requires separate verification.
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python -u - <<'PY'
+from pathlib import Path
+
+decimal_path = Path("/tmp/s6e11_isol/decimal_token.sh")
+lines = decimal_path.read_text().splitlines(keepends=True)
+assert lines[0].rstrip().endswith("<<'PY'") and lines[-1].strip() == "PY"
+assembly, boundary, _ = "".join(lines[1:-1]).partition('\nevaluation = """')
+assert boundary, "Decimal runner assembly boundary changed"
+namespace = {"__name__": "_assemble_decimal_runner"}
+exec(compile(assembly, str(decimal_path), "exec"), namespace)
+runner = namespace["runner"]
+
+def replace_once(text, old, new):
+    assert text.count(old) == 1, f"Decimal runner changed near {old!r}"
+    return text.replace(old, new, 1)
+
+runner = replace_once(runner, "(len(train), 4)", "(len(train), 5)")
+assert runner.count('"/tmp/s6e11_isol/data/train.csv"') == 2
+runner = runner.replace('"/tmp/s6e11_isol/data/train.csv"', '"data/train.csv"')
+assert 'device="cpu"' in runner
+runner = replace_once(runner, "del raw_strings", """from scipy.sparse import hstack
+from sklearn.feature_extraction.text import HashingVectorizer
+
+lexical = {
+    column: "^" + raw_strings[column].fillna("<missing>") + "$"
+    for column in decimal_fields
+}
+del raw_strings
+hasher = HashingVectorizer(
+    analyzer="char", ngram_range=(2, 4), n_features=2**14,
+    alternate_sign=False, binary=True, norm=None, lowercase=False, dtype=np.float64,
+)
+
+def lexical_matrix(row_indices):
+    return hstack(
+        [hasher.transform(lexical[column].iloc[row_indices]) for column in decimal_fields],
+        format="csr",
+    )
+""")
+runner = replace_once(runner, "    scores = np.column_stack(margins)", """    lexical_fit = lexical_matrix(fit_rows)
+    lexical_model = LogisticRegression(C=0.1, solver="liblinear", max_iter=200, random_state=42)
+    lexical_model.fit(lexical_fit, fit_labels)
+    assert lexical_model.n_iter_.max() < lexical_model.max_iter, "Lexical model did not converge"
+    del lexical_fit
+    margins.append(lexical_model.decision_function(lexical_matrix(score_frame.index.to_numpy())))
+
+    scores = np.column_stack(margins)""")
+
+evaluation = """
+control, _ = stack(4)
+candidate, coefficients = stack(5)
+with np.load(pred / "p2_decimal_token_inner_oof_f0_dev.npz", allow_pickle=False) as saved:
+    np.testing.assert_array_equal(saved["row_indices"], valid)
+    np.testing.assert_array_equal(saved["ids"], ids[valid])
+    np.testing.assert_allclose(control, saved["candidate"], rtol=1e-8, atol=1e-8)
+
+observed = labels[valid]
+base_auc = roc_auc_score(observed, control)
+assert abs(base_auc - 0.9461443510359124) < 1e-12
+candidate_auc = roc_auc_score(observed, candidate)
+delta = candidate_auc - base_auc
+subfold_deltas = [
+    (roc_auc_score(observed[held], candidate[held]) - roc_auc_score(observed[held], control[held])) * 1e5
+    for _, held in StratifiedKFold(5, shuffle=True, random_state=7).split(control, observed)
+]
+positive = sum(change > 0 for change in subfold_deltas)
+verdict = "DEV_ADVANCE" if delta >= 8e-5 and positive >= 4 else "NO-GO"
+result = {
+    "scope": "historical_F0_DEV_ONLY",
+    "experiment": "field_specific_boundary_marked_decimal_char_ngram_lr",
+    "base_auc": base_auc, "candidate_auc": candidate_auc,
+    "lexical_solo_auc": roc_auc_score(observed, np.mean([part[:, 4] for part in outer_designs], axis=0)),
+    "delta_e5": delta * 1e5, "positive_subfolds": positive,
+    "subfold_deltas_e5": subfold_deltas, "meta_coefficients": coefficients,
+    "verdict": verdict, "NO_SUBMIT": True, "NO_GPU": True,
+}
+payload = json.dumps(result, indent=2)
+(logs / "P2_DECIMAL_CHAR_NGRAM_F0_DEV.json").write_text(payload + "\\n")
+np.savez(
+    pred / "p2_decimal_char_ngram_f0_dev.npz", ids=ids[valid], row_indices=valid,
+    control=control, candidate=candidate, outer_stream_margins=np.stack(outer_scores),
+)
+with Path("logs/v47/CODEX_DS_REVIEW_NEXT.md").open("a") as review:
+    review.write(
+        "\\n## P2 decimal character n-gram LR\\n\\n"
+        f"Historical Fold-0. Control {base_auc:.16f}, candidate {candidate_auc:.16f}, "
+        f"lexical solo {result['lexical_solo_auc']:.16f}, Δe-5 {delta * 1e5:+.8f}, "
+        f"{positive}/5 positive, {verdict}. Subfold Δe-5 {subfold_deltas}.\\n"
+    )
+print(payload)
+"""
+exec(compile(runner + "\n" + evaluation, str(decimal_path), "exec"), {"__name__": "__main__"})
+PY
+```
+tokens used
+216,373
+**Keep the four-stream stack and test one character n-gram challenger.** The decimal-token gain survived the seed-2031 transport test. The next hypothesis is that recurring fragments within the original numeric strings carry signal beyond exact suffix and prefix–suffix rates. A sparse CPU logistic model tests that hypothesis with a different learner. The run must reproduce **0.9461443510** before it can advance at **≥+8e-5 and ≥4/5 positive** on historical Fold-0. The target of **0.95726 public AUC** still requires separate verification.
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python -u - <<'PY'
+from pathlib import Path
+
+decimal_path = Path("/tmp/s6e11_isol/decimal_token.sh")
+lines = decimal_path.read_text().splitlines(keepends=True)
+assert lines[0].rstrip().endswith("<<'PY'") and lines[-1].strip() == "PY"
+assembly, boundary, _ = "".join(lines[1:-1]).partition('\nevaluation = """')
+assert boundary, "Decimal runner assembly boundary changed"
+namespace = {"__name__": "_assemble_decimal_runner"}
+exec(compile(assembly, str(decimal_path), "exec"), namespace)
+runner = namespace["runner"]
+
+def replace_once(text, old, new):
+    assert text.count(old) == 1, f"Decimal runner changed near {old!r}"
+    return text.replace(old, new, 1)
+
+runner = replace_once(runner, "(len(train), 4)", "(len(train), 5)")
+assert runner.count('"/tmp/s6e11_isol/data/train.csv"') == 2
+runner = runner.replace('"/tmp/s6e11_isol/data/train.csv"', '"data/train.csv"')
+assert 'device="cpu"' in runner
+runner = replace_once(runner, "del raw_strings", """from scipy.sparse import hstack
+from sklearn.feature_extraction.text import HashingVectorizer
+
+lexical = {
+    column: "^" + raw_strings[column].fillna("<missing>") + "$"
+    for column in decimal_fields
+}
+del raw_strings
+hasher = HashingVectorizer(
+    analyzer="char", ngram_range=(2, 4), n_features=2**14,
+    alternate_sign=False, binary=True, norm=None, lowercase=False, dtype=np.float64,
+)
+
+def lexical_matrix(row_indices):
+    return hstack(
+        [hasher.transform(lexical[column].iloc[row_indices]) for column in decimal_fields],
+        format="csr",
+    )
+""")
+runner = replace_once(runner, "    scores = np.column_stack(margins)", """    lexical_fit = lexical_matrix(fit_rows)
+    lexical_model = LogisticRegression(C=0.1, solver="liblinear", max_iter=200, random_state=42)
+    lexical_model.fit(lexical_fit, fit_labels)
+    assert lexical_model.n_iter_.max() < lexical_model.max_iter, "Lexical model did not converge"
+    del lexical_fit
+    margins.append(lexical_model.decision_function(lexical_matrix(score_frame.index.to_numpy())))
+
+    scores = np.column_stack(margins)""")
+
+evaluation = """
+control, _ = stack(4)
+candidate, coefficients = stack(5)
+with np.load(pred / "p2_decimal_token_inner_oof_f0_dev.npz", allow_pickle=False) as saved:
+    np.testing.assert_array_equal(saved["row_indices"], valid)
+    np.testing.assert_array_equal(saved["ids"], ids[valid])
+    np.testing.assert_allclose(control, saved["candidate"], rtol=1e-8, atol=1e-8)
+
+observed = labels[valid]
+base_auc = roc_auc_score(observed, control)
+assert abs(base_auc - 0.9461443510359124) < 1e-12
+candidate_auc = roc_auc_score(observed, candidate)
+delta = candidate_auc - base_auc
+subfold_deltas = [
+    (roc_auc_score(observed[held], candidate[held]) - roc_auc_score(observed[held], control[held])) * 1e5
+    for _, held in StratifiedKFold(5, shuffle=True, random_state=7).split(control, observed)
+]
+positive = sum(change > 0 for change in subfold_deltas)
+verdict = "DEV_ADVANCE" if delta >= 8e-5 and positive >= 4 else "NO-GO"
+result = {
+    "scope": "historical_F0_DEV_ONLY",
+    "experiment": "field_specific_boundary_marked_decimal_char_ngram_lr",
+    "base_auc": base_auc, "candidate_auc": candidate_auc,
+    "lexical_solo_auc": roc_auc_score(observed, np.mean([part[:, 4] for part in outer_designs], axis=0)),
+    "delta_e5": delta * 1e5, "positive_subfolds": positive,
+    "subfold_deltas_e5": subfold_deltas, "meta_coefficients": coefficients,
+    "verdict": verdict, "NO_SUBMIT": True, "NO_GPU": True,
+}
+payload = json.dumps(result, indent=2)
+(logs / "P2_DECIMAL_CHAR_NGRAM_F0_DEV.json").write_text(payload + "\\n")
+np.savez(
+    pred / "p2_decimal_char_ngram_f0_dev.npz", ids=ids[valid], row_indices=valid,
+    control=control, candidate=candidate, outer_stream_margins=np.stack(outer_scores),
+)
+with Path("logs/v47/CODEX_DS_REVIEW_NEXT.md").open("a") as review:
+    review.write(
+        "\\n## P2 decimal character n-gram LR\\n\\n"
+        f"Historical Fold-0. Control {base_auc:.16f}, candidate {candidate_auc:.16f}, "
+        f"lexical solo {result['lexical_solo_auc']:.16f}, Δe-5 {delta * 1e5:+.8f}, "
+        f"{positive}/5 positive, {verdict}. Subfold Δe-5 {subfold_deltas}.\\n"
+    )
+print(payload)
+"""
+exec(compile(runner + "\n" + evaluation, str(decimal_path), "exec"), {"__name__": "__main__"})
+PY
+```

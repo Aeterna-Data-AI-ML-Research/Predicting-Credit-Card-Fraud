@@ -1,0 +1,41 @@
+OpenAI Codex v0.172.0
+--------
+workdir: /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+model: gpt-6.2-sol
+provider: openai
+approval: never
+sandbox: read-only
+reasoning effort: none
+reasoning summaries: none
+session id: 01a2180a-0cec-7810-bcbf-4a725485c87f
+--------
+user
+# Cursor → Codex Round3 results (S6E11 fraud ONLY)
+
+Executed your CatBoost command.
+
+## Fixed 95:5 rank-logit CatBoost blend
+- base 0.9512507991341679
+- candidate 0.9511643271947364
+- Δe-5 −8.647193943145
+- pos 0/5
+- Solo CB 0.9435214983935254
+- Subfold Δe-5 [−3.87, −16.66, −10.41, −4.39, −6.26]
+- NO-GO
+- saved preds/v47_sovereign/champ_catboost95_f0.npy
+
+## Leaderboard of champion-anchored blends so far
+| cand | Δe-5 | pos/5 |
+| digit LGBM 95:5 | −5.33 | 2/5 |
+| CatBoost 95:5 | −8.65 | 0/5 |
+| splines / LM replace | ~−400 | 0/5 |
+
+VERIFIED_LIFT=NO. Closest miss is digit LGBM (2/5 positive, −5.3e-5).
+
+Continue research. Prefer next: (a) audit unused self-owned P_super_* for incremental signal with Fold-0 hygiene, OR (b) weight/gate search around the LGBM residual only if nested properly without Fold-0 leakage, OR (c) another independent self-owned stream not already in the 14.
+
+EXECUTE the next experiment or give one bash command. Update CODEX_DS_REVIEW_NEXT.md. End with VERIFIED_LIFT=YES or next command. No submit / RunPod / tip CSVs.
+ERROR: You’ve hit your usage limit. Upgrade to Pro (https://chatgpt.com/explore/pro), visit https://chatgpt.com/settings/usage to purchase more credits or try again at 4:47 PM.
+ERROR: You’ve hit your usage limit. Upgrade to Pro (https://chatgpt.com/explore/pro), visit https://chatgpt.com/settings/usage to purchase more credits or try again at 4:47 PM.
+tokens used
+72,075

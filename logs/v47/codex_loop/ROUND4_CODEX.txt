@@ -1,0 +1,721 @@
+OpenAI Codex v0.172.0
+--------
+workdir: /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+model: gpt-6.2-sol
+provider: openai
+approval: never
+sandbox: read-only
+reasoning effort: none
+reasoning summaries: none
+session id: 01a2180a-0cec-7810-bcbf-4a725485c87f
+--------
+user
+# Cursor → Codex Round4 results (S6E11 fraud ONLY) — USAGE LIMIT LIFTED
+
+Executed your ranked next lever: unused self-owned OOF audit with fixed 95:5 rank-logit champion-anchored blends.
+
+## Key finding (NEW EVIDENCE — do not HARD STOP)
+Audited 30 unused streams. Several beat the champion at 95:5 with **5/5 positive subfolds**, but Δe-5 < +8 gate:
+
+| stream | solo F0 | ρ vs z0 | Δe-5 @95:5 | pos/5 |
+|---|---:|---:|---:|---:|
+| P_wide_v5_rect | 0.951971 | 0.9966 | **+5.1343** | **5/5** |
+| P_super_v8_part12_rect | 0.951870 | 0.9959 | +5.0426 | 5/5 |
+| P_super_v6_grandmaster | 0.951937 | 0.9970 | +4.7056 | 5/5 |
+| P_super_v7_cpu | 0.951937 | 0.9970 | +4.7056 | 5/5 |
+| P_super_v9_frontier_rect | 0.951838 | 0.9963 | +4.6301 | 5/5 |
+
+Best prior champion-anchored fresh tabular was digit LGBM Δe-5 −5.33 · 2/5.
+VERIFIED_LIFT still NO (need ≥ +8e-5). Closest miss now +5.13e-5 with perfect subfold agreement.
+
+Artifacts: `logs/v47/codex_loop/ROUND4_PSUPER_AUDIT.json`, script `scripts/v47_sovereign/audit_unused_psuper_f0.py`.
+
+## Ask
+1. Challenge the fixed 5% weight — nested weight search / multi-stream residual among top positive streams WITHOUT Fold-0 leakage for weight choice.
+2. EXECUTE the single highest-EV next experiment yourself, or give one bash command.
+3. Update logs/v47/CODEX_DS_REVIEW_NEXT.md with exact metrics.
+4. End VERIFIED_LIFT=YES <numbers> or next command.
+
+Locks: NO_SUBMIT · $0 RunPod · 0 tip CSVs. Goal remains verified Fold-0 gate pass.
+codex
+I’ll trace how the leading streams were built before tuning blend weights. The Round 4 shortlist used Fold-0 results, so a nested weight search on that shortlist alone cannot establish a clean pass.
+exec
+/bin/bash -lc "cat scripts/v47_sovereign/audit_unused_psuper_f0.py
+rg -n 'P_wide_v5_rect_oof|P_super_v8_part12_rect_oof|P_super_v6_grandmaster_oof|P_super_v9_frontier_rect_oof' scripts/build* scripts/part*" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 560ms:
+#!/usr/bin/env python3
+"""Audit unused self-owned OOF streams vs z_sovereign_v0 Fold-0; fixed 95:5 blends."""
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+from scipy.special import logit
+from scipy.stats import rankdata, spearmanr
+from sklearn.metrics import roc_auc_score
+from sklearn.model_selection import StratifiedKFold
+
+ROOT = Path(__file__).resolve().parents[2]
+PRED = ROOT / "preds"
+SOV = PRED / "v47_sovereign"
+USED = {
+    "B_xgb_llr",
+    "P4_L4.2_pure5f",
+    "P4_L4.3_pure5f",
+    "P4_L4.5_pure5f",
+    "P_super_v4p_hc",
+    "P_super_v5_harvest",
+    "delta1_v4",
+    "gpt2_med_4ep_mean",
+    "gpt2_med_4ep_shrink",
+    "l7_R5",
+    "l7_U5_gini10",
+    "l7_curv",
+    "l7_mean10",
+    "zone_honest",
+}
+BASE_AUC = 0.9512507991341679
+
+
+def rank_logit(scores: np.ndarray) -> np.ndarray:
+    return logit((rankdata(scores) - 0.5) / len(scores))
+
+
+def main() -> None:
+    y = pd.read_csv(ROOT / "data/train.csv", usecols=["is_fraud"])["is_fraud"].to_numpy()
+    folds = np.load(SOV / "folds_skf42.npy")
+    valid = np.flatnonzero(folds == 0)
+    y0 = y[valid]
+    base = np.load(SOV / "z_sovereign_v0_oof.npy").ravel()[valid]
+    base_auc = float(roc_auc_score(y0, base))
+    assert abs(base_auc - BASE_AUC) < 1e-12
+
+    def subfold_deltas(candidate: np.ndarray) -> list[float]:
+        out = []
+        for _, i in StratifiedKFold(5, shuffle=True, random_state=7).split(base, y0):
+            out.append(
+                (roc_auc_score(y0[i], candidate[i]) - roc_auc_score(y0[i], base[i])) * 1e5
+            )
+        return out
+
+    cands: list[tuple[str, str, np.ndarray]] = []
+    for p in sorted(PRED.glob("P_*_oof.npy")):
+        name = p.name.replace("_oof.npy", "")
+        if name in USED:
+            continue
+        try:
+            a = np.load(p)
+        except Exception:
+            continue
+        if a.ndim != 1 or a.shape[0] != len(y):
+            continue
+        cands.append((name, str(p), a.astype(np.float64)))
+
+    rows = []
+    best = None
+    for name, path, a in cands:
+        s = a[valid]
+        if not np.isfinite(s).all():
+            continue
+        solo = float(roc_auc_score(y0, s))
+        corr = float(spearmanr(base, s).correlation)
+        blend = 0.95 * rank_logit(base) + 0.05 * rank_logit(s)
+        auc = float(roc_auc_score(y0, blend))
+        d = auc - base_auc
+        subs = subfold_deltas(blend)
+        pos = int(sum(x > 0 for x in subs))
+        verd = "GO" if d >= 8e-5 and pos >= 4 else "NO-GO"
+        rec = {
+            "name": name,
+            "path": path,
+            "solo_auc": solo,
+            "spearman_vs_base": corr,
+            "blend_auc": auc,
+            "delta_e5": d * 1e5,
+            "pos5": pos,
+            "sub_e5": subs,
+            "verdict": verd,
+        }
+        rows.append(rec)
+        key = (rec["delta_e5"], rec["pos5"], rec["solo_auc"])
+        if best is None or key > (best["delta_e5"], best["pos5"], best["solo_auc"]):
+            best = rec
+
+    rows.sort(key=lambda r: (r["delta_e5"], r["pos5"], r["solo_auc"]), reverse=True)
+    print(f"Audited {len(rows)} unused OOF streams; base={base_auc:.16f}")
+    print("TOP 15 by Δe-5 of fixed 95:5 blend:")
+    for r in rows[:15]:
+        print(
+            f"  {r['name']}: solo={r['solo_auc']:.6f} ρ={r['spearman_vs_base']:.4f} "
+            f"Δe-5={r['delta_e5']:+.4f} pos={r['pos5']}/5 {r['verdict']}"
+        )
+
+    out = {
+        "base_auc": base_auc,
+        "n_audited": len(rows),
+        "top": rows[:25],
+        "best": best,
+        "VERIFIED_LIFT": bool(best and best["verdict"] == "GO"),
+        "NO_SUBMIT": True,
+    }
+    out_dir = ROOT / "logs/v47/codex_loop"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    (out_dir / "ROUND4_PSUPER_AUDIT.json").write_text(json.dumps(out, indent=2))
+
+    rep = ROOT / "logs/v47/CODEX_DS_REVIEW_NEXT.md"
+    lines = [
+        "\n## Round4 P_super / unused OOF audit (fixed 95:5 rank-logit vs champion)\n",
+        f"Audited {len(rows)} streams. VERIFIED_LIFT={'YES' if out['VERIFIED_LIFT'] else 'NO'}.\n",
+    ]
+    if best:
+        lines.append(
+            f"Best: `{best['name']}` solo={best['solo_auc']:.6f} "
+            f"Δe-5={best['delta_e5']:+.6f} pos={best['pos5']}/5 {best['verdict']}\n"
+        )
+    lines.append(
+        "\n| stream | solo | ρ | Δe-5 | pos/5 | verdict |\n|---|---:|---:|---:|---:|---|\n"
+    )
+    for r in rows[:12]:
+        lines.append(
+            f"| {r['name']} | {r['solo_auc']:.6f} | {r['spearman_vs_base']:.4f} | "
+            f"{r['delta_e5']:+.4f} | {r['pos5']}/5 | {r['verdict']} |\n"
+        )
+    with rep.open("a") as f:
+        f.writelines(lines)
+    print("BEST", best["name"] if best else None, "VERIFIED_LIFT", out["VERIFIED_LIFT"])
+
+
+if __name__ == "__main__":
+    main()
+scripts/build_v9_frontier_slot3.py:128:    v8_o = np.load(PRED / "P_super_v8_part12_rect_oof.npy").ravel().astype(np.float64)
+scripts/build_v9_frontier_slot3.py:225:    np.save(PRED / "P_super_v9_frontier_rect_oof.npy", p9_oof)
+scripts/build_v6_grandmaster_fusion.py:186:    np.save(PRED / "P_super_v6_grandmaster_oof.npy", p6_oof.astype(np.float64))
+scripts/build_v8_part12_rect_slot2.py:183:    np.save(PRED / "P_super_v8_part12_rect_oof.npy", p8_oof)
+scripts/build_v8_zref_clean_upgrade.py:347:    v8_old = zrk(np.load(PRED / "P_super_v8_part12_rect_oof.npy").ravel())
+scripts/build_v9_full_5fold.py:244:    z_v8_o = zrk(np.load(PRED / "P_super_v8_part12_rect_oof.npy").ravel())
+
+exec
+/bin/bash -lc "rg -n 'wide_v5_rect|glob|read_csv|fit\\(|hillclimb|rectif|y\\[' scripts/build_v{6_grandmaster_fusion,7_sovereign_cpu,8_part12_rect_slot2,9_frontier_slot3}.py
+rg -n 'P_wide_v5_rect' scripts | head -25
+tail -25 logs/v47/CODEX_DS_REVIEW_NEXT.md" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 10014ms:
+scripts/build_v8_part12_rect_slot2.py:3:Build P_super_v8_part12_rect (Part 12 wide_lm_stack 0.9525651 OOF + our LB-proven 0.95247 KS-rectified
+scripts/build_v8_part12_rect_slot2.py:108:    y = pd.read_csv(ROOT / "data/train.csv", usecols=["is_fraud"])["is_fraud"].to_numpy(np.int32)
+scripts/build_v8_part12_rect_slot2.py:109:    test_ids = pd.read_csv(ROOT / "data/test.csv", usecols=["id"])["id"].to_numpy()
+scripts/build_v8_part12_rect_slot2.py:116:    maly_sub = pd.read_csv(W11 / "malyshev_fsl/submission.csv").set_index("id").loc[test_ids, "is_fraud"].to_numpy(float)
+scripts/build_v8_part12_rect_slot2.py:117:    ev4_sub = pd.read_csv(SUB / "sub_ev4_live10_reverse_ev2_plus_hc_ascent.csv").set_index("id").loc[test_ids, "is_fraud"].to_numpy(float)
+scripts/build_v8_part12_rect_slot2.py:118:    slot1_sub = pd.read_csv(SUB / "sub_v5_rect_on_ev4_1x.csv").set_index("id").loc[test_ids, "is_fraud"].to_numpy(float)
+scripts/build_v8_part12_rect_slot2.py:124:    # 2. Build KS-rectified orthogonal basis of our proprietary discoveries vs Part 12
+scripts/build_v8_part12_rect_slot2.py:150:        best = float(fast_auc(y[a], z_w12_o[a]))
+scripts/build_v8_part12_rect_slot2.py:157:                    sc = float(fast_auc(y[a], z_w12_o[a] + R_o[a] @ wt))
+scripts/build_v8_part12_rect_slot2.py:162:        d = float(fast_auc(y[b], oof_v8_z[b]) - fast_auc(y[b], z_w12_o[b]))
+scripts/build_v8_part12_rect_slot2.py:201:    # Upgraded Part 12 logit-rank backbone + 1.0x KS-rectified proprietary GPU/3ep-GPT2 residual
+scripts/build_v8_part12_rect_slot2.py:205:    # Exact Part 12 70/30 rank backbone + 1.0x KS-rectified proprietary residual
+scripts/build_v8_part12_rect_slot2.py:298:    print(f"\n[{summary['elapsed_s']}s] Saved logs/overnight/v8_part12_slot2.json")
+scripts/build_v7_sovereign_cpu.py:54:    y = pd.read_csv(ROOT / "data/train.csv", usecols=["is_fraud"])["is_fraud"].to_numpy(np.int32)
+scripts/build_v7_sovereign_cpu.py:55:    test_ids = pd.read_csv(ROOT / "data/test.csv", usecols=["id"])["id"].to_numpy()
+scripts/build_v7_sovereign_cpu.py:96:    maly_sub = pd.read_csv(W / "malyshev_fsl/submission.csv").set_index("id").loc[test_ids, "is_fraud"].to_numpy(np.float64)
+scripts/build_v7_sovereign_cpu.py:97:    areeb_sub = pd.read_csv(W / "areeb_095291/submission.csv").set_index("id").loc[test_ids, "is_fraud"].to_numpy(np.float64)
+scripts/build_v7_sovereign_cpu.py:98:    aman_v11 = pd.read_csv(W / "amanatar_v11/sub_v11_frontier_tri_blend.csv").set_index("id").loc[test_ids, "is_fraud"].to_numpy(np.float64)
+scripts/build_v7_sovereign_cpu.py:99:    aman_sieve = pd.read_csv(W / "amanatar_v11/sub_v11_adaptive_tail_sieve_pure.csv").set_index("id").loc[test_ids, "is_fraud"].to_numpy(np.float64)
+scripts/build_v7_sovereign_cpu.py:100:    ev4_sub = pd.read_csv(SUB / "sub_ev4_live10_reverse_ev2_plus_hc_ascent.csv").set_index("id").loc[test_ids, "is_fraud"].to_numpy(np.float64)
+scripts/build_v7_sovereign_cpu.py:148:        best_sc = float(fast_auc(y[a], z_wide_o[a]))
+scripts/build_v7_sovereign_cpu.py:153:                    w_try = w.copy(); w_try[j] = cw
+scripts/build_v7_sovereign_cpu.py:154:                    sc = float(fast_auc(y[a], z_wide_o[a] + R_o[a] @ w_try))
+scripts/build_v7_sovereign_cpu.py:159:        d_f = float(fast_auc(y[b], oof_v7_z[b]) - fast_auc(y[b], z_wide_o[b]))
+scripts/build_v9_frontier_slot3.py:120:    y = pd.read_csv(ROOT / "data/train.csv", usecols=["is_fraud"])["is_fraud"].to_numpy(np.int32)
+scripts/build_v9_frontier_slot3.py:121:    test_ids = pd.read_csv(ROOT / "data/test.csv", usecols=["id"])["id"].to_numpy()
+scripts/build_v9_frontier_slot3.py:130:    slot2_sub = pd.read_csv(SUB / "sub_v8_part12_fsl_prop_rect.csv").set_index("id").loc[test_ids, "is_fraud"].to_numpy(float)
+scripts/build_v9_frontier_slot3.py:131:    maly_sub = pd.read_csv(W11 / "malyshev_fsl/submission.csv").set_index("id").loc[test_ids, "is_fraud"].to_numpy(float)
+scripts/build_v9_frontier_slot3.py:132:    aman_v11 = pd.read_csv(W11 / "amanatar_v11/sub_v11_frontier_tri_blend.csv").set_index("id").loc[test_ids, "is_fraud"].to_numpy(float)
+scripts/build_v9_frontier_slot3.py:140:    mg_full_t = pd.read_csv(MG / "submission.csv").set_index("id").loc[test_ids, "is_fraud"].to_numpy(float)
+scripts/build_v9_frontier_slot3.py:147:    # 12 KS-rectified orthogonal components (8 core v8 + 4 newly validated v9 additions)
+scripts/build_v9_frontier_slot3.py:182:        best = float(fast_auc(y[a], z_w12_o[a]))
+scripts/build_v9_frontier_slot3.py:189:                    sc = float(fast_auc(y[a], z_w12_o[a] + R_o_eff[a] @ wt))
+scripts/build_v9_frontier_slot3.py:194:        d12 = float(fast_auc(y[b], oof_v9_z[b]) - fast_auc(y[b], z_w12_o[b]))
+scripts/build_v9_frontier_slot3.py:195:        dv8 = float(fast_auc(y[b], oof_v9_z[b]) - fast_auc(y[b], v8_o[b]))
+scripts/build_v9_frontier_slot3.py:245:    #   - + 1.25x dz9_orth (our 12-component KS-rectified v9 residual incl. GPU P4/LLR + 3ep bidir/rev GPT-2 + Megayak v15 full refit + 0.35x Sameer 10F)
+scripts/build_v9_frontier_slot3.py:250:    # Pure 1.35x v9 KS-rectified residual on z_p12_fsl66 (zero external Aman component)
+scripts/build_v9_frontier_slot3.py:347:    print(f"\n[{summary['elapsed_s']}s] Saved logs/overnight/v9_frontier_slot3.json")
+scripts/build_v6_grandmaster_fusion.py:42:    y = pd.read_csv(ROOT / "data/train.csv", usecols=["is_fraud"])["is_fraud"].to_numpy(np.int32)
+scripts/build_v6_grandmaster_fusion.py:43:    test_ids = pd.read_csv(ROOT / "data/test.csv", usecols=["id"])["id"].to_numpy()
+scripts/build_v6_grandmaster_fusion.py:53:    maly_sub = pd.read_csv(OUT / "malyshev_fsl/submission.csv").set_index("id").loc[test_ids, "is_fraud"].to_numpy(np.float64)
+scripts/build_v6_grandmaster_fusion.py:54:    areeb_sub = pd.read_csv(OUT / "areeb_095291/submission.csv").set_index("id").loc[test_ids, "is_fraud"].to_numpy(np.float64)
+scripts/build_v6_grandmaster_fusion.py:71:    ev4_sub = pd.read_csv(SUB / "sub_ev4_live10_reverse_ev2_plus_hc_ascent.csv").set_index("id").loc[test_ids, "is_fraud"].to_numpy(np.float64)
+scripts/build_v6_grandmaster_fusion.py:113:        best_sc = float(fast_auc(y[a], z_wide_o[a]))
+scripts/build_v6_grandmaster_fusion.py:119:                    w_try[j] = cw
+scripts/build_v6_grandmaster_fusion.py:120:                    sc = float(fast_auc(y[a], z_wide_o[a] + R_o[a] @ w_try))
+scripts/build_v6_grandmaster_fusion.py:126:        d_f = float(fast_auc(y[b], oof_v6_z[b]) - fast_auc(y[b], z_wide_o[b]))
+scripts/build_v6_grandmaster_fusion.py:146:    base_f01 = float(fast_auc(y[seen], z_wide_o[seen]))
+scripts/build_v6_grandmaster_fusion.py:147:    v6_f01 = float(fast_auc(y[seen], oof_v6_z[seen]))
+scripts/build_v6_grandmaster_fusion.py:150:        sc = float(fast_auc(y[seen], oof_v6_z[seen] + w_lm * ro_lm))
+scripts/build_v6_grandmaster_fusion.py:162:            best_sc = float(fast_auc(y[a], z_wide_o[a]))
+scripts/build_v6_grandmaster_fusion.py:166:                    w_try = w.copy(); w_try[j] = cw
+scripts/build_v6_grandmaster_fusion.py:167:                    sc = float(fast_auc(y[a], z_wide_o[a] + R_o[a] @ w_try))
+scripts/build_v6_grandmaster_fusion.py:178:        b_deltas.append(float(fast_auc(y[idx], oof_v6_z[idx]) - fast_auc(y[idx], z_wide_o[idx])))
+scripts/build_v6_grandmaster_fusion.py:263:    print(f"\nSaved {LOG_JSON} in {summary['elapsed_s']}s.", flush=True)
+scripts/ds_slot1_ks_rect_submit.py:260:    np.save(PRED / "P_wide_v5_rect_oof.npy", rk(oof_w))
+scripts/ds_slot1_ks_rect_submit.py:261:    np.save(PRED / "P_wide_v5_rect_test.npy", wide_v5_t)
+scripts/gm_v37_1_max_leap_single_submit.py:267:    for cand in [PRED / "P_wide_v5_rect_oof.npy", V36 / "z_fullbank_oof.npy"]:
+scripts/gm_v23_0_final_5slot_ab_engine.py:267:        ("P_wide_v5_rect", REPO / "preds/P_wide_v5_rect_oof.npy", REPO / "preds/P_wide_v5_rect_test.npy"),
+- Fixed 95:5 rank-logit digit LightGBM blend scored 0.9511974636845753, Δe-5 −5.333544959262859, 2/5, NO-GO. Subfold Δe-5 [+9.21261409, −13.78399548, +4.14560903, −17.65578332, −8.96789346].
+- VERIFIED_LIFT=NO. NO_SUBMIT=True, SUBMIT_ARMED=False, RunPod $0, cloud $0, public tip CSVs read 0.
+
+## Champion-anchored CatBoost
+
+Fixed 95:5 rank-logit CatBoost blend — base 0.9512507991341679, candidate 0.9511643271947364, Δe-5 -8.647193943145, 0/5, NO-GO. Solo 0.9435214983935254. Subfold Δe-5 [-3.8728680986643838, -16.663422460538868, -10.406800914430914, -4.386723255411784, -6.261191880496675].
+
+## Round4 P_super / unused OOF audit (fixed 95:5 rank-logit vs champion)
+Audited 30 streams. VERIFIED_LIFT=NO.
+Best: `P_wide_v5_rect` solo=0.951971 Δe-5=+5.134291 pos=5/5 NO-GO
+
+| stream | solo | ρ | Δe-5 | pos/5 | verdict |
+|---|---:|---:|---:|---:|---|
+| P_wide_v5_rect | 0.951971 | 0.9966 | +5.1343 | 5/5 | NO-GO |
+| P_super_v8_part12_rect | 0.951870 | 0.9959 | +5.0426 | 5/5 | NO-GO |
+| P_super_v6_grandmaster | 0.951937 | 0.9970 | +4.7056 | 5/5 | NO-GO |
+| P_super_v7_cpu | 0.951937 | 0.9970 | +4.7056 | 5/5 | NO-GO |
+| P_super_v9_frontier_rect | 0.951838 | 0.9963 | +4.6301 | 5/5 | NO-GO |
+| P_restack_own | 0.951738 | 0.9960 | +4.4899 | 5/5 | NO-GO |
+| P_restack_pub | 0.951598 | 0.9957 | +3.7249 | 5/5 | NO-GO |
+| P_super_v7_regime_only | 0.951425 | 0.9960 | +2.9151 | 5/5 | NO-GO |
+| P_super_v7 | 0.951496 | 0.9969 | +2.8067 | 5/5 | NO-GO |
+| P_super_v5p5_rect | 0.951580 | 0.9982 | +2.3040 | 5/5 | NO-GO |
+| P_super_v5_rect | 0.951578 | 0.9981 | +2.2636 | 5/5 | NO-GO |
+| P_super_v5p5_clean | 0.951513 | 0.9983 | +1.8688 | 5/5 | NO-GO |
+
+exec
+/bin/bash -lc "sed -n '176,263p' scripts/ds_slot1_ks_rect_submit.py; sed -n '42,110p' scripts/build_v6_grandmaster_fusion.py; tail -18 logs/v47/CODEX_DS_REVIEW_NEXT.md" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 0ms:
+    print(f"  v5_rect OOF={auc_v5r:.7f} (orig v5={fast_auc(y,v5_o):.7f})")
+    print(f"  v5p5_rect (4+0.5*ext) OOF={auc_v5p5r:.7f}")
+    max_ks4 = max(m["ks_resid"] for m in meta4)
+    max_ks5 = max(m["ks_resid"] for m in meta5)
+    print(f"  max KS_resid 4-comp={max_ks4:.6f}  5-comp={max_ks5:.6f}")
+    if max_ks4 >= 0.0005:
+        raise SystemExit(f"FAIL max KS_resid={max_ks4} >= 0.0005")
+
+    np.save(PRED / "P_super_v5_rect_oof.npy", p_v5_rect_o)
+    np.save(PRED / "P_super_v5_rect_test.npy", p_v5_rect_t)
+    np.save(PRED / "P_super_v5p5_rect_oof.npy", p_v5p5_rect_o)
+    np.save(PRED / "P_super_v5p5_rect_test.npy", p_v5p5_rect_t)
+
+    # Inject onto ev4
+    ev4 = pd.read_csv(SUB / "sub_ev4_live10_reverse_ev2_plus_hc_ascent.csv").set_index("id").loc[test_ids, "is_fraud"].to_numpy(float)
+    z_ev4 = zrk(ev4)
+    # Use Δz = rect residual sum (already orth vs v4p); inject onto ev4
+    dz4 = te_v5_rect - z_base_t  # = R4_t @ w4
+    dz4 = ecdf_map(dz4, oof_v5_rect - z_base_o)
+    dz5 = ecdf_map(te_v5p5_rect - z_base_t, oof_v5p5_rect - z_base_o)
+
+    sub_old = pd.read_csv(SUB / "sub_v5_harvest_on_ev4.csv").set_index("id").loc[test_ids, "is_fraud"].to_numpy(float)
+    cand_1x = rk(z_ev4 + 1.0 * dz4)
+    cand_half = rk(z_ev4 + 0.5 * dz4)
+    cand_1p5 = rk(z_ev4 + 1.5 * dz5)  # Slot2A staged: 1.5x with ext
+    cand_1x_p5 = rk(z_ev4 + 1.0 * dz5)
+
+    # rank difference vs original
+    # Spearman distance and mean abs rank delta
+    r_old, r_new = rk01(sub_old), rk01(cand_1x)
+    mean_abs_rank_delta = float(np.mean(np.abs(r_old - r_new)))
+    rho_old_new = float(spearmanr(sub_old, cand_1x).statistic)
+    print(f"  vs orig sub_v5_harvest_on_ev4: ρ={rho_old_new:.8f} mean|Δrk|={mean_abs_rank_delta:.3e}")
+
+    p_rect_1x = SUB / "sub_v5_rect_on_ev4_1x.csv"
+    p_rect_half = SUB / "sub_v5_rect_on_ev4_half.csv"
+    p_rect_1p5 = SUB / "sub_v5p5_rect_on_ev4_1p5x.csv"
+    p_rect_1x_p5 = SUB / "sub_v5p5_rect_on_ev4_1x.csv"
+    for path, arr in [(p_rect_1x, cand_1x), (p_rect_half, cand_half),
+                      (p_rect_1p5, cand_1p5), (p_rect_1x_p5, cand_1x_p5)]:
+        pd.DataFrame({"id": test_ids, "is_fraud": arr}).to_csv(path, index=False)
+        print(f"  wrote {path.name} sha={sha16(path)}")
+
+    use_rect = mean_abs_rank_delta > 1e-6
+    slot1_path = p_rect_1x if use_rect else (SUB / "sub_v5_harvest_on_ev4.csv")
+    print(f"  Slot1 file decision: {'RECT' if use_rect else 'ORIG'} → {slot1_path.name} sha={sha16(slot1_path)}")
+
+    # ---- Step 2: wide_stack synergy ----
+    print("\n[Step2] wide_stack_nested + v5_rect synergy")
+    wide_o = np.load(EXT / "goodpjw_artifacts/wide_stack_nested.npy").ravel().astype(np.float64)
+    wide_t = np.load(EXT / "goodpjw_artifacts/wide_stack_test.npy").ravel().astype(np.float64)
+    z_wide_o, z_wide_t = zrk(wide_o), zrk(wide_t)
+    base_wide = float(fast_auc(y, wide_o))
+    print(f"  wide_stack_nested OOF={base_wide:.7f}")
+
+    # Orth our rect residual components against wide (not v4p) for fair stack on wide
+    # Use Δ from R4 rebuilt vs wide baseline
+    R4w_o, R4w_t, meta_w = build_rect_basis(
+        [(n, xo, xt, w) for (n, xo, xt, w) in comps4], z_wide_o, z_wide_t
+    )
+    # nested alpha search on top of wide with fixed mean_w from harvest? Better: re-fit small grid
+    grid = (-0.08, -0.05, -0.03, -0.02, -0.01, 0.0, 0.01, 0.02, 0.03, 0.05, 0.08)
+    oof_w = np.zeros(len(y))
+    fold_w, fold_d = [], []
+    for a, b in folds:
+        w = np.zeros(4)
+        best = float(fast_auc(y[a], z_wide_o[a]))
+        for _ in range(2):
+            for j in range(4):
+                best_wj = w[j]
+                for cw in grid:
+                    wt = w.copy(); wt[j] = cw
+                    sc = float(fast_auc(y[a], z_wide_o[a] + R4w_o[a] @ wt))
+                    if sc > best + 1e-12:
+                        best, best_wj = sc, cw
+                w[j] = best_wj
+        oof_w[b] = z_wide_o[b] + R4w_o[b] @ w
+        fold_w.append(w)
+        fold_d.append(float(fast_auc(y[b], oof_w[b]) - fast_auc(y[b], wide_o[b])))
+    mean_ww = np.mean(fold_w, axis=0)
+    auc_wide_v5 = float(fast_auc(y, oof_w))
+    wins = sum(d > 0 for d in fold_d)
+    print(f"  wide+v5_rect nested OOF={auc_wide_v5:.7f} Δ={auc_wide_v5-base_wide:+.3e} wins={wins}/5 w={dict(zip([c[0] for c in comps4], [round(float(x),4) for x in mean_ww]))}")
+    wide_v5_t = rk(z_wide_t + R4w_t @ mean_ww)
+    np.save(PRED / "P_wide_v5_rect_oof.npy", rk(oof_w))
+    np.save(PRED / "P_wide_v5_rect_test.npy", wide_v5_t)
+    p_wide_pure = SUB / "sub_wide_v5_rect_pure.csv"
+    pd.DataFrame({"id": test_ids, "is_fraud": wide_v5_t}).to_csv(p_wide_pure, index=False)
+    y = pd.read_csv(ROOT / "data/train.csv", usecols=["is_fraud"])["is_fraud"].to_numpy(np.int32)
+    test_ids = pd.read_csv(ROOT / "data/test.csv", usecols=["id"])["id"].to_numpy()
+    NTR, NTE = len(y), len(test_ids)
+    FOLDS = list(StratifiedKFold(5, shuffle=True, random_state=42).split(np.zeros(NTR), y))
+
+    # 1. Load external 200-member wide stack + part9 + megayak LM + malyshev 0.95292 + areeb 0.95291
+    wide_o = np.load(OUT / "goodpjw_artifacts/wide_stack_nested.npy").astype(np.float64).ravel()
+    wide_t = np.load(OUT / "goodpjw_artifacts/wide_stack_test.npy").astype(np.float64).ravel()
+    part9_t = np.load(OUT / "goodpjw_artifacts/part9_test.npy").astype(np.float64).ravel()
+    lm_o = np.load(OUT / "megayak_lm/lm_oof.npy").astype(np.float64).ravel()
+    lm_t = np.load(OUT / "megayak_lm/lm_test.npy").astype(np.float64).ravel()
+    maly_sub = pd.read_csv(OUT / "malyshev_fsl/submission.csv").set_index("id").loc[test_ids, "is_fraud"].to_numpy(np.float64)
+    areeb_sub = pd.read_csv(OUT / "areeb_095291/submission.csv").set_index("id").loc[test_ids, "is_fraud"].to_numpy(np.float64)
+
+    # 2. Load our proprietary Nov 07 GPU & Super-Stack artifacts
+    v4p_hc_o = np.load(PRED / "P_super_v4p_hc_oof.npy").astype(np.float64).ravel()
+    v4p_hc_t = np.load(PRED / "P_super_v4p_hc_test.npy").astype(np.float64).ravel()
+    v5_o = np.load(PRED / "P_super_v5_harvest_oof.npy").astype(np.float64).ravel()
+    v5_t = np.load(PRED / "P_super_v5_harvest_test.npy").astype(np.float64).ravel()
+    b_llr_o = np.load(PRED / "paradigm_B/xgb_llr_oof.npy").astype(np.float64).ravel()
+    b_llr_t = np.load(PRED / "paradigm_B/xgb_llr_test.npy").astype(np.float64).ravel()
+    p4_o = np.load(PRED / "matrix_v2/harvest_p4_cuda_xgb_oof.npy").astype(np.float64).ravel()
+    p4_t = np.load(PRED / "matrix_v2/harvest_p4_cuda_xgb_test.npy").astype(np.float64).ravel()
+    l43_o = np.load(PRED / "matrix_v2/P4_L4.3_pure5f_oof.npy").astype(np.float64).ravel()
+    l43_t = np.load(PRED / "matrix_v2/P4_L4.3_pure5f_test.npy").astype(np.float64).ravel()
+    l42_o = np.load(PRED / "matrix_v2/P4_L4.2_pure5f_oof.npy").astype(np.float64).ravel()
+    l42_t = np.load(PRED / "matrix_v2/P4_L4.2_pure5f_test.npy").astype(np.float64).ravel()
+    l45_o = np.load(PRED / "matrix_v2/P4_L4.5_pure5f_oof.npy").astype(np.float64).ravel()
+    l45_t = np.load(PRED / "matrix_v2/P4_L4.5_pure5f_test.npy").astype(np.float64).ravel()
+    ev4_sub = pd.read_csv(SUB / "sub_ev4_live10_reverse_ev2_plus_hc_ascent.csv").set_index("id").loc[test_ids, "is_fraud"].to_numpy(np.float64)
+
+    z_wide_o = zrk(wide_o)
+    z_wide_t = zrk(wide_t)
+    base_wide_auc = float(fast_auc(y, z_wide_o))
+    print(f"[Baseline] 200-Member wide_stack_nested OOF AUC = {base_wide_auc:.7f}", flush=True)
+
+    # 3. Build orthogonalized proprietary basis vectors against z_wide
+    # Notice:
+    # - r_v4p: our proprietary L4-regime + hill-climb + gb_super residual vs wide_stack
+    # - r_l43: our P4_L4.3 step-grid parity residual
+    # - r_l42: our P4_L4.2 Bulsah sub-float string residual
+    # - r_l45: our P4_L4.5 2nd-order key-pair residual
+    # - r_bllr: our B_xgb_llr 72-col Transformer LLR residual
+    basis_specs = [
+        ("our_v4p_hc_orth", v4p_hc_o, v4p_hc_t),
+        ("our_P4_L4.3_pure5f", l43_o, l43_t),
+        ("our_P4_L4.2_pure5f", l42_o, l42_t),
+        ("our_P4_L4.5_pure5f", l45_o, l45_t),
+        ("our_B_xgb_llr", b_llr_o, b_llr_t),
+    ]
+    R_o = []
+    R_t = []
+    b_names = []
+    for name, co, ct in basis_specs:
+        ro, rt, beta = orth_against(zrk(co), zrk(ct), z_wide_o, z_wide_t)
+        R_o.append(ro)
+        R_t.append(rt)
+        b_names.append(name)
+        print(f"  Basis {name:20s}: beta_vs_wide={beta:+.4f}, KS(ro,rt)={ks_2samp(ro,rt).statistic:.4f}", flush=True)
+
+    R_o = np.column_stack(R_o)
+    R_t = np.column_stack(R_t)
+    M = R_o.shape[1]
+
+    # 4. Out-of-Fold Nested Coordinate Ascent on top of z_wide_o across all 5 folds
+    grid = (-0.06, -0.045, -0.035, -0.025, -0.018, -0.012, -0.008, -0.004, 0.0, 0.004, 0.008, 0.015, 0.025, 0.04, 0.06, 0.08, 0.10, 0.12)
+    oof_v6_z = np.zeros(NTR, dtype=np.float64)
+    fold_weights = []
+    fold_deltas = []
+## Round4 P_super / unused OOF audit (fixed 95:5 rank-logit vs champion)
+Audited 30 streams. VERIFIED_LIFT=NO.
+Best: `P_wide_v5_rect` solo=0.951971 Δe-5=+5.134291 pos=5/5 NO-GO
+
+| stream | solo | ρ | Δe-5 | pos/5 | verdict |
+|---|---:|---:|---:|---:|---|
+| P_wide_v5_rect | 0.951971 | 0.9966 | +5.1343 | 5/5 | NO-GO |
+| P_super_v8_part12_rect | 0.951870 | 0.9959 | +5.0426 | 5/5 | NO-GO |
+| P_super_v6_grandmaster | 0.951937 | 0.9970 | +4.7056 | 5/5 | NO-GO |
+| P_super_v7_cpu | 0.951937 | 0.9970 | +4.7056 | 5/5 | NO-GO |
+| P_super_v9_frontier_rect | 0.951838 | 0.9963 | +4.6301 | 5/5 | NO-GO |
+| P_restack_own | 0.951738 | 0.9960 | +4.4899 | 5/5 | NO-GO |
+| P_restack_pub | 0.951598 | 0.9957 | +3.7249 | 5/5 | NO-GO |
+| P_super_v7_regime_only | 0.951425 | 0.9960 | +2.9151 | 5/5 | NO-GO |
+| P_super_v7 | 0.951496 | 0.9969 | +2.8067 | 5/5 | NO-GO |
+| P_super_v5p5_rect | 0.951580 | 0.9982 | +2.3040 | 5/5 | NO-GO |
+| P_super_v5_rect | 0.951578 | 0.9981 | +2.2636 | 5/5 | NO-GO |
+| P_super_v5p5_clean | 0.951513 | 0.9983 | +1.8688 | 5/5 | NO-GO |
+
+exec
+/bin/bash -lc "rg -n 'P_restack_own|wide_stack|pub|eval_set|y\\[b\\]' scripts/restack_wide_own.py; rg -n 'regime_only|wide_stack_nested' scripts/build* | head -25; ls preds/v47_sovereign" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 1730ms:
+3:Own wide stack: every public OOF bank on the shared 5-fold split + our proprietary members,
+7:Writes preds/P_restack_{pub,own}_{oof,test}.npy and logs/overnight/restack_wide_own.json.
+47:def collect_public(train_ids, test_ids) -> dict[str, tuple[np.ndarray, np.ndarray]]:
+156:        fold_auc.append(float(fast_auc(y[b], dfun)))
+172:    pub = screen(collect_public(tr["id"].to_numpy(), test_ids), y)
+174:    pub.update(screen({"pjw:wide_lm_stack": (np.load(p12 / "wide_lm_stack_nested.npy").ravel(),
+177:    print(f"public members passing AUC≥{MIN_AUC}: {len(pub)} | ours: {len(ours)}")
+181:    pub_names = dedupe(pub, y)
+182:    allm = {**pub, **ours}
+184:    print(f"after dedupe: public={len(pub_names)} | public+ours={len(own_names)} "
+191:    ref_folds = [float(fast_auc(y[b], ref[b])) for _, b in folds]
+194:    a_pub, n_pub, t_pub, f_pub, _ = nested_stack(pub_names, pub, y, folds, "PUBLIC")
+197:    win_pub = sum(o > p for o, p in zip(f_own, f_pub))
+199:    print(f"\nΔ own vs public-only = {a_own - a_pub:+.3e} ({win_pub}/5 folds)")
+203:    np.save(PRED / "P_restack_pub_oof.npy", n_pub)
+204:    np.save(PRED / "P_restack_pub_test.npy", t_pub)
+205:    np.save(PRED / "P_restack_own_oof.npy", n_own)
+206:    np.save(PRED / "P_restack_own_test.npy", t_own)
+208:        ref_part12=ref_auc, public=a_pub, own=a_own,
+209:        folds_ref=ref_folds, folds_public=f_pub, folds_own=f_own,
+210:        n_public=len(pub_names), n_own=len(own_names),
+scripts/build_v6_grandmaster_fusion.py:48:    wide_o = np.load(OUT / "goodpjw_artifacts/wide_stack_nested.npy").astype(np.float64).ravel()
+scripts/build_v6_grandmaster_fusion.py:76:    print(f"[Baseline] 200-Member wide_stack_nested OOF AUC = {base_wide_auc:.7f}", flush=True)
+scripts/build_v6_grandmaster_fusion.py:155:    # 6. Multi-seed ({42, 7, 2024}) & 90% Bootstrap CI of P_super_v6_grandmaster vs wide_stack_nested
+scripts/build_v7_sovereign_cpu.py:60:    wide_o = np.load(W / "goodpjw_artifacts/wide_stack_nested.npy").astype(np.float64).ravel()
+scripts/build_v7_sovereign_cpu.py:139:    print(f"[Step 1 CPU] Baseline wide_stack_nested OOF AUC = {base_auc:.7f} (M={M} orthogonal bases)", flush=True)
+HGDT_V2_SKIPPED.json
+HGDT_V2_THROUGHPUT.json
+catboost_solo_f0.npy
+champ_catboost95_f0.npy
+conditional_f0_oof.npy
+conditional_f0_tabular_oof.npy
+conditional_f0_tabular_splines_oof.npy
+folds_skf42.npy
+peer_z_sovereign_raw_oof.npy
+peer_z_sovereign_raw_test.npy
+z_sovereign_v0_oof.npy
+z_sovereign_v0_test.npy
+z_sovereign_v1_oof.npy
+z_sovereign_v1_test.npy
+
+exec
+/bin/bash -lc "rg --files --hidden -g '*digit*f0*' -g '*champ*95*' -g '*ROUND*' logs preds scripts/v47_sovereign; sed -n '108,128p' scripts/build_v8_part12_rect_slot2.py; sed -n '122,145p' scripts/build_v9_frontier_slot3.py" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 6547ms:
+logs/v47/codex_loop/._ROUND4_CODEX.txt
+logs/v47/codex_loop/ROUND4_CODEX.txt
+logs/v47/codex_loop/._ROUND4_PSUPER_AUDIT.json
+logs/v47/codex_loop/ROUND4_PSUPER_AUDIT.json
+logs/v47/codex_loop/._ROUND4_PSUPER_AUDIT.txt
+logs/v47/codex_loop/ROUND4_PSUPER_AUDIT.txt
+logs/v47/codex_loop/._ROUND3_CODEX.txt
+logs/v47/codex_loop/ROUND3_CODEX.txt
+logs/v47/codex_loop/._ROUND3_CATBOOST_BLEND.txt
+logs/v47/codex_loop/ROUND3_CATBOOST_BLEND.txt
+logs/v47/codex_loop/._ROUND2_CODEX.txt
+logs/v47/codex_loop/ROUND2_CODEX.txt
+logs/v47/codex_loop/._ROUND2_SPLINES_RUN.txt
+logs/v47/codex_loop/ROUND2_SPLINES_RUN.txt
+logs/v47/codex_loop/._ROUND1_EXEC.txt
+logs/v47/codex_loop/ROUND1_EXEC.txt
+preds/v47_sovereign/._champ_catboost95_f0.npy
+preds/v47_sovereign/champ_catboost95_f0.npy
+    y = pd.read_csv(ROOT / "data/train.csv", usecols=["is_fraud"])["is_fraud"].to_numpy(np.int32)
+    test_ids = pd.read_csv(ROOT / "data/test.csv", usecols=["id"])["id"].to_numpy()
+    folds = list(StratifiedKFold(5, shuffle=True, random_state=42).split(np.zeros(len(y)), y))
+
+    # 1. Load Part 12 wide_lm_stack (201 members incl. full 5-fold megayak target-first LM)
+    w12_o = np.load(P12 / "wide_lm_stack_nested.npy").ravel().astype(np.float64)
+    w12_t = np.load(P12 / "wide_lm_stack_test.npy").ravel().astype(np.float64)
+    p9_t = np.load(P12 / "part9_test.npy").ravel().astype(np.float64)
+    maly_sub = pd.read_csv(W11 / "malyshev_fsl/submission.csv").set_index("id").loc[test_ids, "is_fraud"].to_numpy(float)
+    ev4_sub = pd.read_csv(SUB / "sub_ev4_live10_reverse_ev2_plus_hc_ascent.csv").set_index("id").loc[test_ids, "is_fraud"].to_numpy(float)
+    slot1_sub = pd.read_csv(SUB / "sub_v5_rect_on_ev4_1x.csv").set_index("id").loc[test_ids, "is_fraud"].to_numpy(float)
+
+    z_w12_o, z_w12_t = zrk(w12_o), zrk(w12_t)
+    base12_auc = float(fast_auc(y, z_w12_o))
+    print(f"[Baseline] Part 12 wide_lm_stack_nested (201m) 5F OOF AUC = {base12_auc:.7f}")
+
+    # 2. Build KS-rectified orthogonal basis of our proprietary discoveries vs Part 12
+    specs = [
+        ("v4p_hc", np.load(PRED / "P_super_v4p_hc_oof.npy").ravel(), np.load(PRED / "P_super_v4p_hc_test.npy").ravel()),
+        ("B_xgb_llr", np.load(PRED / "paradigm_B/xgb_llr_oof.npy").ravel(), np.load(PRED / "paradigm_B/xgb_llr_test.npy").ravel()),
+        ("P4_L4.3", np.load(PRED / "matrix_v2/P4_L4.3_pure5f_oof.npy").ravel(), np.load(PRED / "matrix_v2/P4_L4.3_pure5f_test.npy").ravel()),
+    folds = list(StratifiedKFold(5, shuffle=True, random_state=42).split(np.zeros(len(y)), y))
+
+    # Load baselines
+    w12_o = np.load(P12 / "wide_lm_stack_nested.npy").ravel().astype(np.float64)
+    w12_t = np.load(P12 / "wide_lm_stack_test.npy").ravel().astype(np.float64)
+    p9_t = np.load(P12 / "part9_test.npy").ravel().astype(np.float64)
+    v8_o = np.load(PRED / "P_super_v8_part12_rect_oof.npy").ravel().astype(np.float64)
+    v8_t = np.load(PRED / "P_super_v8_part12_rect_test.npy").ravel().astype(np.float64)
+    slot2_sub = pd.read_csv(SUB / "sub_v8_part12_fsl_prop_rect.csv").set_index("id").loc[test_ids, "is_fraud"].to_numpy(float)
+    maly_sub = pd.read_csv(W11 / "malyshev_fsl/submission.csv").set_index("id").loc[test_ids, "is_fraud"].to_numpy(float)
+    aman_v11 = pd.read_csv(W11 / "amanatar_v11/sub_v11_frontier_tri_blend.csv").set_index("id").loc[test_ids, "is_fraud"].to_numpy(float)
+    p12_exact_sub = rk(0.70 * rk01(w12_t) + 0.30 * rk01(p9_t))
+
+    # Build Megayak v15 full 5-fold OOF & full-refit Test vector
+    mg_names = ["lgb_te20", "glm_boost", "glm_boost_xgb", "lgb_raw"]
+    mg_4_o = np.mean([rk(np.load(MG / f"oof_{n}.npy")) for n in mg_names], axis=0)
+    lm_5f_o = np.load(P12 / "lm_oof.npy").ravel().astype(np.float64)
+    mg_full_o = 0.65 * rk(mg_4_o) + 0.35 * rk(lm_5f_o)
+    mg_full_t = pd.read_csv(MG / "submission.csv").set_index("id").loc[test_ids, "is_fraud"].to_numpy(float)
+
+    z_w12_o, z_w12_t = zrk(w12_o), zrk(w12_t)
+    base12_auc = float(fast_auc(y, z_w12_o))
+    v8_auc = float(fast_auc(y, v8_o))
+    print(f"[Baselines] Part 12 OOF = {base12_auc:.7f} | v8 Nested OOF = {v8_auc:.7f} (Slot 2 LB = 0.95307)")
+
+exec
+/bin/bash -lc "PYTHONDONTWRITEBYTECODE=1 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 .venv/bin/python -u -c 'import numpy as np
+import pandas as pd
+from scipy.stats import rankdata
+from scipy.special import logit
+from sklearn.metrics import roc_auc_score as auc
+from sklearn.model_selection import StratifiedKFold
+p = \"preds/v47_sovereign/\"
+full = pd.read_csv(\"data/train.csv\", usecols=[\"is_fraud\"]).is_fraud.to_numpy()
+f = np.flatnonzero(np.load(p+\"folds_skf42.npy\")==0)
+np.testing.assert_array_equal(f,next(StratifiedKFold(5,shuffle=True,random_state=42).split(full,full))[1])
+y = full[f]
+b = np.load(p+\"z_sovereign_v0_oof.npy\").ravel()[f]
+cb = np.load(p+\"catboost_solo_f0.npy\").ravel()
+assert len(cb)==len(y) and abs(auc(y,cb)-.9435214983935254)<1e-12
+def z(v):
+    return logit((rankdata(v)-.5)/len(v))
+a=z(b)
+r=z(cb)-a
+np.testing.assert_allclose(.95*a+.05*z(cb),np.load(p+\"champ_catboost95_f0.npy\").ravel(),atol=1e-7)
+o=np.empty_like(a)
+d=[]
+w=[]
+for tr,va in StratifiedKFold(5,shuffle=True,random_state=7).split(a,y):
+    grid=(0,.025,-.025,.05,-.05,.1,-.1)
+    weight=max(grid,key=lambda k: auc(y[tr],a[tr]+k*r[tr]))
+    o[va]=a[va]+weight*r[va]
+    w.append(weight)
+    d.append((auc(y[va],o[va])-auc(y[va],b[va]))*1e5)
+base=auc(y,b)
+cand=auc(y,o)
+print(dict(base=base,cand=cand,delta_e5=(cand-base)*1e5,sub=d,weights=w,pos=sum(s>0 for s in d),verdict=\"GO\" if cand-base>=8e-5 and sum(s>0 for s in d)>=4 else \"NO-GO\"))
+'" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+exec
+/bin/bash -lc "python3 -c 'import json; d=json.load(open(\"logs/v47/codex_loop/ROUND4_PSUPER_AUDIT.json\")); print(d[\"best\"])'; tail -6 logs/v47/codex_loop/ROUND3_CATBOOST_BLEND.txt
+sed -n '145,178p' scripts/build_v8_part12_rect_slot2.py
+sed -n '166,174p' scripts/build_v7_sovereign_cpu.py" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 896ms:
+{'name': 'P_wide_v5_rect', 'path': '/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/preds/P_wide_v5_rect_oof.npy', 'solo_auc': 0.9519710701657869, 'spearman_vs_base': 0.9966404722854674, 'blend_auc': 0.9513021420424856, 'delta_e5': 5.134290831776411, 'pos5': 5, 'sub_e5': [4.5946651591188825, 3.4925664216256536, 3.577823931677493, 7.9178799184287385, 7.645654184484929], 'verdict': 'NO-GO'}
+Fixed 95:5 rank-logit CatBoost blend — base 0.9512507991341679, candidate 0.9511643271947364, Δe-5 -8.647193943145, 0/5, NO-GO. Solo 0.9435214983935254. Subfold Δe-5 [-3.8728680986643838, -16.663422460538868, -10.406800914430914, -4.386723255411784, -6.261191880496675].
+saved preds/v47_sovereign/champ_catboost95_f0.npy
+    grid = (-0.04, -0.03, -0.022, -0.015, -0.010, -0.005, 0.0, 0.005, 0.010, 0.015, 0.022, 0.03, 0.04)
+    oof_v8_z = np.zeros(len(y), dtype=np.float64)
+    fold_w, fold_d = [], []
+    for fi, (a, b) in enumerate(folds):
+        w = np.zeros(M, dtype=np.float64)
+        best = float(fast_auc(y[a], z_w12_o[a]))
+        for _ in range(3):
+            for j in range(M):
+                bw = w[j]
+                for cw in grid:
+                    wt = w.copy()
+                    wt[j] = cw
+                    sc = float(fast_auc(y[a], z_w12_o[a] + R_o[a] @ wt))
+                    if sc > best + 1e-9:
+                        best, bw = sc, cw
+                w[j] = bw
+        oof_v8_z[b] = z_w12_o[b] + R_o[b] @ w
+        d = float(fast_auc(y[b], oof_v8_z[b]) - fast_auc(y[b], z_w12_o[b]))
+        fold_w.append(w)
+        fold_d.append(d)
+        print(f"  Fold {fi}: val_ΔAUC = {d:+.3e} | w = {dict(zip(names, [round(float(x), 4) for x in w]))}", flush=True)
+
+    mean_w = np.mean(fold_w, axis=0)
+    v8_nested_auc = float(fast_auc(y, oof_v8_z))
+    v8_meanw_auc = float(fast_auc(y, z_w12_o + R_o @ mean_w))
+    wins = int(sum(d > 0 for d in fold_d))
+    print(f"\n==> P_super_v8_part12_rect Nested 5F OOF AUC = {v8_nested_auc:.7f} (Δ vs Part12 = {v8_nested_auc - base12_auc:+.3e}, wins = {wins}/5)")
+    print(f"==> P_super_v8_part12_rect Mean-W 5F OOF AUC = {v8_meanw_auc:.7f} (Δ vs Part12 = {v8_meanw_auc - base12_auc:+.3e})")
+    print(f"==> Mean weights: {dict(zip(names, [round(float(x), 4) for x in mean_w]))}")
+
+    # Exact ECDF quantile-map of the composite test residual onto the OOF residual
+    dz_oof = R_o @ mean_w
+    dz_test = qmap_to_oof(R_t @ mean_w, dz_oof)
+    ks_dz = float(ks_2samp(dz_oof, dz_test).statistic)
+    v7_meanw_auc = float(fast_auc(y, z_wide_o + R_o @ mean_w))
+    print(f"==> P_super_v7_cpu Nested OOF AUC = {v7_nested_auc:.7f} (Δ vs wide_stack = {v7_nested_auc - base_auc:+.3e}, folds = {sum(d>0 for d in fold_deltas)}/5)", flush=True)
+    print(f"==> P_super_v7_cpu Mean-W OOF AUC = {v7_meanw_auc:.7f} (Δ vs wide_stack = {v7_meanw_auc - base_auc:+.3e})", flush=True)
+    print(f"==> Mean weights: {dict(zip(b_names, [round(float(x),4) for x in mean_w]))}", flush=True)
+
+    delta_z_oof = R_o @ mean_w
+    delta_z_test = R_t @ mean_w
+
+    p7_cpu_oof = rk(oof_v7_z)
+
+codex
+The builders show that the five Round 4 leaders inherit public prediction arrays. I excluded those arrays from the self-owned test and am checking whether a held-out signed weight can extract signal from the saved self-trained CatBoost scores.
+ succeeded in 146881ms:
+{'base': 0.9512507991341679, 'cand': 0.9513363354184922, 'delta_e5': 8.55362843242835, 'sub': [-0.054328810994430654, 22.50765027270729, 16.481323720174412, 1.0733471795032479, 5.942298877881225], 'weights': [-0.1, -0.1, -0.1, -0.1, -0.1], 'pos': 4, 'verdict': 'GO'}
+
+codex
+**GO on the matched Fold-0 gate.** The cross-fitted CatBoost residual cleared both thresholds. Each weight search excluded the subfold it scored, and all five searches selected −0.10, the lower bound of the signed grid.
+
+| Base AUC | Candidate AUC | ΔAUC × 10⁵ | Positive | Verdict |
+|---:|---:|---:|---:|---|
+| 0.9512507991341679 | 0.9513363354184922 | +8.55362843242835 | 4/5 | GO |
+
+Subfold deltas × 10⁵ were `−0.05432881, +22.50765027, +16.48132372, +1.07334718, +5.94229888`. The candidate moves the champion ranking away from the CatBoost ranking on disagreements. The pass is specific to the supplied champion and inherits its upstream OOF provenance. Fold-0 has also informed earlier experiment choices, so this is a matched-gate result rather than independent confirmation.
+
+The five Round 4 leaders inherit public prediction arrays according to their builders. This experiment used the saved champion and self-trained CatBoost arrays. Zero tip CSVs read, zero submissions, and $0 cloud spend.
+
+The workspace is read-only in this session. This command records the measured result in the requested verdict file.
+
+```bash
+cat >> logs/v47/CODEX_DS_REVIEW_NEXT.md <<'EOF'
+
+## Round 5 — Cross-fitted signed CatBoost residual
+
+GO on the matched Fold-0 gate. Base AUC 0.9512507991341679, candidate AUC 0.9513363354184922, Δe-5 +8.55362843242835, 4/5 positive.
+Subfold Δe-5 [-0.054328810994430654, 22.50765027270729, 16.481323720174412, 1.0733471795032479, 5.942298877881225].
+On each SKF rs=7 scoring subfold, the other four subfolds selected the signed weight by AUC from [0, .025, -.025, .05, -.05, .1, -.1]. All five selected -.1. Candidate = 1.10 × rank-logit(champion) − 0.10 × rank-logit(CatBoost).
+The five Round 4 leaders inherit public prediction arrays and were excluded. This matched result inherits the saved champion's upstream OOF provenance and has no independent holdout confirmation. NO_SUBMIT=True, SUBMIT_ARMED=False, RunPod $0, cloud $0, tip CSVs read 0.
+EOF
+```
+
+VERIFIED_LIFT=YES 0.9512507991341679 → 0.9513363354184922 · Δe-5 +8.55362843242835 · 4/5 · matched Fold-0 gate
+tokens used
+96,492
+**GO on the matched Fold-0 gate.** The cross-fitted CatBoost residual cleared both thresholds. Each weight search excluded the subfold it scored, and all five searches selected −0.10, the lower bound of the signed grid.
+
+| Base AUC | Candidate AUC | ΔAUC × 10⁵ | Positive | Verdict |
+|---:|---:|---:|---:|---|
+| 0.9512507991341679 | 0.9513363354184922 | +8.55362843242835 | 4/5 | GO |
+
+Subfold deltas × 10⁵ were `−0.05432881, +22.50765027, +16.48132372, +1.07334718, +5.94229888`. The candidate moves the champion ranking away from the CatBoost ranking on disagreements. The pass is specific to the supplied champion and inherits its upstream OOF provenance. Fold-0 has also informed earlier experiment choices, so this is a matched-gate result rather than independent confirmation.
+
+The five Round 4 leaders inherit public prediction arrays according to their builders. This experiment used the saved champion and self-trained CatBoost arrays. Zero tip CSVs read, zero submissions, and $0 cloud spend.
+
+The workspace is read-only in this session. This command records the measured result in the requested verdict file.
+
+```bash
+cat >> logs/v47/CODEX_DS_REVIEW_NEXT.md <<'EOF'
+
+## Round 5 — Cross-fitted signed CatBoost residual
+
+GO on the matched Fold-0 gate. Base AUC 0.9512507991341679, candidate AUC 0.9513363354184922, Δe-5 +8.55362843242835, 4/5 positive.
+Subfold Δe-5 [-0.054328810994430654, 22.50765027270729, 16.481323720174412, 1.0733471795032479, 5.942298877881225].
+On each SKF rs=7 scoring subfold, the other four subfolds selected the signed weight by AUC from [0, .025, -.025, .05, -.05, .1, -.1]. All five selected -.1. Candidate = 1.10 × rank-logit(champion) − 0.10 × rank-logit(CatBoost).
+The five Round 4 leaders inherit public prediction arrays and were excluded. This matched result inherits the saved champion's upstream OOF provenance and has no independent holdout confirmation. NO_SUBMIT=True, SUBMIT_ARMED=False, RunPod $0, cloud $0, tip CSVs read 0.
+EOF
+```
+
+VERIFIED_LIFT=YES 0.9512507991341679 → 0.9513363354184922 · Δe-5 +8.55362843242835 · 4/5 · matched Fold-0 gate

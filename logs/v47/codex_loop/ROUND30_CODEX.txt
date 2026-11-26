@@ -1,0 +1,204 @@
+OpenAI Codex v0.172.0
+--------
+workdir: /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+model: gpt-6.2-sol
+provider: openai
+approval: never
+sandbox: read-only
+reasoning effort: none
+reasoning summaries: none
+session id: 01a2180a-0cec-7810-bcbf-4a725485c87f
+--------
+user
+# Cursor → Codex Round30
+
+Champion regime-interaction head (velocity×merchant gates, scale=0.10) on 14 streams:
+- control=z0 exact
+- folds1–4 weighted Δe-5=-1.2672640766320244 pos=1/4 → NO-GO
+- loo=[-0.6144969773765515, -1.9403314299837329, -1.1702682196745864, -1.343959679493227]
+Artifact: CHAMP_REGIME_INTERACTION_HEAD_DIAGNOSTIC.json
+
+Champion-compat ledger this loop:
+1. pairwise head +4.54 NO-GO
+2. char15 -2.64 NO-GO
+3. decimal15 +0.09 NO-GO
+4. hardneg +7.36 near-miss NO-GO (do not retune)
+5. B2039 hardneg vs uniform FAIL -7.16 0/4
+6. regime -1.27 NO-GO
+B2037 pairwise frozen PASS. Submissions HOLD. NO_SUBMIT/NO_GPU/$0. Objective public >0.95726.
+
+Highest-EV next measurable champion-compatible experiment? Prefer stream pruning / complementary-error residual on unused self-owned OOF / rank calibration — not hard-neg or regime retunes. ONE command after short verdict.
+codex
+I’ll trace the harvest stream’s inputs before choosing the pruning test.
+exec
+/bin/bash -lc "rg -n 'P_super_v5_harvest_oof|z_base|B_xgb_llr|best.*blend' scripts/harvest_v5_finalize.py | tail -25
+rg -n 'P_super_v5_harvest_oof.npy|P_super_v5_harvest' scripts/v47_sovereign/step2_provenance_and_z_v1.py
+rg -n 'P_super_v5_harvest_oof.npy' scripts/p4_pure_5fold.py
+rg -n 'pairwise_head|SCORES|REPORT|np.savez' scripts/v47_sovereign/champ_pairwise_head_diagnostic.py" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 0ms:
+2:"""Fast finalize P_super_v5_harvest from verified Step1 signed B_xgb_llr + optional p4. STRICT NO_SUBMIT."""
+92:        "B_xgb_llr": (np.load(PRED/"paradigm_B/xgb_llr_oof.npy").ravel(),
+111:    # Best single: B_xgb_llr (only gate=True typically)
+112:    o_llr, t_llr = cands["B_xgb_llr"]
+211:        w_report = {"B_xgb_llr_alpha": al_signed if s1_method == "signed" else mean_al}
+214:        w_report = {"B_xgb_llr_alpha": mean_a1, "p4_xgb_alpha": mean_a2}
+216:    np.save(PRED / "P_super_v5_harvest_oof.npy", p5_o.astype(np.float64))
+247:    log(f"{'Step1 B_xgb_llr ('+s1_method+')':42s} | {float(fast_auc(y,s1_oof_f)):.7f} | {s1_test1:+.3e}")
+273:        PRED/"P_super_v5_harvest_oof.npy", PRED/"P_super_v5_harvest_test.npy",
+94:        "P_super_v5_harvest": {
+95:            "oof": PRED / "P_super_v5_harvest_oof.npy",
+134:            if name == "P_super_v5_harvest":
+253:    np.save(PRED / "P_super_v5_harvest_oof.npy", p5_o.astype(np.float64))
+309:        PRED / "P_super_v5_harvest_oof.npy",
+25:REPORT = LOGS / "CHAMP_PAIRWISE_HEAD_DIAGNOSTIC.json"
+26:SCORES = PRED / "champ_pairwise_head_diagnostic.npz"
+41:def pairwise_head(Xtr, ytr, Xva, Xte):
+58:    assert not REPORT.exists(), "diagnostic already exists"
+99:        va_scores, te_scores, coef = pairwise_head(Xtr, y[trm], Xva, Xte)
+141:        "scope": "champion_14stream_pairwise_head_swap_matched",
+143:        "pairwise_head": {"seed": PAIR_SEED, "pairs_per_fraud": PAIRS_PER_FRAUD, "C": C},
+158:    np.savez(
+159:        SCORES,
+167:    REPORT.write_text(json.dumps(result, indent=2) + "\n")
+
+codex
+**Ablate `P_super_v5_harvest` from the Deotte stack.** The harvest builder already uses `B_xgb_llr`, which the champion also receives directly. Dropping the composite tests whether it adds useful ranking information or makes the fitted weights more sensitive to overlapping inputs. Freeze this single ablation, keep the row-wise head and all other streams fixed, and require exact `z0` reproduction before applying the **+8e-5, 3/4 positive, positive leave-one-out** gate. This remains a matched historical diagnostic.
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python -u - <<'PY'
+from pathlib import Path
+
+path = Path("scripts/v47_sovereign/champ_pairwise_head_diagnostic.py").resolve()
+source = path.read_text()
+
+def replace_once(text, old, new):
+    assert text.count(old) == 1, f"Champion runner changed near {old!r}"
+    return text.replace(old, new, 1)
+
+start = source.index("def pairwise_head(")
+end = source.index("def main()", start)
+source = source[:start] + '''DROPPED_STREAM = "P_super_v5_harvest"
+
+
+def pruned_head(Xtr, ytr, Xva, Xte, keep):
+    head = LogisticRegression(C=C, solver="lbfgs", max_iter=2000)
+    head.fit(Xtr[:, keep], ytr)
+    assert head.n_iter_.max() < head.max_iter
+    return (
+        head.predict_proba(Xva[:, keep])[:, 1],
+        head.predict_proba(Xte[:, keep])[:, 1],
+        head.coef_.ravel().tolist(),
+    )
+
+
+''' + source[end:]
+
+source = replace_once(source, "    assert len(names) == 14, names", '''    assert len(names) == 14 and DROPPED_STREAM in names, names
+    keep = np.array([name != DROPPED_STREAM for name in names])
+    assert int(keep.sum()) == 13''')
+source = replace_once(
+    source,
+    "        va_scores, te_scores, coef = pairwise_head(Xtr, y[trm], Xva, Xte)",
+    "        va_scores, te_scores, coef = pruned_head(Xtr, y[trm], Xva, Xte, keep)",
+)
+source = replace_once(source, "    np.savez(\n", '''    np.testing.assert_array_equal(control, champ_saved)
+    np.testing.assert_array_equal(te_control, np.load(PRED / "z_sovereign_v0_test.npy").ravel())
+    assert np.isfinite(candidate).all() and np.isfinite(te_candidate).all()
+    np.savez(
+''')
+source = replace_once(source, "        stream_names=np.array(names),", '''        stream_names=np.array(names),
+        candidate_stream_names=np.array(names)[keep],''')
+
+for old, new in {
+    '"CHAMP_PAIRWISE_HEAD_DIAGNOSTIC.json"': '"CHAMP_HARVEST_ABLATION_DIAGNOSTIC.json"',
+    '"champ_pairwise_head_diagnostic.npz"': '"champ_harvest_ablation_diagnostic.npz"',
+    '"champion_14stream_pairwise_head_swap_matched"': '"champion_harvest_ablation_matched"',
+    '"pairwise_head": {"seed": PAIR_SEED, "pairs_per_fraud": PAIRS_PER_FRAUD, "C": C},': (
+        '"dropped_stream": DROPPED_STREAM,\n'
+        '        "candidate_streams": np.array(names)[keep].tolist(),\n'
+        '        "rowwise_head_C": C,'
+    ),
+    '"pairwise_coef": coef,': '"candidate_coef": coef,',
+    '"DEV_ADVANCE_CHAMP_PAIRWISE"': '"DEV_ADVANCE_CHAMP_HARVEST_ABLATION"',
+    '"note": "Char-ngram excluded by design. B2037 not retuned.",': (
+        '"note": "Single prespecified stream ablation. Historical folds and legacy provenance. B2037 frozen.",\n'
+        '        "SUBMIT_ARMED": False,'
+    ),
+    "## Champion 14-stream pairwise head diagnostic": "## Champion harvest stream ablation",
+}.items():
+    source = replace_once(source, old, new)
+
+exec(compile(source, str(path), "exec"), {"__name__": "__main__", "__file__": str(path)})
+PY
+```
+tokens used
+288,283
+**Ablate `P_super_v5_harvest` from the Deotte stack.** The harvest builder already uses `B_xgb_llr`, which the champion also receives directly. Dropping the composite tests whether it adds useful ranking information or makes the fitted weights more sensitive to overlapping inputs. Freeze this single ablation, keep the row-wise head and all other streams fixed, and require exact `z0` reproduction before applying the **+8e-5, 3/4 positive, positive leave-one-out** gate. This remains a matched historical diagnostic.
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python -u - <<'PY'
+from pathlib import Path
+
+path = Path("scripts/v47_sovereign/champ_pairwise_head_diagnostic.py").resolve()
+source = path.read_text()
+
+def replace_once(text, old, new):
+    assert text.count(old) == 1, f"Champion runner changed near {old!r}"
+    return text.replace(old, new, 1)
+
+start = source.index("def pairwise_head(")
+end = source.index("def main()", start)
+source = source[:start] + '''DROPPED_STREAM = "P_super_v5_harvest"
+
+
+def pruned_head(Xtr, ytr, Xva, Xte, keep):
+    head = LogisticRegression(C=C, solver="lbfgs", max_iter=2000)
+    head.fit(Xtr[:, keep], ytr)
+    assert head.n_iter_.max() < head.max_iter
+    return (
+        head.predict_proba(Xva[:, keep])[:, 1],
+        head.predict_proba(Xte[:, keep])[:, 1],
+        head.coef_.ravel().tolist(),
+    )
+
+
+''' + source[end:]
+
+source = replace_once(source, "    assert len(names) == 14, names", '''    assert len(names) == 14 and DROPPED_STREAM in names, names
+    keep = np.array([name != DROPPED_STREAM for name in names])
+    assert int(keep.sum()) == 13''')
+source = replace_once(
+    source,
+    "        va_scores, te_scores, coef = pairwise_head(Xtr, y[trm], Xva, Xte)",
+    "        va_scores, te_scores, coef = pruned_head(Xtr, y[trm], Xva, Xte, keep)",
+)
+source = replace_once(source, "    np.savez(\n", '''    np.testing.assert_array_equal(control, champ_saved)
+    np.testing.assert_array_equal(te_control, np.load(PRED / "z_sovereign_v0_test.npy").ravel())
+    assert np.isfinite(candidate).all() and np.isfinite(te_candidate).all()
+    np.savez(
+''')
+source = replace_once(source, "        stream_names=np.array(names),", '''        stream_names=np.array(names),
+        candidate_stream_names=np.array(names)[keep],''')
+
+for old, new in {
+    '"CHAMP_PAIRWISE_HEAD_DIAGNOSTIC.json"': '"CHAMP_HARVEST_ABLATION_DIAGNOSTIC.json"',
+    '"champ_pairwise_head_diagnostic.npz"': '"champ_harvest_ablation_diagnostic.npz"',
+    '"champion_14stream_pairwise_head_swap_matched"': '"champion_harvest_ablation_matched"',
+    '"pairwise_head": {"seed": PAIR_SEED, "pairs_per_fraud": PAIRS_PER_FRAUD, "C": C},': (
+        '"dropped_stream": DROPPED_STREAM,\n'
+        '        "candidate_streams": np.array(names)[keep].tolist(),\n'
+        '        "rowwise_head_C": C,'
+    ),
+    '"pairwise_coef": coef,': '"candidate_coef": coef,',
+    '"DEV_ADVANCE_CHAMP_PAIRWISE"': '"DEV_ADVANCE_CHAMP_HARVEST_ABLATION"',
+    '"note": "Char-ngram excluded by design. B2037 not retuned.",': (
+        '"note": "Single prespecified stream ablation. Historical folds and legacy provenance. B2037 frozen.",\n'
+        '        "SUBMIT_ARMED": False,'
+    ),
+    "## Champion 14-stream pairwise head diagnostic": "## Champion harvest stream ablation",
+}.items():
+    source = replace_once(source, old, new)
+
+exec(compile(source, str(path), "exec"), {"__name__": "__main__", "__file__": str(path)})
+PY
+```

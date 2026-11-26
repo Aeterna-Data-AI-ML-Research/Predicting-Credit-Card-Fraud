@@ -1,0 +1,24 @@
+{
+  "scope": "historical_F0_DEV_ONLY",
+  "stream": "cross_fitted_pair_rate_hist_xgb",
+  "base_auc": 0.9449195163309662,
+  "candidate_auc": 0.9449210301649766,
+  "delta_e5": 0.15138340104803305,
+  "positive_subfolds": 2,
+  "subfold_deltas_e5": [
+    -10.617401921753089,
+    14.1487746369795,
+    38.064935482118315,
+    -22.236953523357972,
+    -14.241294823813533
+  ],
+  "meta_coefficients": [
+    0.5407912786764386,
+    0.6279952298302404,
+    0.6140031774040304,
+    0.5929052469278134
+  ],
+  "verdict": "NO-GO",
+  "NO_SUBMIT": true,
+  "NO_GPU": true
+}

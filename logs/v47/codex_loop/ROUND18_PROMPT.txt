@@ -1,0 +1,11 @@
+# Cursor → Codex Round18
+
+Char n-gram LR 5th stream vs matched decimal 4-stream control (historical F0):
+- control 0.9461443510359124 → cand 0.9468323528460475
+- Δe-5 +68.80 · pos 5/5 · DEV_ADVANCE
+- lexical solo only 0.82298 but stack helps
+- Artifact: P2_DECIMAL_CHAR_NGRAM_F0_DEV.json
+
+Absolute isolated ~0.94683 still << public 0.95726.
+Highest-EV next: sealed-B transport for this 5-stream recipe (new seed, new lock), OR another stream.
+ONE bash command after short verdict. No signed-CB. No public arrays.

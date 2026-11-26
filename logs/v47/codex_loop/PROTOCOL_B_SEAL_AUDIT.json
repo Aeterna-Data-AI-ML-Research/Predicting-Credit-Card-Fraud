@@ -1,0 +1,47 @@
+{
+  "audit_time_local": "2026-11-26T18:40:00+02:00",
+  "question": "Does Protocol B remain genuinely sealed across repeated research iterations?",
+  "findings": {
+    "distinct_outer_seeds": [2027, 2031, 2033, 2037],
+    "seed_reuse_across_B_locks": false,
+    "locks": [
+      {
+        "file": "SEALED_LOCK.json",
+        "seed": 2027,
+        "scope": "B_transport_diagnostic_previously_examined_rows",
+        "verdict_report": "SEALED_B_XGB_TRANSPORT.json",
+        "verdict": "B_TRANSPORT_PASS"
+      },
+      {
+        "file": "SEALED_LOCK_DECIMAL_TOKEN_B2031.json",
+        "seed": 2031,
+        "scope": "B_decimal_token_transport_previously_examined_rows",
+        "verdict_report": "SEALED_B_DECIMAL_TOKEN_2031_TRANSPORT.json",
+        "verdict": "B_TRANSPORT_PASS"
+      },
+      {
+        "file": "SEALED_LOCK_DECIMAL_CHAR_NGRAM_B2033.json",
+        "seed": 2033,
+        "scope": "B_decimal_char_ngram_transport_previously_examined_rows",
+        "verdict_report": "SEALED_B_DECIMAL_CHAR_NGRAM_2033_TRANSPORT.json",
+        "verdict": "B_TRANSPORT_PASS"
+      },
+      {
+        "file": "SEALED_LOCK_FIVE_STREAM_PAIRWISE_B2037.json",
+        "seed": 2037,
+        "scope": "B_pairwise_meta_transport_previously_examined_rows",
+        "verdict_report": "pending",
+        "verdict": "IN_PROGRESS"
+      }
+    ],
+    "all_locks_NO_SUBMIT": true,
+    "all_locks_have_gate": true,
+    "caveats": [
+      "Protocol B uses previously examined rows by design; it is transport diagnostic, not Independent A holdout.",
+      "Repeated B studies with new seeds still examine overlapping row populations under different SKF partitions.",
+      "Adaptive research over many B passes can inflate family-wise error; freeze-on-pass without retune on those folds is required.",
+      "Independent holdout (Protocol A) and champion-compatible OOF verification remain unmet milestones."
+    ],
+    "verdict": "STRUCTURALLY_SEALED_PER_STUDY_but_NOT_independent_of_research_iteration_exposure"
+  }
+}

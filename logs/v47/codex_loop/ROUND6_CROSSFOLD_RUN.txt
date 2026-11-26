@@ -1,0 +1,18 @@
+Training CatBoost outer fold 0 n_tr=559968 n_va=139992 ...
+  fold0 CB solo AUC=0.943521
+Training CatBoost outer fold 1 n_tr=559968 n_va=139992 ...
+  fold1 CB solo AUC=0.946871
+Training CatBoost outer fold 2 n_tr=559968 n_va=139992 ...
+  fold2 CB solo AUC=0.950504
+Training CatBoost outer fold 3 n_tr=559968 n_va=139992 ...
+  fold3 CB solo AUC=0.945880
+Training CatBoost outer fold 4 n_tr=559968 n_va=139992 ...
+  fold4 CB solo AUC=0.941379
+F0 CB vs prior solo corr=1.000000
+fold0: base=0.951251 cand=0.951336 Δe-5=+8.554 [DEV]
+fold1: base=0.952438 cand=0.952237 Δe-5=-20.104 [EVAL]
+fold2: base=0.957075 cand=0.957115 Δe-5=+4.043 [EVAL]
+fold3: base=0.952647 cand=0.952658 Δe-5=+1.115 [EVAL]
+fold4: base=0.947987 cand=0.947928 Δe-5=-5.966 [EVAL]
+POOLED all5: base=0.952251 cand=0.952255 Δe-5=+0.386
+EVAL folds1-4 pooled: base=0.952501 cand=0.952486 Δe-5=-1.547 pos=2/4

@@ -1,0 +1,49 @@
+{
+  "names": [
+    "B_xgb_llr",
+    "P4_L4.2_pure5f",
+    "P4_L4.3_pure5f",
+    "P4_L4.5_pure5f",
+    "P_super_v4p_hc",
+    "P_super_v5_harvest",
+    "delta1_v4",
+    "gpt2_med_4ep_mean",
+    "gpt2_med_4ep_shrink",
+    "inner_hgb_sov",
+    "l7_R5",
+    "l7_U5_gini10",
+    "l7_curv",
+    "l7_mean10",
+    "zone_honest"
+  ],
+  "overall_auc": 0.9522487222917878,
+  "fold_aucs": [
+    0.9512469819100099,
+    0.9524120821991758,
+    0.9571062042055009,
+    0.9526417775028434,
+    0.9479947790149349
+  ],
+  "fold0_auc": 0.9512469819100099,
+  "n_streams": 15,
+  "peer": {
+    "hygiene": {
+      "disp_raw": 1.0021027773786997,
+      "KS_raw": 0.005069886676791258,
+      "pass": true
+    },
+    "pos5": 0,
+    "sf25": 1,
+    "promote": false,
+    "lgbm_oof_auc": 0.9306999492898481
+  },
+  "NO_SUBMIT": true,
+  "extras": [
+    "inner_hgb_sov"
+  ],
+  "hgb_hygiene": {
+    "disp_raw": 0.9982298305307021,
+    "KS_raw": 0.0027250800957818178,
+    "pass": true
+  }
+}

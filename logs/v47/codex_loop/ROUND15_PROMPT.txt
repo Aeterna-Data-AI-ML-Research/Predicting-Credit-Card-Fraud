@@ -1,0 +1,11 @@
+# Cursor → Codex Round15
+
+Hist-XGB capacity replacement (depth6/800 vs depth4/400) on historical F0:
+- base/control 0.9449195163309662 → cand 0.945291338210148
+- Δe-5 +37.18 but pos only 3/5 → NO-GO (consistency gate)
+- deeper solo 0.943956 < control xgb solo 0.944666
+- Artifact: P2_XGB_CAPACITY_F0_DEV.json
+
+Keep frozen 3-stream depth4/400 as best isolated recipe.
+Highest-EV next measurable step to raise absolute isolated AUC toward public 0.95726 under NO_SUBMIT/NO_GPU?
+ONE bash command after short verdict. No signed-CB. No public arrays. Do not retune XGB depth on same F0.

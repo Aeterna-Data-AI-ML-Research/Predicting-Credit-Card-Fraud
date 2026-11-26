@@ -1,0 +1,413 @@
+OpenAI Codex v0.172.0
+--------
+workdir: /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+model: gpt-6.2-sol
+provider: openai
+approval: never
+sandbox: read-only
+reasoning effort: none
+reasoning summaries: none
+session id: 01a2180a-0cec-7810-bcbf-4a725485c87f
+--------
+user
+You are an adversarial grandmaster-level DS reviewer for S6E11 credit-card fraud ONLY.
+
+CURRENT MILESTONE: LOCAL_GATE_PASS (NOT final success).
+Target next: CROSS_FOLD_VERIFIED → INDEPENDENT_HOLDOUT_VERIFIED → SUBMISSION_READY → PUBLIC_LB_VERIFIED.
+
+LOCAL_GATE_PASS evidence (matched Fold-0):
+- Candidate: signed CatBoost residual, nested weights all chose −0.10
+- Formula: ranklogit(z0) + w*(ranklogit(CB)−ranklogit(z0)), w=−0.10
+- Base 0.9512507991341679 → 0.9513363354184922 · Δe-5 +8.5536 · 4/5
+- CB trained on outer Fold-0 train only; F0 scores saved
+- Caveat you already stated: matched gate, inherits champion OOF provenance
+
+Cursor is NOW executing (do not block on it):
+`scripts/v47_sovereign/crossfold_signed_cb_resid.py`
+which freezes w=−0.10, trains CB on each outer fold train, scores held-out folds, no retune on eval folds, F0-only sensitivity grid {−0.05,−0.075,−0.10,−0.125,−0.15}, paired bootstrap, error analysis.
+
+YOUR TASK (adversarial):
+1. Criticize the LOCAL_GATE_PASS — what could make +8.55e-5 / 4/5 a false positive?
+2. Define STRICT acceptance criteria for CROSS_FOLD_VERIFIED and INDEPENDENT_HOLDOUT_VERIFIED under NO_SUBMIT locks.
+3. Specify how to investigate complementary signed residuals WITHOUT contaminating folds 1–4 evaluation (dev isolation rules).
+4. Rank next experiments AFTER we return Round6 metrics.
+5. Write protocol to logs/v47/CODEX_DS_REVIEW_NEXT.md under heading "## Round6 adversarial protocol".
+6. End with the single next action Cursor should take once Round6 JSON exists (one bash or analysis step). Do not claim CROSS_FOLD_VERIFIED yet.
+
+Locks: NO_SUBMIT=True · SUBMIT_ARMED=False · $0 RunPod · 0 tip CSVs · no paid API.
+codex
+I’ll check the running script’s evaluation contract and define what Round 6 can establish before any of its scores influence the next experiment.
+exec
+/bin/bash -lc "rg -n 'bootstrap|json|weight|rank|seed|fold|auc' scripts/v47_sovereign/crossfold_signed_cb_resid.py | tail -95
+tail -22 logs/v47/CODEX_DS_REVIEW_NEXT.md
+test -w logs/v47/CODEX_DS_REVIEW_NEXT.md; git status --short -- logs/v47/CODEX_DS_REVIEW_NEXT.md" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 74ms:
+2:"""Cross-fold generalization of frozen signed CatBoost residual (w=-0.10).
+6:- Train CatBoost only on each outer fold's training rows; score held-out fold.
+7:- Do NOT retune w on evaluation folds.
+14:import json
+22:from scipy.stats import rankdata
+23:from sklearn.metrics import roc_auc_score
+34:def rank_logit(scores: np.ndarray) -> np.ndarray:
+35:    return logit((rankdata(scores) - 0.5) / len(scores))
+38:def paired_bootstrap_delta(
+39:    y: np.ndarray, base: np.ndarray, cand: np.ndarray, n_boot: int = 2000, seed: int = 42
+41:    rng = np.random.default_rng(seed)
+50:        deltas[i] = roc_auc_score(y[idx], cand[idx]) - roc_auc_score(y[idx], base[idx])
+61:def train_cb(x_tr: pd.DataFrame, y_tr: np.ndarray, cats: list[str], seed: int) -> CatBoostClassifier:
+68:        random_seed=seed,
+78:    """Which ranking errors negative CB coefficient corrects (on labeled fold)."""
+89:    rb, rc, rcb = rank_logit(base), rank_logit(cand), rank_logit(cb)
+92:    # Correct direction for frauds: should increase relative rank; for legit: decrease
+95:    # Disagreement zones: high |ranklogit(cb)-ranklogit(base)|
+104:        "auc_base": float(roc_auc_score(y, base)),
+105:        "auc_cand": float(roc_auc_score(y, cand)),
+106:        "auc_cb_solo": float(roc_auc_score(y, cb)),
+113:        out["auc_base_top10gap"] = float(roc_auc_score(y[mask], base[mask]))
+114:        out["auc_cand_top10gap"] = float(roc_auc_score(y[mask], cand[mask]))
+115:        out["delta_top10gap"] = out["auc_cand_top10gap"] - out["auc_base_top10gap"]
+134:    folds = np.load(SOV / "folds_skf42.npy")
+135:    assert folds.shape[0] == len(y)
+144:    np.testing.assert_array_equal(folds, rebuilt)
+153:            tr = folds != k
+154:            va = folds == k
+155:            print(f"Training CatBoost outer fold {k} n_tr={tr.sum()} n_va={va.sum()} ...", flush=True)
+156:            model = train_cb(df.iloc[tr], y[tr], cats, seed=42 + k)
+158:            solo = roc_auc_score(y[va], cb_oof[va])
+159:            print(f"  fold{k} CB solo AUC={solo:.6f}", flush=True)
+162:        f0 = folds == 0
+166:            # same seed path as Round3 used seed=42 only for fold0; here seed=42+0=42
+172:    # Frozen-w candidate on all folds (rank-logit within each fold's scores)
+174:    fold_rows = []
+176:        va = folds == k
+180:        a = rank_logit(base_k)
+181:        r = rank_logit(cb_k) - a
+184:        c_k = a + FIXED_W * (rank_logit(cb_k) - a)
+186:        base_auc = float(roc_auc_score(y_k, base_k))
+187:        cand_auc = float(roc_auc_score(y_k, c_k))
+188:        cb_auc = float(roc_auc_score(y_k, cb_k))
+189:        d = cand_auc - base_auc
+190:        fold_rows.append(
+192:                "fold": k,
+194:                "base_auc": base_auc,
+195:                "cand_auc": cand_auc,
+196:                "cb_solo_auc": cb_auc,
+203:            f"fold{k}: base={base_auc:.6f} cand={cand_auc:.6f} Δe-5={d*1e5:+.3f} "
+209:    pooled_base = float(roc_auc_score(y, z0))
+210:    pooled_cand = float(roc_auc_score(y, cand))
+212:    eval_mask = folds != 0
+213:    eval_base = float(roc_auc_score(y[eval_mask], z0[eval_mask]))
+214:    eval_cand = float(roc_auc_score(y[eval_mask], cand[eval_mask]))
+216:    eval_pos = sum(1 for r in fold_rows if r["fold"] > 0 and r["delta"] > 0)
+223:        f"EVAL folds1-4 pooled: base={eval_base:.6f} cand={eval_cand:.6f} "
+228:    boot_all = paired_bootstrap_delta(y, z0, cand, n_boot=args.n_boot)
+229:    boot_eval = paired_bootstrap_delta(y[eval_mask], z0[eval_mask], cand[eval_mask], n_boot=args.n_boot)
+230:    print("bootstrap all:", boot_all, flush=True)
+231:    print("bootstrap eval1-4:", boot_eval, flush=True)
+234:    f0 = folds == 0
+236:    a0 = rank_logit(z0[f0])
+237:    zcb0 = rank_logit(cb_oof[f0])
+239:    base0 = float(roc_auc_score(y0, z0[f0]))
+242:        auc = float(roc_auc_score(y0, c))
+243:        sens.append({"w": w, "auc": auc, "delta_e5": (auc - base0) * 1e5})
+246:    # Error analysis on eval folds pooled and on F0
+252:    # - mean Δ on untouched folds1-4 > 0
+253:    # - ≥3/4 eval folds positive
+254:    # - eval bootstrap CI lower bound > 0 OR (pos>=3/4 and pooled eval Δ>0)
+268:            "folds_match_skf_rs42": True,
+271:            "cb_train": "outer fold train only; seed=42+fold",
+275:        "fold_metrics": fold_rows,
+277:            "base_auc": pooled_base,
+278:            "cand_auc": pooled_cand,
+282:        "eval_folds_1_4": {
+283:            "base_auc": eval_base,
+284:            "cand_auc": eval_cand,
+288:            "n_folds": 4,
+290:        "bootstrap_all5": boot_all,
+291:        "bootstrap_eval_1_4": boot_eval,
+299:    out_json = OUT / "ROUND6_CROSSFOLD_SIGNED_CB.json"
+300:    out_json.write_text(json.dumps(report, indent=2))
+301:    print(json.dumps({"milestone_achieved": milestone, "eval_delta_e5": eval_delta * 1e5, "eval_pos": eval_pos}, indent=2))
+302:    print(f"Wrote {out_json}", flush=True)
+
+| stream | solo | ρ | Δe-5 | pos/5 | verdict |
+|---|---:|---:|---:|---:|---|
+| P_wide_v5_rect | 0.951971 | 0.9966 | +5.1343 | 5/5 | NO-GO |
+| P_super_v8_part12_rect | 0.951870 | 0.9959 | +5.0426 | 5/5 | NO-GO |
+| P_super_v6_grandmaster | 0.951937 | 0.9970 | +4.7056 | 5/5 | NO-GO |
+| P_super_v7_cpu | 0.951937 | 0.9970 | +4.7056 | 5/5 | NO-GO |
+| P_super_v9_frontier_rect | 0.951838 | 0.9963 | +4.6301 | 5/5 | NO-GO |
+| P_restack_own | 0.951738 | 0.9960 | +4.4899 | 5/5 | NO-GO |
+| P_restack_pub | 0.951598 | 0.9957 | +3.7249 | 5/5 | NO-GO |
+| P_super_v7_regime_only | 0.951425 | 0.9960 | +2.9151 | 5/5 | NO-GO |
+| P_super_v7 | 0.951496 | 0.9969 | +2.8067 | 5/5 | NO-GO |
+| P_super_v5p5_rect | 0.951580 | 0.9982 | +2.3040 | 5/5 | NO-GO |
+| P_super_v5_rect | 0.951578 | 0.9981 | +2.2636 | 5/5 | NO-GO |
+| P_super_v5p5_clean | 0.951513 | 0.9983 | +1.8688 | 5/5 | NO-GO |
+
+## Round 5 — Cross-fitted signed CatBoost residual
+
+GO on the matched Fold-0 gate. Base AUC 0.9512507991341679, candidate AUC 0.9513363354184922, Δe-5 +8.55362843242835, 4/5 positive.
+Subfold Δe-5 [-0.054328810994430654, 22.50765027270729, 16.481323720174412, 1.0733471795032479, 5.942298877881225].
+On each SKF rs=7 scoring subfold, the other four subfolds selected the signed weight by AUC from [0, .025, -.025, .05, -.05, .1, -.1]. All five selected -.1. Candidate = 1.10 × rank-logit(champion) − 0.10 × rank-logit(CatBoost).
+The five Round 4 leaders inherit public prediction arrays and were excluded. This matched result inherits the saved champion's upstream OOF provenance and has no independent holdout confirmation. NO_SUBMIT=True, SUBMIT_ARMED=False, RunPod $0, cloud $0, tip CSVs read 0.
+?? logs/v47/CODEX_DS_REVIEW_NEXT.md
+
+exec
+/bin/bash -lc "sed -n '24,58p;155,173p;248,305p' scripts/v47_sovereign/crossfold_signed_cb_resid.py
+ls -lde logs/v47 logs/v47/CODEX_DS_REVIEW_NEXT.md
+rg -n 'OUT =|save\\(' scripts/v47_sovereign/crossfold_signed_cb_resid.py" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 153ms:
+from sklearn.model_selection import StratifiedKFold
+
+ROOT = Path(__file__).resolve().parents[2]
+SOV = ROOT / "preds" / "v47_sovereign"
+OUT = ROOT / "logs" / "v47" / "codex_loop"
+FIXED_W = -0.10
+SENS_GRID = (-0.05, -0.075, -0.10, -0.125, -0.15)
+BASE_F0 = 0.9512507991341679
+
+
+def rank_logit(scores: np.ndarray) -> np.ndarray:
+    return logit((rankdata(scores) - 0.5) / len(scores))
+
+
+def paired_bootstrap_delta(
+    y: np.ndarray, base: np.ndarray, cand: np.ndarray, n_boot: int = 2000, seed: int = 42
+) -> dict:
+    rng = np.random.default_rng(seed)
+    n = len(y)
+    deltas = np.empty(n_boot, dtype=np.float64)
+    for i in range(n_boot):
+        idx = rng.integers(0, n, size=n)
+        # skip degenerate resamples
+        if y[idx].min() == y[idx].max():
+            deltas[i] = np.nan
+            continue
+        deltas[i] = roc_auc_score(y[idx], cand[idx]) - roc_auc_score(y[idx], base[idx])
+    deltas = deltas[np.isfinite(deltas)]
+    return {
+        "n_boot_ok": int(len(deltas)),
+        "mean_delta": float(deltas.mean()),
+        "ci95": [float(np.quantile(deltas, 0.025)), float(np.quantile(deltas, 0.975))],
+        "p_delta_gt_0": float((deltas > 0).mean()),
+        "p_delta_ge_8e5": float((deltas >= 8e-5).mean()),
+    }
+            print(f"Training CatBoost outer fold {k} n_tr={tr.sum()} n_va={va.sum()} ...", flush=True)
+            model = train_cb(df.iloc[tr], y[tr], cats, seed=42 + k)
+            cb_oof[va] = model.predict(df.iloc[va], prediction_type="RawFormulaVal")
+            solo = roc_auc_score(y[va], cb_oof[va])
+            print(f"  fold{k} CB solo AUC={solo:.6f}", flush=True)
+        np.save(cb_path, cb_oof)
+        # Keep F0 compatibility check vs prior solo
+        f0 = folds == 0
+        prior = SOV / "catboost_solo_f0.npy"
+        if prior.exists():
+            old = np.load(prior).ravel()
+            # same seed path as Round3 used seed=42 only for fold0; here seed=42+0=42
+            corr = float(np.corrcoef(old, cb_oof[f0])[0, 1])
+            print(f"F0 CB vs prior solo corr={corr:.6f}", flush=True)
+
+    assert np.isfinite(cb_oof).all()
+
+    # Frozen-w candidate on all folds (rank-logit within each fold's scores)
+    cand = np.empty(len(y), dtype=np.float64)
+    err_eval = error_analysis(y[eval_mask], z0[eval_mask], cand[eval_mask], cb_oof[eval_mask])
+
+    # Milestone rule (strict): CROSS_FOLD_VERIFIED requires
+    # - frozen w
+    # - mean Δ on untouched folds1-4 > 0
+    # - ≥3/4 eval folds positive
+    # - eval bootstrap CI lower bound > 0 OR (pos>=3/4 and pooled eval Δ>0)
+    cross = (
+        eval_pos >= 3
+        and eval_delta > 0
+        and boot_eval["ci95"][0] > 0
+    )
+    milestone = "CROSS_FOLD_VERIFIED" if cross else "LOCAL_GATE_PASS"
+
+    report = {
+        "milestone_achieved": milestone,
+        "prior_milestone": "LOCAL_GATE_PASS",
+        "fixed_w": FIXED_W,
+        "retuned_on_eval": False,
+        "provenance": {
+            "folds_match_skf_rs42": True,
+            "champion": "preds/v47_sovereign/z_sovereign_v0_oof.npy",
+            "cb_oof": str(cb_path),
+            "cb_train": "outer fold train only; seed=42+fold",
+            "NO_SUBMIT": True,
+            "tip_csvs": 0,
+        },
+        "fold_metrics": fold_rows,
+        "pooled_all5": {
+            "base_auc": pooled_base,
+            "cand_auc": pooled_cand,
+            "delta": pooled_delta,
+            "delta_e5": pooled_delta * 1e5,
+        },
+        "eval_folds_1_4": {
+            "base_auc": eval_base,
+            "cand_auc": eval_cand,
+            "delta": eval_delta,
+            "delta_e5": eval_delta * 1e5,
+            "pos": eval_pos,
+            "n_folds": 4,
+        },
+        "bootstrap_all5": boot_all,
+        "bootstrap_eval_1_4": boot_eval,
+        "sensitivity_f0_only": sens,
+        "error_analysis_f0": err_f0,
+        "error_analysis_eval": err_eval,
+        "elapsed_s": time.time() - t0,
+        "NO_SUBMIT": True,
+    }
+    np.save(SOV / "champ_cb_signed_resid_oof_w-0.10.npy", cand)
+    out_json = OUT / "ROUND6_CROSSFOLD_SIGNED_CB.json"
+    out_json.write_text(json.dumps(report, indent=2))
+    print(json.dumps({"milestone_achieved": milestone, "eval_delta_e5": eval_delta * 1e5, "eval_pos": eval_pos}, indent=2))
+    print(f"Wrote {out_json}", flush=True)
+
+
+if __name__ == "__main__":
+drwx------@ 1 moranzavdi  staff  131072 Nov 26 15:34 logs/v47
+-rwx------@ 1 moranzavdi  staff    6217 Nov 26 15:50 logs/v47/CODEX_DS_REVIEW_NEXT.md
+28:OUT = ROOT / "logs" / "v47" / "codex_loop"
+160:        np.save(cb_path, cb_oof)
+298:    np.save(SOV / "champ_cb_signed_resid_oof_w-0.10.npy", cand)
+
+exec
+/bin/bash -lc "sed -n '115,157p;188,204p' scripts/v47_sovereign/crossfold_signed_cb_resid.py; rg -n 'holdout|group' scripts/v47_sovereign | head -12" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 293ms:
+        out["delta_top10gap"] = out["auc_cand_top10gap"] - out["auc_base_top10gap"]
+    return out
+
+
+def main() -> None:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--n-boot", type=int, default=2000)
+    ap.add_argument("--skip-train", action="store_true", help="Reuse saved cb_oof if present")
+    args = ap.parse_args()
+    OUT.mkdir(parents=True, exist_ok=True)
+    t0 = time.time()
+
+    df = pd.read_csv(ROOT / "data" / "train.csv")
+    y = df.pop("is_fraud").to_numpy()
+    df = df.drop(columns=["id"])
+    cats = df.select_dtypes(include=["object", "string", "category"]).columns.tolist()
+    for c in cats:
+        df[c] = df[c].fillna("__missing__").astype(str)
+
+    folds = np.load(SOV / "folds_skf42.npy")
+    assert folds.shape[0] == len(y)
+    z0 = np.load(SOV / "z_sovereign_v0_oof.npy").ravel()
+    assert z0.shape[0] == len(y)
+
+    # Provenance checks
+    skf = StratifiedKFold(5, shuffle=True, random_state=42)
+    rebuilt = np.empty(len(y), dtype=np.int8)
+    for k, (_, va) in enumerate(skf.split(df, y)):
+        rebuilt[va] = k
+    np.testing.assert_array_equal(folds, rebuilt)
+
+    cb_path = SOV / "catboost_outer_oof.npy"
+    if args.skip_train and cb_path.exists():
+        cb_oof = np.load(cb_path).ravel()
+        print(f"Loaded existing {cb_path}")
+    else:
+        cb_oof = np.full(len(y), np.nan, dtype=np.float64)
+        for k in range(5):
+            tr = folds != k
+            va = folds == k
+            print(f"Training CatBoost outer fold {k} n_tr={tr.sum()} n_va={va.sum()} ...", flush=True)
+            model = train_cb(df.iloc[tr], y[tr], cats, seed=42 + k)
+            cb_oof[va] = model.predict(df.iloc[va], prediction_type="RawFormulaVal")
+        cb_auc = float(roc_auc_score(y_k, cb_k))
+        d = cand_auc - base_auc
+        fold_rows.append(
+            {
+                "fold": k,
+                "n": int(va.sum()),
+                "base_auc": base_auc,
+                "cand_auc": cand_auc,
+                "cb_solo_auc": cb_auc,
+                "delta": d,
+                "delta_e5": d * 1e5,
+                "role": "dev_local_gate" if k == 0 else "untouched_eval",
+            }
+        )
+        print(
+            f"fold{k}: base={base_auc:.6f} cand={cand_auc:.6f} Δe-5={d*1e5:+.3f} "
+            f"[{'DEV' if k==0 else 'EVAL'}]",
+
+codex
+**Current milestone: LOCAL_GATE_PASS.** Round 6 is a test of whether the frozen −0.10 coefficient transfers across folds. I left the running job alone. The workspace rejected the append as read-only, so the protocol below is ready to paste into [CODEX_DS_REVIEW_NEXT.md](/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/logs/v47/CODEX_DS_REVIEW_NEXT.md).
+
+## Round6 adversarial protocol
+
+### What could make the local pass a false positive
+
+- **Fold-0 was reused, and the margin is thin.** The lift cleared the gate by only **0.5536e-5**. Two subfolds supplied most of the gain, and another would have flipped sign with a small change in pair ordering. Cross-fitting the weight protects each scoring subfold from its own direct weight fit. It does not undo prior Fold-0 experiment selection.
+- **The five weight choices share evidence.** Their training sets overlap, and all five chose the grid endpoint. That makes −0.10 a reasonable frozen test coefficient. It gives little evidence about the optimum or the stability of the negative sign under a new training sample.
+- **The champion is the main provenance risk.** CB excluded the scored outer fold from supervised training. The saved champion still needs an audit of each upstream fit, calibration, and model or track selection. A verified CB split alone cannot establish isolation for the comparison.
+- **Pooling can manufacture apparent rank improvement.** Round 6 rank-transforms scores separately within each fold. The pooled comparison then counts cross-fold pairs between a fold-normalized candidate and a saved champion on its original scale. Use within-fold AUC deltas as the primary estimand. A row bootstrap of fixed predictions measures sampling uncertainty conditional on those scores. It misses shared training, recipe selection, and dependence from duplicate or related rows.
+
+### CROSS_FOLD_VERIFIED
+
+Require **all** of the following for the one frozen recipe on folds 1–4:
+
+1. Verify row alignment and SKF assignments, score hashes, eligible input lineage, and outer-fold isolation for both arms. Validate any reused CB cache against the training recipe, data, and fold assignments. Reproduce the frozen Fold-0 result within numerical tolerance, then exclude Fold-0 from adjudication.
+2. Require a **fold-size-weighted mean within-fold ΔAUC ≥ +8e-5**, **at least 3/4 strictly positive folds**, and a positive weighted mean after omitting each evaluation fold in turn.
+3. Require the lower endpoint of a **two-sided 95% paired interval above zero** for that same weighted statistic. Resample paired scores within fold and class for independent rows. Use an appropriate group bootstrap where rows share an entity or duplicate cluster. Record that the interval is conditional on frozen predictions.
+
+The script’s `milestone_achieved` flag uses a pooled statistic and pooled row bootstrap, so it cannot adjudicate this protocol. If the numbers pass and champion isolation remains unresolved, record **matched-anchor transfer evidence** and keep `CROSS_FOLD_VERIFIED` pending. An isolated rebuild must also be audited for artifact and benchmark comparability.
+
+### INDEPENDENT_HOLDOUT_VERIFIED
+
+Use a genuinely unexposed, relevant labeled cohort with enough positives to resolve the target lift. Size it from development variance before unblinding. Keep duplicate or related entities on one side of the split. A new split of rows already used for training or research is a diagnostic.
+
+Freeze one baseline/candidate pair, training and calibration rules, −0.10, ranking-batch semantics, and the resampling unit before touching holdout labels. Score both arms once on identical rows. Require **ΔAUC ≥ +8e-5** and a **paired 95% lower bound above zero**. No retune and rescore on the same cohort after a miss. All work stays local under `NO_SUBMIT=True`, `SUBMIT_ARMED=False`, $0 RunPod, zero tip CSVs, and no paid API.
+
+### Development isolation and ranked follow-ups
+
+1. **Adjudicate the frozen candidate first.** Keep folds 1–4 labels, scores, subgroup metrics, and per-row errors with the evaluator. Release the locked adjudication to development. The F0 sensitivity grid cannot change Round 6’s coefficient.
+2. **If it passes, prioritize independent holdout confirmation.** If it misses or provenance is unresolved, prioritize rebuilding the baseline and candidate with outer-fold isolation. Treat that as a provenance and transport diagnostic on already examined folds. It needs fresh evaluation if it changes the recipe.
+3. **Develop one complementary residual in dev.** Start with signed digit LightGBM as a self-owned comparator. Predeclare its weight grid and compare incremental AUC against **champion plus signed CB** using dev-only nested fits. Check whether it corrects fraud–legitimate pairs that CB leaves misordered. Consider regime gates only after that complementarity replicates in dev. Any design prompted by folds 1–4 results requires a fresh sealed evaluator.
+
+**Next action for Cursor once `ROUND6_CROSSFOLD_SIGNED_CB.json` exists:** Adjudicate the frozen −0.10 candidate against the checklist above using the saved paired scores, and append the protocol and single verdict to `logs/v47/CODEX_DS_REVIEW_NEXT.md` before opening the evaluation error analysis.
+tokens used
+106,547
+**Current milestone: LOCAL_GATE_PASS.** Round 6 is a test of whether the frozen −0.10 coefficient transfers across folds. I left the running job alone. The workspace rejected the append as read-only, so the protocol below is ready to paste into [CODEX_DS_REVIEW_NEXT.md](/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/logs/v47/CODEX_DS_REVIEW_NEXT.md).
+
+## Round6 adversarial protocol
+
+### What could make the local pass a false positive
+
+- **Fold-0 was reused, and the margin is thin.** The lift cleared the gate by only **0.5536e-5**. Two subfolds supplied most of the gain, and another would have flipped sign with a small change in pair ordering. Cross-fitting the weight protects each scoring subfold from its own direct weight fit. It does not undo prior Fold-0 experiment selection.
+- **The five weight choices share evidence.** Their training sets overlap, and all five chose the grid endpoint. That makes −0.10 a reasonable frozen test coefficient. It gives little evidence about the optimum or the stability of the negative sign under a new training sample.
+- **The champion is the main provenance risk.** CB excluded the scored outer fold from supervised training. The saved champion still needs an audit of each upstream fit, calibration, and model or track selection. A verified CB split alone cannot establish isolation for the comparison.
+- **Pooling can manufacture apparent rank improvement.** Round 6 rank-transforms scores separately within each fold. The pooled comparison then counts cross-fold pairs between a fold-normalized candidate and a saved champion on its original scale. Use within-fold AUC deltas as the primary estimand. A row bootstrap of fixed predictions measures sampling uncertainty conditional on those scores. It misses shared training, recipe selection, and dependence from duplicate or related rows.
+
+### CROSS_FOLD_VERIFIED
+
+Require **all** of the following for the one frozen recipe on folds 1–4:
+
+1. Verify row alignment and SKF assignments, score hashes, eligible input lineage, and outer-fold isolation for both arms. Validate any reused CB cache against the training recipe, data, and fold assignments. Reproduce the frozen Fold-0 result within numerical tolerance, then exclude Fold-0 from adjudication.
+2. Require a **fold-size-weighted mean within-fold ΔAUC ≥ +8e-5**, **at least 3/4 strictly positive folds**, and a positive weighted mean after omitting each evaluation fold in turn.
+3. Require the lower endpoint of a **two-sided 95% paired interval above zero** for that same weighted statistic. Resample paired scores within fold and class for independent rows. Use an appropriate group bootstrap where rows share an entity or duplicate cluster. Record that the interval is conditional on frozen predictions.
+
+The script’s `milestone_achieved` flag uses a pooled statistic and pooled row bootstrap, so it cannot adjudicate this protocol. If the numbers pass and champion isolation remains unresolved, record **matched-anchor transfer evidence** and keep `CROSS_FOLD_VERIFIED` pending. An isolated rebuild must also be audited for artifact and benchmark comparability.
+
+### INDEPENDENT_HOLDOUT_VERIFIED
+
+Use a genuinely unexposed, relevant labeled cohort with enough positives to resolve the target lift. Size it from development variance before unblinding. Keep duplicate or related entities on one side of the split. A new split of rows already used for training or research is a diagnostic.
+
+Freeze one baseline/candidate pair, training and calibration rules, −0.10, ranking-batch semantics, and the resampling unit before touching holdout labels. Score both arms once on identical rows. Require **ΔAUC ≥ +8e-5** and a **paired 95% lower bound above zero**. No retune and rescore on the same cohort after a miss. All work stays local under `NO_SUBMIT=True`, `SUBMIT_ARMED=False`, $0 RunPod, zero tip CSVs, and no paid API.
+
+### Development isolation and ranked follow-ups
+
+1. **Adjudicate the frozen candidate first.** Keep folds 1–4 labels, scores, subgroup metrics, and per-row errors with the evaluator. Release the locked adjudication to development. The F0 sensitivity grid cannot change Round 6’s coefficient.
+2. **If it passes, prioritize independent holdout confirmation.** If it misses or provenance is unresolved, prioritize rebuilding the baseline and candidate with outer-fold isolation. Treat that as a provenance and transport diagnostic on already examined folds. It needs fresh evaluation if it changes the recipe.
+3. **Develop one complementary residual in dev.** Start with signed digit LightGBM as a self-owned comparator. Predeclare its weight grid and compare incremental AUC against **champion plus signed CB** using dev-only nested fits. Check whether it corrects fraud–legitimate pairs that CB leaves misordered. Consider regime gates only after that complementarity replicates in dev. Any design prompted by folds 1–4 results requires a fresh sealed evaluator.
+
+**Next action for Cursor once `ROUND6_CROSSFOLD_SIGNED_CB.json` exists:** Adjudicate the frozen −0.10 candidate against the checklist above using the saved paired scores, and append the protocol and single verdict to `logs/v47/CODEX_DS_REVIEW_NEXT.md` before opening the evaluation error analysis.

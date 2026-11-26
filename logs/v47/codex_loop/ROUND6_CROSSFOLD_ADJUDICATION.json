@@ -1,0 +1,78 @@
+{
+  "verdict": "CROSS_FOLD_FAIL \u2014 remain at LOCAL_GATE_PASS",
+  "milestone_achieved": "LOCAL_GATE_PASS",
+  "numeric_pass": false,
+  "champion_isolation_resolved": false,
+  "fixed_w": -0.1,
+  "per_fold_delta_e5": {
+    "0": 8.55362843242835,
+    "1": -20.103776638968895,
+    "2": 4.043064892744752,
+    "3": 1.115478248159274,
+    "4": -5.966099677656711
+  },
+  "loo": [
+    {
+      "leave_fold": 1,
+      "weighted_mean_delta_e5": -0.269185512250895,
+      "positive": false
+    },
+    {
+      "leave_fold": 2,
+      "weighted_mean_delta_e5": -8.318132689488777,
+      "positive": false
+    },
+    {
+      "leave_fold": 3,
+      "weighted_mean_delta_e5": -7.342270474626952,
+      "positive": false
+    },
+    {
+      "leave_fold": 4,
+      "weighted_mean_delta_e5": -4.981744499354957,
+      "positive": false
+    }
+  ],
+  "criteria": {
+    "weighted_mean_delta_e5": -5.227833293930395,
+    "weighted_mean_ge_8e5": false,
+    "pos_eval_folds": 2,
+    "pos_ge_3_of_4": false,
+    "loo_all_positive": false,
+    "fold_delta_bootstrap_ci95_e5": [
+      -14.798962917186852,
+      2.579271570452013
+    ],
+    "bootstrap_lb_gt_0": false,
+    "note": "Primary CI deferred; fold-level resample shown as diagnostic only. Per-row within-fold CI unnecessary for FAIL given pos=2/4 and negative weighted mean."
+  },
+  "sensitivity_f0_only": [
+    {
+      "w": -0.05,
+      "delta_e5": 5.620458468791334
+    },
+    {
+      "w": -0.075,
+      "delta_e5": 7.325464536045434
+    },
+    {
+      "w": -0.1,
+      "delta_e5": 8.55362843242835
+    },
+    {
+      "w": -0.125,
+      "delta_e5": 9.071813503358506
+    },
+    {
+      "w": -0.15,
+      "delta_e5": 8.496121390955125
+    }
+  ],
+  "error_analysis_eval": {
+    "fraud_frac_up": 0.4974337040205304,
+    "legit_frac_down": 0.49209612506719747,
+    "mean_move_fraud": -0.00019820935581312576,
+    "mean_move_legit": 3.301130220325681e-06
+  },
+  "NO_SUBMIT": true
+}

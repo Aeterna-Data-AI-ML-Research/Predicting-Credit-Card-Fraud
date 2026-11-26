@@ -1,0 +1,1 @@
+Isolated 5-stream + pairwise meta: F0 DEV_ADVANCE and B2037 PASS, but NO full-train OOF/test predictions exist. Cannot issue submission CSV without a champion-compatible full rebuild. Naive F0 blends onto z0 all negative (0 gate clears).

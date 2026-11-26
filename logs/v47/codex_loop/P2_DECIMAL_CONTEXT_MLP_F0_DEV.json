@@ -1,0 +1,27 @@
+{
+  "scope": "historical_F0_DEV_ONLY",
+  "experiment": "decimal_character_position_and_raw_context_cpu_mlp",
+  "base_auc": 0.9468323528460475,
+  "candidate_auc": 0.94669289671625,
+  "stream_solo_auc": 0.9223623544483182,
+  "delta_e5": -13.945612979748834,
+  "positive_subfolds": 0,
+  "subfold_deltas_e5": [
+    -10.904568494196631,
+    -17.95179140716696,
+    -15.579089859174555,
+    -10.865695723016877,
+    -15.252418978439763
+  ],
+  "meta_coefficients": [
+    0.5434400861619181,
+    0.5345969788822785,
+    0.5231786525100771,
+    0.6598497373686953,
+    0.19786598697763536,
+    0.06339514940393984
+  ],
+  "verdict": "NO-GO",
+  "NO_SUBMIT": true,
+  "NO_GPU": true
+}

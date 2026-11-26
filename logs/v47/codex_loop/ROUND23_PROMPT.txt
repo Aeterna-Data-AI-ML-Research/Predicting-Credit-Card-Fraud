@@ -1,0 +1,16 @@
+# Cursor → Codex Round23
+
+Pairwise logistic head on frozen five-stream inner OOF (F0 DEV) — DEV_ADVANCE:
+- base_auc 0.9468323528460475 (assert OK vs p2_decimal_char_ngram_f0_dev.npz)
+- candidate_auc 0.946929365670755
+- Δe-5 +9.701282470753192
+- positive_subfolds 5/5
+- subfold_deltas_e5 [2.88, 11.06, 26.76, 3.52, 6.92]
+- control_coefs [0.488, 0.444, 0.437, 0.952, 0.191]
+- pairwise_coefs [0.339, 0.531, 0.175, 1.199, 0.185]
+- pair_seed 2035, pairs_per_fraud 64, n_pairs 598528
+- Artifacts: P2_FIVE_STREAM_PAIRWISE_META_F0_DEV.json / p2_five_stream_pairwise_meta_f0_dev.npz
+
+Gate met (≥+8e-5 & ≥4/5). Absolute still ~0.94693 << public 0.95726. Milestone=LOCAL_GATE_PASS. Signed-CB retired. NO_SUBMIT/NO_GPU/$0.
+
+Issue the sealed Protocol-B transport command for this pairwise meta (same frozen streams; previously examined rows; lock+JSON like B2031/B2033). ONE bash after short verdict. Keep /tmp/s6e11_isol/data/train.csv. No submit. No public arrays.

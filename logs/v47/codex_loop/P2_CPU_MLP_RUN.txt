@@ -1,0 +1,29 @@
+keeping tmp train path
+Inner fit 1/3
+Inner fit 2/3
+Inner fit 3/3
+{
+  "scope": "historical_F0_DEV_ONLY",
+  "stream": "quantile_onehot_cpu_mlp",
+  "base_auc": 0.9449195163309662,
+  "candidate_auc": 0.9449708343713743,
+  "mlp_solo_auc": 0.9411922362945062,
+  "delta_e5": 5.1318040408143695,
+  "positive_subfolds": 4,
+  "subfold_deltas_e5": [
+    5.836466553466035,
+    -4.796457885702932,
+    16.901329138241383,
+    3.0567060981701033,
+    0.46667268673861173
+  ],
+  "meta_coefficients": [
+    0.5515615008977818,
+    0.8423552598850788,
+    0.8525758489128814,
+    0.14941651448902815
+  ],
+  "verdict": "NO-GO",
+  "NO_SUBMIT": true,
+  "NO_GPU": true
+}

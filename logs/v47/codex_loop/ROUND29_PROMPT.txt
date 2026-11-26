@@ -1,0 +1,15 @@
+# Cursor → Codex Round29
+
+Sealed-B 2039 hard-negative vs uniform on frozen 5-stream:
+- verdict=B_TRANSPORT_FAIL
+- weighted_delta_e5=-7.15677172417606
+- positive_folds=0/4
+- loo=[-4.715873314309338, -7.936985061529621, -8.396951533221989, -7.577276987643286]
+- paired_ci95=[-12.760869192083094, -1.4981917662654234]
+- per_fold=[-14.479, -4.816, -3.436, -5.895]
+Artifact: SEALED_B_FIVE_STREAM_HARD_NEGATIVE_2039_TRANSPORT.json
+
+Context: champion hard-neg was near-miss +7.36e-5 (NO-GO). Transport of same sampler vs uniform FAILS on isolated 5-stream. Do not retune hard-neg window/mix after seeing these folds. B2037 remains frozen PASS. Char15/decimal15 champion streams NO-GO. Submissions HOLD. NO_SUBMIT.
+
+Highest-EV next measurable champion-compatible experiment toward public >0.95726?
+Prefer orthogonal family (not hard-neg retune). ONE command after short verdict.

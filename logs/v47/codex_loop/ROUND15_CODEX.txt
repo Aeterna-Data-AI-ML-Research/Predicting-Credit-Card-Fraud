@@ -1,0 +1,461 @@
+OpenAI Codex v0.172.0
+--------
+workdir: /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+model: gpt-6.2-sol
+provider: openai
+approval: never
+sandbox: read-only
+reasoning effort: none
+reasoning summaries: none
+session id: 01a2180a-0cec-7810-bcbf-4a725485c87f
+--------
+user
+# Cursor → Codex Round15
+
+Hist-XGB capacity replacement (depth6/800 vs depth4/400) on historical F0:
+- base/control 0.9449195163309662 → cand 0.945291338210148
+- Δe-5 +37.18 but pos only 3/5 → NO-GO (consistency gate)
+- deeper solo 0.943956 < control xgb solo 0.944666
+- Artifact: P2_XGB_CAPACITY_F0_DEV.json
+
+Keep frozen 3-stream depth4/400 as best isolated recipe.
+Highest-EV next measurable step to raise absolute isolated AUC toward public 0.95726 under NO_SUBMIT/NO_GPU?
+ONE bash command after short verdict. No signed-CB. No public arrays. Do not retune XGB depth on same F0.
+codex
+I’ll look for a self-owned model family beyond tree depth.
+exec
+/bin/bash -lc "rg -n '"'^def |''^class '"' scripts/gboost.py | head -45
+rg -n 'additive|GAM|EBM|explainable' scripts/v44_phase2_local_fwfm_ebm.py | head -22
+ls /tmp/s6e11_isol" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 0ms:
+31:def log(*a):
+35:def find(name):
+72:def key_table(df):
+92:def token_keys():
+148:def joint_col(df, c):
+152:def joint_code(df, cols):
+191:def te_rate(k, t, ncat, prior, smooth):
+197:def te_fold(a, b, smooth=20.0, inner=5, seed=0):
+219:def logit(p):
+237:def gen_encode(i, o, m0=50.0, m1=2000.0, m2=200.0):
+257:def gen_fold(a, b, inner=5, seed=0):
+282:def make_view_fn(view_mode="joint"):
+288:def glm_fit_factory(C, OHK=None):
+301:def cache_fold_matrices(teseed, out_dir, glm_C=0.3, view_mode="joint", glm="gen"):
+378:def run_driver(argv=None):
+2:"""V44 Phase 2 — local FwFM_BPE + EBM_GAM (NO_SUBMIT, $0 Mac CPU/MPS, 0 pods).
+259:    log(f"EBM matrix shape tr={Xtr.shape} te={Xte.shape} n_names={len(names)}")
+457:        use = "EBM"
+460:        use = "fallback_stepGAM"
+464:        if use == "EBM":
+476:            # cyclic Empirical-Bayes pairwise step-GAM fallback (12 bags of Ridge on expanded feats)
+497:        log(f"  EBM fold{f} done ({use})")
+593:    log("=== V44 Phase2 FwFM+EBM | NO_SUBMIT=True | 0 pods ===")
+665:    # ── 2B EBM ──
+666:    log("building EBM features…")
+668:    log("fitting EBM_GAM 5-fold…")
+674:    report["EBM_GAM"] = {
+684:    log(f"EBM gate Δe5={g_eb['mean_e5']:.2f} pos={g_eb['pos']} R2={r2_eb:.4f}")
+708:        f"## EBM_GAM\n`{json.dumps(report['EBM_GAM'], indent=2)}`\n\n"
+712:    print(json.dumps({"LB_C3": lb_c3, "FwFM_e5": g_fw["mean_e5"], "EBM_e5": g_eb["mean_e5"], "staged": list(staged)}, indent=2))
+data
+logs
+mlp_runner.sh
+p2_p4_stepgrid_runner.sh
+p2_spline.py
+p2_xgb_inner.py
+pair_rate.sh
+preds
+run_isol.py
+sealed_b.sh
+xgb_capacity.sh
+
+exec
+/bin/bash -lc "sed -n '65,148p;219,258p' scripts/gboost.py" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 0ms:
+for df in (tr, te):
+    df[FLAGS] = df[FLAGS].astype("int8")
+y = tr[TARGET].astype(int).values
+NTR, NTE = len(tr), len(te)
+full = pd.concat([tr[FEATS], te[FEATS]], ignore_index=True)
+FOLDS = list(StratifiedKFold(5, shuffle=True, random_state=42).split(np.zeros(NTR), y))
+OOF, PRED = {}, {}
+def key_table(df):
+    K = {}
+    for c in FEATS:
+        K[f"v_{c}"] = df[c].astype(str).values if c in CATS else df[c].values
+    for c in FLOATS:
+        x = df[c].values
+        K[f"cents_{c}"] = (np.round(x * 100) % 100).astype(np.int64)
+        K[f"int_{c}"] = np.floor(x).astype(np.int64)
+        K[f"ten_{c}"] = np.floor(x / 10).astype(np.int64)
+        K[f"dec_{c}"] = np.floor(x * 10 + 1e-6).astype(np.int64)
+    for c in FLOATS:
+        i = pd.Series(np.floor(df[c].values).astype(np.int64)).astype(str)
+        K[f"l1_{c}"] = (i.str.len() * 10 + i.str[0].astype(int)).values
+        K[f"l2_{c}"] = (i.str.len() * 100 + i.str[:2].astype(int)).values
+    return K
+
+
+STR, TOK = None, None     # the floats as written, and their GPT-2 tokens (kept for section 3)
+
+
+def token_keys():
+    global STR, TOK
+    try:
+        from tokenizers import Tokenizer
+        gpt2 = Tokenizer.from_file(find("gpt2-tokenizer.json"))
+    except Exception as e:
+        log(f"GPT-2 tokenizer unavailable ({type(e).__name__}), token keys skipped")
+        return {}
+    STR = pd.concat([pd.read_csv(find("train.csv"), usecols=FLOATS, dtype=str),
+                     pd.read_csv(find("test.csv"), usecols=FLOATS, dtype=str)], ignore_index=True)
+    TOK, K = {}, {}
+    for c in FLOATS:
+        p = TOK[c] = STR[c].map({v: gpt2.encode(" " + v).tokens for v in STR[c].unique()})
+        K[f"t1_{c}"] = p.str[0].values
+        K[f"t2_{c}"] = p.map(lambda t: t[1] if len(t) > 1 else "").values
+        K[f"tl_{c}"] = p.str[-1].values
+        K[f"tn_{c}"] = p.str.len().values
+    return K
+
+
+KEYS = key_table(full)
+KEYS.update(token_keys())
+KNAMES = list(KEYS)
+codes = [pd.factorize(pd.Series(KEYS[n]))[0].astype(np.int32) for n in KNAMES]
+KMAT = np.column_stack(codes)
+NCAT = np.array([c.max() + 1 for c in codes])
+del KEYS, codes
+
+# raw view: the 24 columns as numbers (categoricals as codes) plus the cents of each float
+RAW = full[NUMS + FLAGS].copy()
+for c in CATS:
+    RAW[c] = pd.factorize(full[c], sort=True)[0].astype(np.int16)
+for c in FLOATS:
+    RAW[f"cents_{c}"] = (np.round(full[c].values * 100) % 100).astype(np.int16)
+RAWV = RAW.values.astype(np.float32)
+CAT_IDX = [list(RAW.columns).index(c) for c in CATS]
+log(f"{len(KNAMES)} target-encoded keys, {RAW.shape[1]} raw columns")
+pass
+
+# the 13 pairs from the offline scan; "q:" = deciles of a float (category x risk was scanned with risk deciles and
+# is keyed on the exact score, which the G check below and the GLM both prefer)
+JOINT = [("j_category_risk", ("merchant_category", "merchant_risk_score")),
+         ("j_foreign_ip", ("is_foreign_transaction", "ip_country_mismatch")),
+         ("j_category_amount", ("merchant_category", "q:amount_usd")),
+         ("j_txn_velocity", ("txn_count_last_24h", "q:velocity_score")),
+         ("j_category_age", ("merchant_category", "customer_age")),
+         ("j_amount_risk", ("q:amount_usd", "q:merchant_risk_score")),
+         ("j_hours_velocity", ("q:hours_since_last_txn", "q:velocity_score")),
+         ("j_age_risk", ("customer_age", "q:merchant_risk_score")),
+         ("j_newmerchant_weekday", ("is_new_merchant", "day_of_week")),
+         ("j_scam_velocity", ("is_ai_generated_scam_attempt", "q:velocity_score")),
+         ("j_age_cardage", ("customer_age", "card_age_months")),
+         ("j_hour_weekday", ("time_of_day_hour", "day_of_week")),
+         ("j_txn_age", ("txn_count_last_24h", "customer_age"))]
+
+
+def joint_col(df, c):
+def logit(p):
+    p = np.clip(p, 1e-6, 1 - 1e-6)
+    return np.log(p / (1 - p))
+
+
+POOL2 = ["amount_usd", "hours_since_last_txn", "distance_from_home_km", "account_balance_usd"]
+POOL1 = ["velocity_score", "merchant_risk_score"]
+GEN = TOK is not None
+if GEN:
+    dec = lambda c: STR[c].str.split(".").str[1].astype(str)
+    lit = lambda c: TOK[c].map(lambda t: t[t.index(".") - 1] if "." in t else t[-1])
+    GROUPS = []
+    for mem, fn in [(POOL2, dec), (POOL2, lambda c: dec(c).str[0]), (POOL1, dec), (POOL1, lit)]:
+        v = pd.concat([fn(c) for c in mem], ignore_index=True)
+        GROUPS.append(pd.factorize(v)[0].astype(np.int32).reshape(len(mem), -1).T.copy())
+    MARKOV = [pd.factorize(lit(c) + "|" + dec(c))[0].astype(np.int32) for c in POOL2]
+
+
+def gen_encode(i, o, m0=50.0, m1=2000.0, m2=200.0):
+    yi = y[i].astype(np.float64)
+    prior, cols, field0 = yi.mean(), [], []
+    for g, C in enumerate(GROUPS):
+        ncat = int(C.max()) + 1
+        s = [np.bincount(C[i, j], weights=yi, minlength=ncat) for j in range(C.shape[1])]
+        n = [np.bincount(C[i, j], minlength=ncat) for j in range(C.shape[1])]
+        pool = (sum(s) + prior * m0) / (sum(n) + m0)
+        for j in range(C.shape[1]):
+            h = ((s[j] + m1 * pool) / (n[j] + m1))[C[o, j]]
+            cols.append(h)
+            if g == 0:
+                field0.append(h)
+    for j, M in enumerate(MARKOV):
+        ncat = int(M.max()) + 1
+        s, n = np.bincount(M[i], weights=yi, minlength=ncat), np.bincount(M[i], minlength=ncat)
+        cols.append((s[M[o]] + m2 * field0[j]) / (n[M[o]] + m2))
+    return np.column_stack(cols).astype(np.float32)
+
+
+def gen_fold(a, b, inner=5, seed=0):
+    Ga = None
+
+codex
+**Test a CPU rebuild of the legacy decimal-token likelihood stream.** The depth-6 replacement failed the consistency gate, and its solo AUC fell. Keep depth 4 frozen. The new hypothesis is that the **original decimal strings** carry fraud information across fields that raw values, cents buckets, and pair-rate features miss. The command tests pooled, smoothed rates for decimal suffixes and prefix–suffix combinations. It cross-fits those rates inside each base-model training split and gates the fourth stream against the reproduced three-stream control on historical Fold-0.
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python -u - <<'PY'
+from pathlib import Path
+
+source_path = Path("/tmp/s6e11_isol/p2_xgb_inner.py")
+runner, boundary, _ = source_path.read_text().partition("\ncontrol, _ = stack(2)")
+assert boundary and 'device="cpu"' in runner
+
+def replace_once(text, old, new):
+    assert text.count(old) == 1, f"Round 10 runner changed near {old!r}"
+    return text.replace(old, new, 1)
+
+runner = replace_once(runner, '"/tmp/s6e11_isol/data/train.csv"', '"data/train.csv"')
+runner = replace_once(runner, "(len(train), 3)", "(len(train), 4)")
+runner = replace_once(
+    runner, "from xgboost import XGBClassifier",
+    "from xgboost import XGBClassifier\nfrom sklearn.base import clone",
+)
+runner = replace_once(runner, "outer_scores = []", """outer_scores = []
+decimal_groups = [
+    ["amount_usd", "hours_since_last_txn", "distance_from_home_km", "account_balance_usd"],
+    ["velocity_score", "merchant_risk_score"],
+]
+decimal_fields = [column for group in decimal_groups for column in group]
+raw_strings = pd.read_csv(
+    "data/train.csv", usecols=["id", *decimal_fields],
+    dtype={column: "string" for column in decimal_fields},
+)
+np.testing.assert_array_equal(raw_strings.pop("id").to_numpy(), ids)
+suffix, joint = {}, {}
+for column in decimal_fields:
+    parts = raw_strings[column].str.partition(".")
+    suffix[column] = parts[2].where(parts[1].eq("."), "<integer>").fillna("<missing>")
+    joint[column] = parts[0].fillna("<missing>").str[:2].str.cat(suffix[column], sep="|")
+del raw_strings
+
+def rate_table(keys, target):
+    return pd.DataFrame({"key": keys.to_numpy(), "label": target}).groupby("key")["label"].agg(["sum", "size"])
+
+def decimal_rates(reference, query):
+    target = labels[reference]
+    prior = target.mean()
+    features = {}
+    for group in decimal_groups:
+        field_tables = {column: rate_table(suffix[column].iloc[reference], target) for column in group}
+        pooled = pd.concat(field_tables.values()).groupby(level=0).sum()
+        pool_rate = (pooled["sum"] + 50 * prior) / (pooled["size"] + 50)
+        for column in group:
+            table = field_tables[column]
+            local_prior = pool_rate.reindex(table.index).fillna(prior)
+            local_rate = (table["sum"] + 2000 * local_prior) / (table["size"] + 2000)
+            query_suffix = suffix[column].iloc[query]
+            coarse = query_suffix.map(local_rate).fillna(query_suffix.map(pool_rate)).fillna(prior)
+            detail = pd.DataFrame({
+                "key": joint[column].iloc[reference].to_numpy(),
+                "suffix": suffix[column].iloc[reference].to_numpy(),
+                "label": target,
+            }).groupby("key").agg(total=("label", "sum"), count=("label", "size"), suffix=("suffix", "first"))
+            detail_prior = detail["suffix"].map(local_rate).fillna(prior)
+            detail_rate = (detail["total"] + 200 * detail_prior) / (detail["count"] + 200)
+            features[f"dec_rate__{column}"] = coarse.to_numpy(dtype=float)
+            features[f"dec_joint_rate__{column}"] = (
+                joint[column].iloc[query].map(detail_rate).fillna(coarse).to_numpy(dtype=float)
+            )
+    return pd.DataFrame(features, index=query)
+""")
+runner = replace_once(runner, "    scores = np.column_stack(margins)", """    rate_parts = []
+    encoder_cv = StratifiedKFold(3, shuffle=True, random_state=2030)
+    for encoder_fit, encoder_held in encoder_cv.split(fit_frame, fit_labels):
+        rate_parts.append(decimal_rates(fit_rows[encoder_fit], fit_rows[encoder_held]))
+    training_rates = pd.concat(rate_parts).reindex(tree_fit.index)
+    inference_rates = decimal_rates(fit_rows, score_frame.index.to_numpy())
+    assert np.isfinite(training_rates.to_numpy()).all()
+    assert np.isfinite(inference_rates.to_numpy()).all()
+
+    decimal_model = clone(xgb).set_params(device="cpu")
+    decimal_model.fit(tree_fit.join(training_rates), fit_labels)
+    margins.append(decimal_model.predict(tree_score.join(inference_rates), output_margin=True))
+
+    scores = np.column_stack(margins)""")
+
+evaluation = """
+control, _ = stack(3)
+candidate, coefficients = stack(4)
+with np.load(pred / "p2_xgb_inner_oof_f0_dev.npz", allow_pickle=False) as saved:
+    np.testing.assert_array_equal(saved["row_indices"], valid)
+    np.testing.assert_array_equal(saved["ids"], ids[valid])
+    np.testing.assert_allclose(control, saved["candidate"], rtol=1e-8, atol=1e-8)
+observed = labels[valid]
+base_auc = roc_auc_score(observed, control)
+assert abs(base_auc - 0.9449195163309662) < 1e-12
+candidate_auc = roc_auc_score(observed, candidate)
+delta = candidate_auc - base_auc
+subfold_deltas = [
+    (roc_auc_score(observed[held], candidate[held])
+     - roc_auc_score(observed[held], control[held])) * 1e5
+    for _, held in StratifiedKFold(5, shuffle=True, random_state=7).split(control, observed)
+]
+positive = sum(change > 0 for change in subfold_deltas)
+verdict = "DEV_ADVANCE" if delta >= 8e-5 and positive >= 4 else "NO-GO"
+decimal_scores = np.mean([design[:, 3] for design in outer_designs], axis=0)
+result = {
+    "scope": "historical_F0_DEV_ONLY",
+    "experiment": "cross_fitted_pooled_decimal_token_hist_xgb",
+    "base_auc": base_auc, "candidate_auc": candidate_auc,
+    "decimal_solo_auc": roc_auc_score(observed, decimal_scores),
+    "delta_e5": delta * 1e5, "positive_subfolds": positive,
+    "subfold_deltas_e5": subfold_deltas, "meta_coefficients": coefficients,
+    "verdict": verdict, "NO_SUBMIT": True, "NO_GPU": True,
+}
+payload = json.dumps(result, indent=2)
+(logs / "P2_DECIMAL_TOKEN_INNER_OOF_F0_DEV.json").write_text(payload + "\\n")
+np.savez(pred / "p2_decimal_token_inner_oof_f0_dev.npz",
+         ids=ids[valid], row_indices=valid, control=control, candidate=candidate,
+         outer_stream_margins=np.stack(outer_scores))
+with Path("logs/v47/CODEX_DS_REVIEW_NEXT.md").open("a") as review:
+    review.write(
+        "\\n## P2 isolated decimal-token likelihood\\n\\n"
+        f"Historical Fold-0. Control {base_auc:.16f}, candidate {candidate_auc:.16f}, "
+        f"solo {result['decimal_solo_auc']:.16f}, Δe-5 {delta * 1e5:+.8f}, "
+        f"{positive}/5 positive, {verdict}. Subfold Δe-5 {subfold_deltas}.\\n"
+    )
+print(payload)
+"""
+exec(compile(runner + "\n" + evaluation, str(source_path), "exec"), {"__name__": "__main__"})
+PY
+```
+tokens used
+205,850
+**Test a CPU rebuild of the legacy decimal-token likelihood stream.** The depth-6 replacement failed the consistency gate, and its solo AUC fell. Keep depth 4 frozen. The new hypothesis is that the **original decimal strings** carry fraud information across fields that raw values, cents buckets, and pair-rate features miss. The command tests pooled, smoothed rates for decimal suffixes and prefix–suffix combinations. It cross-fits those rates inside each base-model training split and gates the fourth stream against the reproduced three-stream control on historical Fold-0.
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python -u - <<'PY'
+from pathlib import Path
+
+source_path = Path("/tmp/s6e11_isol/p2_xgb_inner.py")
+runner, boundary, _ = source_path.read_text().partition("\ncontrol, _ = stack(2)")
+assert boundary and 'device="cpu"' in runner
+
+def replace_once(text, old, new):
+    assert text.count(old) == 1, f"Round 10 runner changed near {old!r}"
+    return text.replace(old, new, 1)
+
+runner = replace_once(runner, '"/tmp/s6e11_isol/data/train.csv"', '"data/train.csv"')
+runner = replace_once(runner, "(len(train), 3)", "(len(train), 4)")
+runner = replace_once(
+    runner, "from xgboost import XGBClassifier",
+    "from xgboost import XGBClassifier\nfrom sklearn.base import clone",
+)
+runner = replace_once(runner, "outer_scores = []", """outer_scores = []
+decimal_groups = [
+    ["amount_usd", "hours_since_last_txn", "distance_from_home_km", "account_balance_usd"],
+    ["velocity_score", "merchant_risk_score"],
+]
+decimal_fields = [column for group in decimal_groups for column in group]
+raw_strings = pd.read_csv(
+    "data/train.csv", usecols=["id", *decimal_fields],
+    dtype={column: "string" for column in decimal_fields},
+)
+np.testing.assert_array_equal(raw_strings.pop("id").to_numpy(), ids)
+suffix, joint = {}, {}
+for column in decimal_fields:
+    parts = raw_strings[column].str.partition(".")
+    suffix[column] = parts[2].where(parts[1].eq("."), "<integer>").fillna("<missing>")
+    joint[column] = parts[0].fillna("<missing>").str[:2].str.cat(suffix[column], sep="|")
+del raw_strings
+
+def rate_table(keys, target):
+    return pd.DataFrame({"key": keys.to_numpy(), "label": target}).groupby("key")["label"].agg(["sum", "size"])
+
+def decimal_rates(reference, query):
+    target = labels[reference]
+    prior = target.mean()
+    features = {}
+    for group in decimal_groups:
+        field_tables = {column: rate_table(suffix[column].iloc[reference], target) for column in group}
+        pooled = pd.concat(field_tables.values()).groupby(level=0).sum()
+        pool_rate = (pooled["sum"] + 50 * prior) / (pooled["size"] + 50)
+        for column in group:
+            table = field_tables[column]
+            local_prior = pool_rate.reindex(table.index).fillna(prior)
+            local_rate = (table["sum"] + 2000 * local_prior) / (table["size"] + 2000)
+            query_suffix = suffix[column].iloc[query]
+            coarse = query_suffix.map(local_rate).fillna(query_suffix.map(pool_rate)).fillna(prior)
+            detail = pd.DataFrame({
+                "key": joint[column].iloc[reference].to_numpy(),
+                "suffix": suffix[column].iloc[reference].to_numpy(),
+                "label": target,
+            }).groupby("key").agg(total=("label", "sum"), count=("label", "size"), suffix=("suffix", "first"))
+            detail_prior = detail["suffix"].map(local_rate).fillna(prior)
+            detail_rate = (detail["total"] + 200 * detail_prior) / (detail["count"] + 200)
+            features[f"dec_rate__{column}"] = coarse.to_numpy(dtype=float)
+            features[f"dec_joint_rate__{column}"] = (
+                joint[column].iloc[query].map(detail_rate).fillna(coarse).to_numpy(dtype=float)
+            )
+    return pd.DataFrame(features, index=query)
+""")
+runner = replace_once(runner, "    scores = np.column_stack(margins)", """    rate_parts = []
+    encoder_cv = StratifiedKFold(3, shuffle=True, random_state=2030)
+    for encoder_fit, encoder_held in encoder_cv.split(fit_frame, fit_labels):
+        rate_parts.append(decimal_rates(fit_rows[encoder_fit], fit_rows[encoder_held]))
+    training_rates = pd.concat(rate_parts).reindex(tree_fit.index)
+    inference_rates = decimal_rates(fit_rows, score_frame.index.to_numpy())
+    assert np.isfinite(training_rates.to_numpy()).all()
+    assert np.isfinite(inference_rates.to_numpy()).all()
+
+    decimal_model = clone(xgb).set_params(device="cpu")
+    decimal_model.fit(tree_fit.join(training_rates), fit_labels)
+    margins.append(decimal_model.predict(tree_score.join(inference_rates), output_margin=True))
+
+    scores = np.column_stack(margins)""")
+
+evaluation = """
+control, _ = stack(3)
+candidate, coefficients = stack(4)
+with np.load(pred / "p2_xgb_inner_oof_f0_dev.npz", allow_pickle=False) as saved:
+    np.testing.assert_array_equal(saved["row_indices"], valid)
+    np.testing.assert_array_equal(saved["ids"], ids[valid])
+    np.testing.assert_allclose(control, saved["candidate"], rtol=1e-8, atol=1e-8)
+observed = labels[valid]
+base_auc = roc_auc_score(observed, control)
+assert abs(base_auc - 0.9449195163309662) < 1e-12
+candidate_auc = roc_auc_score(observed, candidate)
+delta = candidate_auc - base_auc
+subfold_deltas = [
+    (roc_auc_score(observed[held], candidate[held])
+     - roc_auc_score(observed[held], control[held])) * 1e5
+    for _, held in StratifiedKFold(5, shuffle=True, random_state=7).split(control, observed)
+]
+positive = sum(change > 0 for change in subfold_deltas)
+verdict = "DEV_ADVANCE" if delta >= 8e-5 and positive >= 4 else "NO-GO"
+decimal_scores = np.mean([design[:, 3] for design in outer_designs], axis=0)
+result = {
+    "scope": "historical_F0_DEV_ONLY",
+    "experiment": "cross_fitted_pooled_decimal_token_hist_xgb",
+    "base_auc": base_auc, "candidate_auc": candidate_auc,
+    "decimal_solo_auc": roc_auc_score(observed, decimal_scores),
+    "delta_e5": delta * 1e5, "positive_subfolds": positive,
+    "subfold_deltas_e5": subfold_deltas, "meta_coefficients": coefficients,
+    "verdict": verdict, "NO_SUBMIT": True, "NO_GPU": True,
+}
+payload = json.dumps(result, indent=2)
+(logs / "P2_DECIMAL_TOKEN_INNER_OOF_F0_DEV.json").write_text(payload + "\\n")
+np.savez(pred / "p2_decimal_token_inner_oof_f0_dev.npz",
+         ids=ids[valid], row_indices=valid, control=control, candidate=candidate,
+         outer_stream_margins=np.stack(outer_scores))
+with Path("logs/v47/CODEX_DS_REVIEW_NEXT.md").open("a") as review:
+    review.write(
+        "\\n## P2 isolated decimal-token likelihood\\n\\n"
+        f"Historical Fold-0. Control {base_auc:.16f}, candidate {candidate_auc:.16f}, "
+        f"solo {result['decimal_solo_auc']:.16f}, Δe-5 {delta * 1e5:+.8f}, "
+        f"{positive}/5 positive, {verdict}. Subfold Δe-5 {subfold_deltas}.\\n"
+    )
+print(payload)
+"""
+exec(compile(runner + "\n" + evaluation, str(source_path), "exec"), {"__name__": "__main__"})
+PY
+```

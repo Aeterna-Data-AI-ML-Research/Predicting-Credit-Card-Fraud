@@ -1,0 +1,351 @@
+OpenAI Codex v0.172.0
+--------
+workdir: /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+model: gpt-6.2-sol
+provider: openai
+approval: never
+sandbox: read-only
+reasoning effort: none
+reasoning summaries: none
+session id: 01a2180a-0cec-7810-bcbf-4a725485c87f
+--------
+user
+# Cursor → Codex Round7 results (S6E11 fraud ONLY)
+
+Executed your #2 ranked follow-up: Fold-0-only complementary signed digit LightGBM residual (nested weight search, SKF rs=7, predeclared grid including ±0.15). Folds 1–4 untouched for promotion.
+
+## Result (DEV ONLY)
+- LGBM solo F0 AUC = **0.8882067** (weak — likely wrong digit-feature recipe vs your earlier ~0.9368 digit LGBM; used raw numeric columns only, dropped categoricals)
+- Nested signed residual: base 0.9512508 → 0.9512423 · Δe-5 **−0.849** · pos **2/5** · NO-GO
+- Selected weights: [−0.025, −0.025, −0.05, −0.05, −0.05] (not stable endpoint like CB)
+- Artifacts: ROUND7_F0_SIGNED_LGBM.json, preds/v47_sovereign/lgbm_digit_solo_f0.npy
+
+## Status
+- Milestone still **LOCAL_GATE_PASS** only
+- Signed-CB frozen −0.10: retired from promotion (CROSS_FOLD_FAIL)
+- This LGBM probe: no promotion signal on F0
+
+## Ask
+1. Confirm whether Round7 used an incorrect digit recipe; if so, give the exact feature construction to re-run F0-only once.
+2. Otherwise proceed to ranked #1: isolated champion diagnostic — give ONE concrete bash/python command that starts a feasible CPU-scoped isolation rebuild (small self-owned stream subset), without touching sealed future holdout design.
+3. Update CODEX_DS_REVIEW_NEXT.md (Cursor can write if your sandbox is RO).
+4. End with next command only. NO_SUBMIT / $0 RunPod / 0 tip CSVs.
+codex
+I’ll compare the Round 7 feature code with the earlier digit LightGBM recipe so the rerun changes only the intended inputs.
+exec
+/bin/bash -lc "rg -n '0.888206|lgbm_digit_solo_f0|ROUND7_F0_SIGNED_LGBM' scripts/v47_sovereign logs/v47/codex_loop -g '*.py' -g '*.json' -g '*.txt' | head -22
+ls scripts/v47_sovereign | tail -18
+ls logs/v47/codex_loop/*ROUND7*" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 836ms:
+logs/v47/codex_loop/ROUND7_F0_SIGNED_LGBM.txt:1:F0 base=0.9512507991341679 LGBM solo=0.8882066999526746
+logs/v47/codex_loop/ROUND7_F0_SIGNED_LGBM.txt:22:  "solo_auc": 0.8882066999526746,
+logs/v47/codex_loop/ROUND7_F0_SIGNED_LGBM.json:21:  "solo_auc": 0.8882066999526746,
+logs/v47/codex_loop/ROUND7_CODEX.txt:18:- LGBM solo F0 AUC = **0.8882067** (weak — likely wrong digit-feature recipe vs your earlier ~0.9368 digit LGBM; used raw numeric columns only, dropped categoricals)
+logs/v47/codex_loop/ROUND7_CODEX.txt:21:- Artifacts: ROUND7_F0_SIGNED_LGBM.json, preds/v47_sovereign/lgbm_digit_solo_f0.npy
+logs/v47/codex_loop/ROUND7_CODEX.txt:36:/bin/bash -lc "rg -n '0.888206|lgbm_digit_solo_f0|ROUND7_F0_SIGNED_LGBM' scripts/v47_sovereign logs/v47/codex_loop -g '*.py' -g '*.json' -g '*.txt' | head -22
+__pycache__
+adjudicate_crossfold_cb.py
+audit_unused_psuper_f0.py
+conditional_f0.py
+crossfold_signed_cb_resid.py
+hgdt_v2_mps_fold0.py
+kaggle_hgdt_f0
+launch_f0_pod.py
+pod_f0
+step1_schema_and_z_sovereign.py
+step2_provenance_and_z_v1.py
+step3_f0_gate.py
+step4_f0_gate_report.py
+v47_3_f0_gate.py
+logs/v47/codex_loop/ROUND7_CODEX.txt
+logs/v47/codex_loop/ROUND7_F0_SIGNED_LGBM.json
+logs/v47/codex_loop/ROUND7_F0_SIGNED_LGBM.txt
+
+exec
+/bin/bash -lc "cat logs/v47/codex_loop/ROUND7_F0_SIGNED_LGBM.json
+rg -n '0.936805|_cents|n_estimators=450' logs/v47/codex_loop/ROUND3_CODEX.txt | head -18
+tail -25 logs/v47/CODEX_DS_REVIEW_NEXT.md" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 0ms:
+{
+  "scope": "F0_DEV_ONLY_signed_digit_LGBM",
+  "base_auc": 0.9512507991341679,
+  "cand_auc": 0.9512423098514521,
+  "delta_e5": -0.8489282715795632,
+  "pos5": 2,
+  "sub_e5": [
+    15.064603165293455,
+    17.641341058571847,
+    -4.99339774817642,
+    -19.048023497292288,
+    -8.415664117633614
+  ],
+  "weights": [
+    -0.025,
+    -0.025,
+    -0.05,
+    -0.05,
+    -0.05
+  ],
+  "solo_auc": 0.8882066999526746,
+  "verdict": "NO-GO",
+  "note": "DEV probe only; folds1-4 must NOT be used to promote. Not CROSS_FOLD.",
+  "NO_SUBMIT": true
+}Genuinely unexposed labeled cohort; freeze recipe before unblinding; ΔAUC ≥ +8e-5 and paired 95% LB > 0; no retune-after-miss. Locks unchanged.
+
+### Dev isolation
+
+Adjudicate frozen candidate first. Complementary residuals (e.g. signed digit LGBM) only in Fold-0/dev nested fits. Any design prompted by folds 1–4 needs a fresh sealed evaluator.
+
+## Round6 strict adjudication
+
+Verdict: **CROSS_FOLD_FAIL — remain at LOCAL_GATE_PASS**
+
+Per-fold Δe-5 (w=−0.10 frozen): [8.5536, -20.1038, 4.0431, 1.1155, -5.9661]
+Weighted mean Δe-5 folds1-4 = -5.2278; pos=2/4; LOO all positive=False; numeric_pass=False.
+F0 sensitivity peak at w=−0.125 (+9.07e-5) but cannot change frozen eval coefficient.
+Milestone remains LOCAL_GATE_PASS. CROSS_FOLD_VERIFIED not achieved.
+
+## Round6 Codex critique
+
+CROSS_FOLD_FAIL. Retire frozen −0.10 signed CatBoost as promotion candidate.
+Champion provenance: global OOF matrix → each outer fold’s 559,968 meta-train rows can include scored-fold labels via base-model fits; P4 tracks selected across all 5 folds. Saved champion cannot certify strict isolation.
+Ranked next: (1) isolated champion diagnostic (2) Fold-0-only complementary signed digit LGBM (3) drop signed-CB family near-term.
+CROSS_FOLD_VERIFIED criteria unchanged and unmet.
+
+## Round7 F0 signed digit LGBM (dev only)
+
+Δe-5=-0.8489 pos=2/5 weights=[-0.025, -0.025, -0.05, -0.05, -0.05] NO-GO. Solo=0.888207.
+
+exec
+/bin/bash -lc "cat logs/v47/codex_loop/ROUND7_F0_SIGNED_LGBM.txt; rg -n --hidden '0\\.936805108|distance_from_home_km.*merchant_risk_score.*velocity_score' logs/v47/codex_loop | head -12" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 21ms:
+F0 base=0.9512507991341679 LGBM solo=0.8882066999526746
+{
+  "scope": "F0_DEV_ONLY_signed_digit_LGBM",
+  "base_auc": 0.9512507991341679,
+  "cand_auc": 0.9512423098514521,
+  "delta_e5": -0.8489282715795632,
+  "pos5": 2,
+  "sub_e5": [
+    15.064603165293455,
+    17.641341058571847,
+    -4.99339774817642,
+    -19.048023497292288,
+    -8.415664117633614
+  ],
+  "weights": [
+    -0.025,
+    -0.025,
+    -0.05,
+    -0.05,
+    -0.05
+  ],
+  "solo_auc": 0.8882066999526746,
+  "verdict": "NO-GO",
+  "note": "DEV probe only; folds1-4 must NOT be used to promote. Not CROSS_FOLD.",
+  "NO_SUBMIT": true
+}
+logs/v47/codex_loop/ROUND2_CODEX.txt:436:for col in [\"amount_usd\", \"account_balance_usd\", \"distance_from_home_km\", \"merchant_risk_score\", \"velocity_score\"]:
+logs/v47/codex_loop/ROUND2_CODEX.txt:525:{'base': 0.9512507991341679, 'solo': 0.9368051080303192, 'cand': 0.9511974636845753, 'delta_e5': -5.333544959262859, 'subfold': [9.212614094389338, -13.78399547736775, 4.145609033912034, -17.655783315162488, -8.96789346361837], 'positive': 2, 'verdict': 'NO-GO'}
+logs/v47/codex_loop/ROUND2_CODEX.txt:535:The digit learner scored 0.9368051080303192 solo. The blend’s subfold deltas were `+9.21261, −13.78400, +4.14561, −17.65578, −8.96789` in units of 10⁻⁵. The five subfolds measure consistency of the fixed blend. Any apparent pass against the saved champion would still inherit the champion’s upstream OOF provenance.
+logs/v47/codex_loop/ROUND2_CODEX.txt:624:The digit learner scored 0.9368051080303192 solo. The blend’s subfold deltas were `+9.21261, −13.78400, +4.14561, −17.65578, −8.96789` in units of 10⁻⁵. The five subfolds measure consistency of the fixed blend. Any apparent pass against the saved champion would still inherit the champion’s upstream OOF provenance.
+
+codex
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python -u - <<'PY'
+import json
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+from lightgbm import LGBMClassifier
+from scipy.special import logit
+from scipy.stats import rankdata
+from sklearn.metrics import roc_auc_score
+from sklearn.model_selection import StratifiedKFold
+
+report = Path("logs/v47/CODEX_DS_REVIEW_NEXT.md")
+heading = "## Round7 corrected digit LightGBM recipe"
+if heading not in report.read_text():
+    with report.open("a") as f:
+        f.write(
+            f"\n{heading}\n\n"
+            "Round7 used a different feature recipe. Its numeric-only input omitted the native "
+            "categorical columns and five categorical cents features used in the earlier "
+            "0.9368051080303192 solo run. The original Round7 result remains NO-GO "
+            "(−0.848928e-5, 2/5). This rerun restores the earlier recipe and scores Fold-0 "
+            "only. NO_SUBMIT=True, SUBMIT_ARMED=False, RunPod $0, tip CSVs read 0.\n"
+        )
+
+pred = Path("preds/v47_sovereign")
+df = pd.read_csv("data/train.csv")
+y = df.pop("is_fraud").to_numpy()
+x = df.drop(columns="id")
+for col in x.select_dtypes(include=["object", "str"]).columns:
+    x[col] = x[col].astype("category")
+for col in [
+    "amount_usd", "account_balance_usd", "distance_from_home_km",
+    "merchant_risk_score", "velocity_score",
+]:
+    x[col + "_cents"] = (np.rint(100 * x[col]).astype("int64") % 100).astype("category")
+
+folds = np.load(pred / "folds_skf42.npy")
+train, valid = next(StratifiedKFold(5, shuffle=True, random_state=42).split(x, y))
+np.testing.assert_array_equal(valid, np.flatnonzero(folds == 0))
+assert len(valid) == 139992
+y0 = y[valid]
+base = np.load(pred / "z_sovereign_v0_oof.npy").ravel()[valid]
+base_auc = roc_auc_score(y0, base)
+assert abs(base_auc - 0.9512507991341679) < 1e-12
+
+model = LGBMClassifier(
+    n_estimators=450, learning_rate=0.045, num_leaves=31,
+    min_child_samples=120, reg_lambda=5, n_jobs=4,
+    verbosity=-1, random_state=42,
+)
+model.fit(x.iloc[train], y[train])
+digit = model.predict(x.iloc[valid], raw_score=True)
+solo_auc = roc_auc_score(y0, digit)
+print(f"Corrected digit solo AUC {solo_auc:.16f}", flush=True)
+if abs(solo_auc - 0.9368051080303192) > 1e-6:
+    raise SystemExit("Earlier solo AUC did not reproduce. Diagnose recipe or runtime drift before choosing weights.")
+
+def rank_logit(scores):
+    return logit((rankdata(scores) - 0.5) / len(scores))
+
+anchor = rank_logit(base)
+residual = rank_logit(digit) - anchor
+grid = (0.0, -0.025, 0.025, -0.05, 0.05, -0.075, 0.075, -0.10, 0.10, -0.125, 0.125, -0.15, 0.15)
+candidate = np.full(len(y0), np.nan)
+weights, sub = [], []
+for fit, score in StratifiedKFold(5, shuffle=True, random_state=7).split(anchor, y0):
+    weight = max(grid, key=lambda w: roc_auc_score(y0[fit], anchor[fit] + w * residual[fit]))
+    candidate[score] = anchor[score] + weight * residual[score]
+    weights.append(weight)
+    sub.append((roc_auc_score(y0[score], candidate[score]) - roc_auc_score(y0[score], base[score])) * 1e5)
+
+assert np.isfinite(candidate).all()
+cand_auc = roc_auc_score(y0, candidate)
+delta = cand_auc - base_auc
+pos = sum(d > 0 for d in sub)
+verdict = "DEV_GATE_PASS" if delta >= 8e-5 and pos >= 4 else "NO-GO"
+result = {
+    "scope": "F0_DEV_ONLY",
+    "base_auc": base_auc, "solo_auc": solo_auc, "cand_auc": cand_auc,
+    "delta_e5": delta * 1e5, "pos5": pos, "sub_e5": sub,
+    "weights": weights, "grid": grid, "verdict": verdict,
+    "milestone": "LOCAL_GATE_PASS", "NO_SUBMIT": True, "SUBMIT_ARMED": False,
+}
+payload = json.dumps(result, indent=2)
+Path("logs/v47/codex_loop/ROUND7_F0_SIGNED_LGBM_CORRECTED.json").write_text(payload + "\n")
+np.save(pred / "lgbm_digit_corrected_solo_f0.npy", digit)
+np.save(pred / "lgbm_digit_corrected_signed_f0.npy", candidate)
+with report.open("a") as f:
+    f.write(
+        f"\nCorrected Fold-0 dev result — base {base_auc:.16f}, solo {solo_auc:.16f}, "
+        f"candidate {cand_auc:.16f}, Δe-5 {delta * 1e5:+.12f}, {pos}/5, {verdict}. "
+        f"Weights {weights}. Subfold Δe-5 {sub}. Milestone remains LOCAL_GATE_PASS.\n"
+    )
+print(payload)
+PY
+```
+tokens used
+121,721
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python -u - <<'PY'
+import json
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+from lightgbm import LGBMClassifier
+from scipy.special import logit
+from scipy.stats import rankdata
+from sklearn.metrics import roc_auc_score
+from sklearn.model_selection import StratifiedKFold
+
+report = Path("logs/v47/CODEX_DS_REVIEW_NEXT.md")
+heading = "## Round7 corrected digit LightGBM recipe"
+if heading not in report.read_text():
+    with report.open("a") as f:
+        f.write(
+            f"\n{heading}\n\n"
+            "Round7 used a different feature recipe. Its numeric-only input omitted the native "
+            "categorical columns and five categorical cents features used in the earlier "
+            "0.9368051080303192 solo run. The original Round7 result remains NO-GO "
+            "(−0.848928e-5, 2/5). This rerun restores the earlier recipe and scores Fold-0 "
+            "only. NO_SUBMIT=True, SUBMIT_ARMED=False, RunPod $0, tip CSVs read 0.\n"
+        )
+
+pred = Path("preds/v47_sovereign")
+df = pd.read_csv("data/train.csv")
+y = df.pop("is_fraud").to_numpy()
+x = df.drop(columns="id")
+for col in x.select_dtypes(include=["object", "str"]).columns:
+    x[col] = x[col].astype("category")
+for col in [
+    "amount_usd", "account_balance_usd", "distance_from_home_km",
+    "merchant_risk_score", "velocity_score",
+]:
+    x[col + "_cents"] = (np.rint(100 * x[col]).astype("int64") % 100).astype("category")
+
+folds = np.load(pred / "folds_skf42.npy")
+train, valid = next(StratifiedKFold(5, shuffle=True, random_state=42).split(x, y))
+np.testing.assert_array_equal(valid, np.flatnonzero(folds == 0))
+assert len(valid) == 139992
+y0 = y[valid]
+base = np.load(pred / "z_sovereign_v0_oof.npy").ravel()[valid]
+base_auc = roc_auc_score(y0, base)
+assert abs(base_auc - 0.9512507991341679) < 1e-12
+
+model = LGBMClassifier(
+    n_estimators=450, learning_rate=0.045, num_leaves=31,
+    min_child_samples=120, reg_lambda=5, n_jobs=4,
+    verbosity=-1, random_state=42,
+)
+model.fit(x.iloc[train], y[train])
+digit = model.predict(x.iloc[valid], raw_score=True)
+solo_auc = roc_auc_score(y0, digit)
+print(f"Corrected digit solo AUC {solo_auc:.16f}", flush=True)
+if abs(solo_auc - 0.9368051080303192) > 1e-6:
+    raise SystemExit("Earlier solo AUC did not reproduce. Diagnose recipe or runtime drift before choosing weights.")
+
+def rank_logit(scores):
+    return logit((rankdata(scores) - 0.5) / len(scores))
+
+anchor = rank_logit(base)
+residual = rank_logit(digit) - anchor
+grid = (0.0, -0.025, 0.025, -0.05, 0.05, -0.075, 0.075, -0.10, 0.10, -0.125, 0.125, -0.15, 0.15)
+candidate = np.full(len(y0), np.nan)
+weights, sub = [], []
+for fit, score in StratifiedKFold(5, shuffle=True, random_state=7).split(anchor, y0):
+    weight = max(grid, key=lambda w: roc_auc_score(y0[fit], anchor[fit] + w * residual[fit]))
+    candidate[score] = anchor[score] + weight * residual[score]
+    weights.append(weight)
+    sub.append((roc_auc_score(y0[score], candidate[score]) - roc_auc_score(y0[score], base[score])) * 1e5)
+
+assert np.isfinite(candidate).all()
+cand_auc = roc_auc_score(y0, candidate)
+delta = cand_auc - base_auc
+pos = sum(d > 0 for d in sub)
+verdict = "DEV_GATE_PASS" if delta >= 8e-5 and pos >= 4 else "NO-GO"
+result = {
+    "scope": "F0_DEV_ONLY",
+    "base_auc": base_auc, "solo_auc": solo_auc, "cand_auc": cand_auc,
+    "delta_e5": delta * 1e5, "pos5": pos, "sub_e5": sub,
+    "weights": weights, "grid": grid, "verdict": verdict,
+    "milestone": "LOCAL_GATE_PASS", "NO_SUBMIT": True, "SUBMIT_ARMED": False,
+}
+payload = json.dumps(result, indent=2)
+Path("logs/v47/codex_loop/ROUND7_F0_SIGNED_LGBM_CORRECTED.json").write_text(payload + "\n")
+np.save(pred / "lgbm_digit_corrected_solo_f0.npy", digit)
+np.save(pred / "lgbm_digit_corrected_signed_f0.npy", candidate)
+with report.open("a") as f:
+    f.write(
+        f"\nCorrected Fold-0 dev result — base {base_auc:.16f}, solo {solo_auc:.16f}, "
+        f"candidate {cand_auc:.16f}, Δe-5 {delta * 1e5:+.12f}, {pos}/5, {verdict}. "
+        f"Weights {weights}. Subfold Δe-5 {sub}. Milestone remains LOCAL_GATE_PASS.\n"
+    )
+print(payload)
+PY
+```

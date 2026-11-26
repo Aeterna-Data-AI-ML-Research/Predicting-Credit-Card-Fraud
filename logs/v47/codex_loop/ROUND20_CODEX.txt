@@ -1,0 +1,246 @@
+OpenAI Codex v0.172.0
+--------
+workdir: /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+model: gpt-6.2-sol
+provider: openai
+approval: never
+sandbox: read-only
+reasoning effort: none
+reasoning summaries: none
+session id: 01a2180a-0cec-7810-bcbf-4a725485c87f
+--------
+user
+# Cursor → Codex Round20
+
+Magnitude-conditioned decimal 6th stream vs matched 5-stream control (F0):
+- Δe-5 +0.85 · pos 2/5 · NO-GO
+- Artifact: P2_DECIMAL_MAGNITUDE_F0_DEV.json
+
+Best verified isolated recipe remains 5-stream with B_TRANSPORT_PASS (seed 2033), absolute fold AUCs up to ~0.95012, public pin 0.95726 still ahead by ~0.007.
+Highest-EV next measurable step under NO_SUBMIT/NO_GPU to close that absolute gap?
+ONE bash command after short verdict. No signed-CB. No public arrays. Do not retune magnitude on same F0.
+codex
+**Test interactions between numeric strings and transaction context.** The magnitude-conditioned stream added **+0.85e-5 with 2/5 positive**, so keep the five-stream stack. The next challenger is a CPU MLP that sees boundary-aligned decimal characters alongside raw transaction features. The existing character LR scores fragments additively. This tests whether combinations across fields, or between characters and fraud flags, improve ranking. Require a reproduced control and **≥+8e-5 with ≥4/5 positive** on historical Fold-0.
+
+```bash
+OPENBLAS_NUM_THREADS=2 OMP_NUM_THREADS=2 VECLIB_MAXIMUM_THREADS=2 .venv/bin/python -u - <<'PY'
+from pathlib import Path
+
+source_path = Path("/tmp/s6e11_isol/char_ngram.sh")
+lines = source_path.read_text().splitlines(keepends=True)
+assert lines[0].rstrip().endswith("<<'PY'") and lines[-1].strip() == "PY"
+assembly, boundary, _ = "".join(lines[1:-1]).partition('\nevaluation = """')
+assert boundary, "Character runner assembly boundary changed"
+namespace = {"__name__": "_assemble_char_runner"}
+exec(compile(assembly, str(source_path), "exec"), namespace)
+runner = namespace["runner"]
+
+def replace_once(text, old, new):
+    assert text.count(old) == 1, f"Runner changed near {old!r}"
+    return text.replace(old, new, 1)
+
+runner = replace_once(runner, "(len(train), 5)", "(len(train), 6)")
+for staged in ('"/tmp/s6e11_isol/data/train.csv"', '"/private/tmp/s6e11_isol/data/train.csv"'):
+    runner = runner.replace(staged, '"data/train.csv"')
+assert runner.count('"data/train.csv"') == 2 and 'device="cpu"' in runner
+
+runner = replace_once(runner, "del raw_strings", """from sklearn.neural_network import MLPClassifier
+from sklearn.preprocessing import QuantileTransformer
+from threadpoolctl import threadpool_limits
+
+position_features = {}
+for column in decimal_fields:
+    decimal = raw_strings[column].str.partition(".")
+    integer, fraction = decimal[0], decimal[2]
+    for offset in (0, 1, 2):
+        position_features[f"{column}__int_{offset}"] = integer.str.get(offset).fillna("_")
+    for offset in (0, 1, -1, -2):
+        position_features[f"{column}__frac_{offset}"] = fraction.str.get(offset).fillna("_")
+    position_features[f"{column}__frac_length"] = fraction.str.len().fillna(0).astype(str)
+context = pd.concat([frame, pd.DataFrame(position_features, index=frame.index)], axis=1)
+context_categories = categories + list(position_features)
+del raw_strings
+""")
+
+runner = replace_once(runner, "    scores = np.column_stack(margins)", """    preprocessing = ColumnTransformer([
+        ("numeric", QuantileTransformer(
+            n_quantiles=256, output_distribution="normal", subsample=100000, random_state=42,
+        ), numeric),
+        ("categorical", OneHotEncoder(handle_unknown="ignore", dtype=np.float32), context_categories),
+    ], sparse_threshold=1.0)
+    neural_fit = preprocessing.fit_transform(context.iloc[fit_rows]).astype(np.float32)
+    neural_score = preprocessing.transform(context.loc[score_frame.index]).astype(np.float32)
+    neural = MLPClassifier(
+        hidden_layer_sizes=(64, 32), activation="relu", solver="adam",
+        alpha=0.001, batch_size=2048, learning_rate_init=0.001,
+        random_state=42, shuffle=True,
+    )
+    with threadpool_limits(limits=2, user_api="blas"):
+        for epoch in range(24):
+            neural.partial_fit(neural_fit, fit_labels, classes=np.array([0, 1]))
+        probability = neural.predict_proba(neural_score)[:, 1].astype(float)
+    margins.append(logit(np.clip(probability, 1e-8, 1 - 1e-8)))
+    del neural_fit, neural_score
+
+    scores = np.column_stack(margins)""")
+
+evaluation = """
+control, _ = stack(5)
+candidate, coefficients = stack(6)
+with np.load(pred / "p2_decimal_char_ngram_f0_dev.npz", allow_pickle=False) as saved:
+    np.testing.assert_array_equal(saved["row_indices"], valid)
+    np.testing.assert_array_equal(saved["ids"], ids[valid])
+    np.testing.assert_allclose(control, saved["candidate"], rtol=1e-8, atol=1e-8)
+
+observed = labels[valid]
+base_auc = roc_auc_score(observed, control)
+assert abs(base_auc - 0.9468323528460475) < 1e-12
+candidate_auc = roc_auc_score(observed, candidate)
+delta = candidate_auc - base_auc
+subfold_deltas = [
+    (roc_auc_score(observed[held], candidate[held])
+     - roc_auc_score(observed[held], control[held])) * 1e5
+    for _, held in StratifiedKFold(5, shuffle=True, random_state=7).split(control, observed)
+]
+positive = sum(change > 0 for change in subfold_deltas)
+verdict = "DEV_ADVANCE" if delta >= 8e-5 and positive >= 4 else "NO-GO"
+solo = roc_auc_score(observed, np.mean([design[:, 5] for design in outer_designs], axis=0))
+result = {
+    "scope": "historical_F0_DEV_ONLY",
+    "experiment": "decimal_character_position_and_raw_context_cpu_mlp",
+    "base_auc": base_auc, "candidate_auc": candidate_auc, "stream_solo_auc": solo,
+    "delta_e5": delta * 1e5, "positive_subfolds": positive,
+    "subfold_deltas_e5": subfold_deltas, "meta_coefficients": coefficients,
+    "verdict": verdict, "NO_SUBMIT": True, "NO_GPU": True,
+}
+payload = json.dumps(result, indent=2)
+(logs / "P2_DECIMAL_CONTEXT_MLP_F0_DEV.json").write_text(payload + "\\n")
+np.savez(
+    pred / "p2_decimal_context_mlp_f0_dev.npz", ids=ids[valid], row_indices=valid,
+    control=control, candidate=candidate, outer_stream_margins=np.stack(outer_scores),
+)
+with Path("logs/v47/CODEX_DS_REVIEW_NEXT.md").open("a") as review:
+    review.write(
+        "\\n## P2 decimal character context MLP\\n\\n"
+        f"Historical Fold-0. Control {base_auc:.16f}, candidate {candidate_auc:.16f}, "
+        f"solo {solo:.16f}, Δe-5 {delta * 1e5:+.8f}, {positive}/5 positive, {verdict}. "
+        f"Subfold Δe-5 {subfold_deltas}.\\n"
+    )
+print(payload)
+"""
+exec(compile(runner + "\n" + evaluation, str(source_path), "exec"), {"__name__": "__main__"})
+PY
+```
+tokens used
+228,493
+**Test interactions between numeric strings and transaction context.** The magnitude-conditioned stream added **+0.85e-5 with 2/5 positive**, so keep the five-stream stack. The next challenger is a CPU MLP that sees boundary-aligned decimal characters alongside raw transaction features. The existing character LR scores fragments additively. This tests whether combinations across fields, or between characters and fraud flags, improve ranking. Require a reproduced control and **≥+8e-5 with ≥4/5 positive** on historical Fold-0.
+
+```bash
+OPENBLAS_NUM_THREADS=2 OMP_NUM_THREADS=2 VECLIB_MAXIMUM_THREADS=2 .venv/bin/python -u - <<'PY'
+from pathlib import Path
+
+source_path = Path("/tmp/s6e11_isol/char_ngram.sh")
+lines = source_path.read_text().splitlines(keepends=True)
+assert lines[0].rstrip().endswith("<<'PY'") and lines[-1].strip() == "PY"
+assembly, boundary, _ = "".join(lines[1:-1]).partition('\nevaluation = """')
+assert boundary, "Character runner assembly boundary changed"
+namespace = {"__name__": "_assemble_char_runner"}
+exec(compile(assembly, str(source_path), "exec"), namespace)
+runner = namespace["runner"]
+
+def replace_once(text, old, new):
+    assert text.count(old) == 1, f"Runner changed near {old!r}"
+    return text.replace(old, new, 1)
+
+runner = replace_once(runner, "(len(train), 5)", "(len(train), 6)")
+for staged in ('"/tmp/s6e11_isol/data/train.csv"', '"/private/tmp/s6e11_isol/data/train.csv"'):
+    runner = runner.replace(staged, '"data/train.csv"')
+assert runner.count('"data/train.csv"') == 2 and 'device="cpu"' in runner
+
+runner = replace_once(runner, "del raw_strings", """from sklearn.neural_network import MLPClassifier
+from sklearn.preprocessing import QuantileTransformer
+from threadpoolctl import threadpool_limits
+
+position_features = {}
+for column in decimal_fields:
+    decimal = raw_strings[column].str.partition(".")
+    integer, fraction = decimal[0], decimal[2]
+    for offset in (0, 1, 2):
+        position_features[f"{column}__int_{offset}"] = integer.str.get(offset).fillna("_")
+    for offset in (0, 1, -1, -2):
+        position_features[f"{column}__frac_{offset}"] = fraction.str.get(offset).fillna("_")
+    position_features[f"{column}__frac_length"] = fraction.str.len().fillna(0).astype(str)
+context = pd.concat([frame, pd.DataFrame(position_features, index=frame.index)], axis=1)
+context_categories = categories + list(position_features)
+del raw_strings
+""")
+
+runner = replace_once(runner, "    scores = np.column_stack(margins)", """    preprocessing = ColumnTransformer([
+        ("numeric", QuantileTransformer(
+            n_quantiles=256, output_distribution="normal", subsample=100000, random_state=42,
+        ), numeric),
+        ("categorical", OneHotEncoder(handle_unknown="ignore", dtype=np.float32), context_categories),
+    ], sparse_threshold=1.0)
+    neural_fit = preprocessing.fit_transform(context.iloc[fit_rows]).astype(np.float32)
+    neural_score = preprocessing.transform(context.loc[score_frame.index]).astype(np.float32)
+    neural = MLPClassifier(
+        hidden_layer_sizes=(64, 32), activation="relu", solver="adam",
+        alpha=0.001, batch_size=2048, learning_rate_init=0.001,
+        random_state=42, shuffle=True,
+    )
+    with threadpool_limits(limits=2, user_api="blas"):
+        for epoch in range(24):
+            neural.partial_fit(neural_fit, fit_labels, classes=np.array([0, 1]))
+        probability = neural.predict_proba(neural_score)[:, 1].astype(float)
+    margins.append(logit(np.clip(probability, 1e-8, 1 - 1e-8)))
+    del neural_fit, neural_score
+
+    scores = np.column_stack(margins)""")
+
+evaluation = """
+control, _ = stack(5)
+candidate, coefficients = stack(6)
+with np.load(pred / "p2_decimal_char_ngram_f0_dev.npz", allow_pickle=False) as saved:
+    np.testing.assert_array_equal(saved["row_indices"], valid)
+    np.testing.assert_array_equal(saved["ids"], ids[valid])
+    np.testing.assert_allclose(control, saved["candidate"], rtol=1e-8, atol=1e-8)
+
+observed = labels[valid]
+base_auc = roc_auc_score(observed, control)
+assert abs(base_auc - 0.9468323528460475) < 1e-12
+candidate_auc = roc_auc_score(observed, candidate)
+delta = candidate_auc - base_auc
+subfold_deltas = [
+    (roc_auc_score(observed[held], candidate[held])
+     - roc_auc_score(observed[held], control[held])) * 1e5
+    for _, held in StratifiedKFold(5, shuffle=True, random_state=7).split(control, observed)
+]
+positive = sum(change > 0 for change in subfold_deltas)
+verdict = "DEV_ADVANCE" if delta >= 8e-5 and positive >= 4 else "NO-GO"
+solo = roc_auc_score(observed, np.mean([design[:, 5] for design in outer_designs], axis=0))
+result = {
+    "scope": "historical_F0_DEV_ONLY",
+    "experiment": "decimal_character_position_and_raw_context_cpu_mlp",
+    "base_auc": base_auc, "candidate_auc": candidate_auc, "stream_solo_auc": solo,
+    "delta_e5": delta * 1e5, "positive_subfolds": positive,
+    "subfold_deltas_e5": subfold_deltas, "meta_coefficients": coefficients,
+    "verdict": verdict, "NO_SUBMIT": True, "NO_GPU": True,
+}
+payload = json.dumps(result, indent=2)
+(logs / "P2_DECIMAL_CONTEXT_MLP_F0_DEV.json").write_text(payload + "\\n")
+np.savez(
+    pred / "p2_decimal_context_mlp_f0_dev.npz", ids=ids[valid], row_indices=valid,
+    control=control, candidate=candidate, outer_stream_margins=np.stack(outer_scores),
+)
+with Path("logs/v47/CODEX_DS_REVIEW_NEXT.md").open("a") as review:
+    review.write(
+        "\\n## P2 decimal character context MLP\\n\\n"
+        f"Historical Fold-0. Control {base_auc:.16f}, candidate {candidate_auc:.16f}, "
+        f"solo {solo:.16f}, Δe-5 {delta * 1e5:+.8f}, {positive}/5 positive, {verdict}. "
+        f"Subfold Δe-5 {subfold_deltas}.\\n"
+    )
+print(payload)
+"""
+exec(compile(runner + "\n" + evaluation, str(source_path), "exec"), {"__name__": "__main__"})
+PY
+```

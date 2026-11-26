@@ -1,0 +1,24 @@
+Fitting tabular anchor on the outer training split
+Tabular anchor AUC 0.943526723763
+Subfold 0: -263.06786414 e-5
+Subfold 1: -382.58348708 e-5
+Subfold 2: -398.34402753 e-5
+Subfold 3: -491.39856126 e-5
+Subfold 4: -419.78763748 e-5
+{
+  "n": 139992,
+  "base_auc": 0.9512507991341679,
+  "candidate_auc": 0.9472101119386994,
+  "delta_e5": -404.0687195468462,
+  "positive_subfolds": 0,
+  "subfold_deltas_e5": [
+    -263.06786413575753,
+    -382.58348708387626,
+    -398.3440275268535,
+    -491.3985612636673,
+    -419.78763748276026
+  ],
+  "verdict": "NO-GO",
+  "NO_SUBMIT": true,
+  "SUBMIT_ARMED": false
+}

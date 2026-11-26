@@ -1,0 +1,50 @@
+{
+  "scope": "B_decimal_char_ngram_transport_previously_examined_rows",
+  "lock_sha256": "56186a6d4ad8eb4281d185395d60ec228ae8a638a922ca1d379e6a515e0b553f",
+  "per_fold": [
+    {
+      "fold": 1,
+      "n": 139992,
+      "base_auc": 0.9440701505689317,
+      "candidate_auc": 0.9445477585828657,
+      "delta_e5": 47.76080139339278
+    },
+    {
+      "fold": 2,
+      "n": 139992,
+      "base_auc": 0.949740800762746,
+      "candidate_auc": 0.9501175589786286,
+      "delta_e5": 37.67582158825667
+    },
+    {
+      "fold": 3,
+      "n": 139992,
+      "base_auc": 0.9458090102628101,
+      "candidate_auc": 0.9460373539424165,
+      "delta_e5": 22.83436796064464
+    },
+    {
+      "fold": 4,
+      "n": 139992,
+      "base_auc": 0.9479864113744828,
+      "candidate_auc": 0.9482970270124585,
+      "delta_e5": 31.061563797574188
+    }
+  ],
+  "weighted_delta_e5": 34.83313868496707,
+  "positive_folds": 4,
+  "loo_delta_e5": [
+    30.5239177821585,
+    33.88557771720387,
+    38.83272892640788,
+    36.09033031409803
+  ],
+  "paired_ci95_e5": [
+    18.895251891339893,
+    50.67845670831878
+  ],
+  "verdict": "B_TRANSPORT_PASS",
+  "milestone": "LOCAL_GATE_PASS",
+  "NO_SUBMIT": true,
+  "NO_GPU": true
+}

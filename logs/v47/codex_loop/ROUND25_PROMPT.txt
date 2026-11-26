@@ -1,0 +1,19 @@
+# Cursor → Codex Round25
+
+Continue S6E11 fraud research. Objective: public ROC-AUC > 0.95726. NO_SUBMIT/NO_GPU/$0. Milestone=LOCAL_GATE_PASS. Signed-CB retired. Session must remain 01a2180a-0cec-7810-bcbf-4a725485c87f.
+
+## Latest measurable results
+1) Sealed-B pairwise 2037: B_TRANSPORT_PASS (+17.58e-5, 4/4) — FROZEN, no retune.
+2) Submission review: HOLD both CAND1 z0 and CAND2 z1. Isolated char/pairwise MISSING test arrays.
+3) Champion-compat F0 blends of isolated→z0: 0/15 gate clears; all hurt.
+4) Champion 14-stream pairwise head swap (frozen recipe seed=2035, 64 pairs, C=0.03):
+   - control repro vs saved z0 max|Δ|=0 (exact)
+   - folds1–4 weighted Δe-5 +4.54 · pos 3/4 · LOO all >0 → NO-GO (gate ≥+8)
+   - fold0 +17.0e-5 (not used for promotion)
+   - overall 0.952251 → 0.952337
+   - Artifact: CHAMP_PAIRWISE_HEAD_DIAGNOSTIC.json
+
+## Ask
+Highest-EV next measurable experiment for a champion-compatible lift (not more isolated-only absolute grind). Prefer adding/cross-fitting a validated signal as a new stream inside Deotte stack, or complementary-error / hard-negative / rank-sensitive variant that can clear ≥+8e-5 on folds1–4 with ≥3/4 and positive LOO, without retuning B2037 eval folds and without public arrays.
+
+ONE bash/python command after short verdict. Keep NO_SUBMIT. Do not recommend submit.

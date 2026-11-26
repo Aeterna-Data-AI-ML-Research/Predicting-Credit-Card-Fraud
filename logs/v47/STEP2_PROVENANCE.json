@@ -1,0 +1,119 @@
+{
+  "streams_v0": [
+    "B_xgb_llr",
+    "P4_L4.2_pure5f",
+    "P4_L4.3_pure5f",
+    "P4_L4.5_pure5f",
+    "P_super_v4p_hc",
+    "P_super_v5_harvest",
+    "delta1_v4",
+    "gpt2_med_4ep_mean",
+    "gpt2_med_4ep_shrink",
+    "l7_R5",
+    "l7_U5_gini10",
+    "l7_curv",
+    "l7_mean10",
+    "zone_honest"
+  ],
+  "assets": {
+    "P_super_v5_harvest": {
+      "exists": {
+        "oof": true
+      },
+      "verdict": "KEEP",
+      "note": "finalize blends v4p_hc + paradigm_B xgb_llr (self); no tip CSV loads",
+      "builder_ban_substr": []
+    },
+    "B_xgb_llr": {
+      "exists": {
+        "oof": true
+      },
+      "verdict": "KEEP"
+    },
+    "P4_L4.2_pure5f": {
+      "exists": {
+        "oof": true
+      },
+      "verdict": "KEEP",
+      "builder_ban_substr": []
+    },
+    "P4_L4.3_pure5f": {
+      "exists": {
+        "oof": true
+      },
+      "verdict": "KEEP"
+    },
+    "P4_L4.5_pure5f": {
+      "exists": {
+        "oof": true
+      },
+      "verdict": "KEEP"
+    },
+    "delta1_v4": {
+      "exists": {
+        "oof": true
+      },
+      "verdict": "KEEP"
+    },
+    "l7_s2026_5f": {
+      "exists": {
+        "oof": true
+      },
+      "verdict": "KEEP",
+      "note": "builder mentions goodpjw seed7 path as optional compare; our s2026 preds/ckpts are self-trained",
+      "builder_ban_substr": []
+    },
+    "gpt2_med_4ep": {
+      "exists": {
+        "oof": true
+      },
+      "verdict": "KEEP"
+    },
+    "P_super_v4p_hc": {
+      "exists": {
+        "oof": true
+      },
+      "verdict": "KEEP"
+    },
+    "oof_xgb_clean": {
+      "exists": {
+        "oof": true
+      },
+      "verdict": "KEEP"
+    },
+    "SCAN_P_super_v6": {
+      "found": [
+        "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/preds/P_super_v6_grandmaster_oof.npy",
+        "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/preds/P_super_v6_grandmaster_test.npy",
+        "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/preds/P_super_v6_campaign_oof.npy",
+        "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/preds/P_super_v6_campaign_test.npy",
+        "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/preds/P_super_v6_oof.npy",
+        "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/preds/P_super_v6_test.npy",
+        "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/preds/P_super_v6_clean_oof.npy",
+        "/Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud/preds/P_super_v6_clean_test.npy"
+      ],
+      "verdict": "EXCLUDED_FROM_V1"
+    },
+    "SCAN_soft_diff": {
+      "found": [],
+      "verdict": "EXCLUDED_FROM_V1"
+    }
+  },
+  "checkpoints": {
+    "l7_s2026_5f": [
+      "fold_0.pt",
+      "fold_latest.pt",
+      "replica.pt"
+    ],
+    "l7_has_full_5fold_weights": false,
+    "gpt2_med_4ep": [
+      "fold_0.pt",
+      "fold_1.pt",
+      "fold_2.pt",
+      "fold_3.pt",
+      "fold_4.pt"
+    ],
+    "gpt2_has_full_5fold_weights": true
+  },
+  "rejects": []
+}

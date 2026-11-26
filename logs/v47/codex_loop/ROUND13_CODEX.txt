@@ -1,0 +1,314 @@
+OpenAI Codex v0.172.0
+--------
+workdir: /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+model: gpt-6.2-sol
+provider: openai
+approval: never
+sandbox: read-only
+reasoning effort: none
+reasoning summaries: none
+session id: 01a2180a-0cec-7810-bcbf-4a725485c87f
+--------
+user
+# Cursor → Codex Round13 (S6E11 fraud ONLY)
+
+## Latest measurable results
+- Sealed B: B_TRANSPORT_PASS for hist-XGB 3-stream vs 2-stream (weighted Δe-5 +39.06, 4/4, CI95 [28.7,48.5]). Absolute AUC still ~0.945.
+- Pair-rate 4th stream vs matched 3-stream control on historical F0: Δe-5 +0.15, pos 2/5, NO-GO (P2_PAIR_RATE_INNER_OOF_F0_DEV.json).
+- Step-grid P4 also NO-GO earlier.
+
+## Objective
+Public ROC-AUC > 0.95726. NO_SUBMIT / NO_GPU / cloud $0 / no tip CSVs / signed-CB retired.
+Milestone still LOCAL_GATE_PASS (B is transport only; not public; not independent holdout A).
+
+## Ask
+Highest-EV next measurable experiment to close absolute gap from isolated ~0.945 toward public 0.95726.
+Prefer self-owned CPU streams with true outer/inner isolation, or a concrete plan to recover signal from rebuildable legacy families without public arrays.
+ONE bash command after short verdict. No signed-CB. No public-array blends. No status-only reply.
+codex
+I’ll check which legacy features can be rebuilt from training rows alone.
+exec
+/bin/bash -lc "rg -n '0\\.94[5-9]|0\\.95' logs/v47/codex_loop/P2_PAIR_RATE_INNER_OOF_F0_DEV.json
+sed -n '55,82p;600,635p' scripts/gpu_matrix_v2_runner.py
+rg -n 'def .*|CatBoostClassifier|LGBMClassifier' scripts/gm_v18_3_pure_subbin_cents_and_logfreq_r2.py | head -28
+ls -lh original
+ls /tmp/s6e11_isol" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 0ms:
+)
+
+FLAGS = [
+    "is_foreign_transaction",
+    "is_new_merchant",
+    "used_vpn",
+    "ip_country_mismatch",
+    "billing_shipping_mismatch",
+    "is_ai_generated_scam_attempt",
+]
+NUMS = [
+    "amount_usd",
+    "hours_since_last_txn",
+    "txn_count_last_24h",
+    "distance_from_home_km",
+    "card_age_months",
+    "customer_age",
+    "account_balance_usd",
+    "cvv_retry_count",
+    "velocity_score",
+    "time_of_day_hour",
+    "day_of_week",
+    "merchant_risk_score",
+    "prior_disputes",
+]
+CATS = ["merchant_category", "card_type", "auth_method", "channel", "device_type"]
+
+
+    from scipy.sparse import csr_matrix
+    import gboost as gb
+    N_tot, D_k = gb.KMAT.shape
+    offsets = np.concatenate([[0], np.cumsum(gb.NCAT[:-1])])
+    total_cols = int(np.sum(gb.NCAT))
+    row_idx = np.repeat(np.arange(N_tot, dtype=np.int32), D_k)
+    col_idx = (gb.KMAT + offsets.reshape(1, -1)).ravel().astype(np.int32)
+    A = csr_matrix((np.ones(len(row_idx), dtype=np.float32), (row_idx, col_idx)), shape=(N_tot, total_cols))
+    U = TruncatedSVD(n_components=32, n_iter=6, random_state=42).fit_transform(A).astype(np.float64)
+    Fo, Ft = U[: ctx.n], U[ctx.n :]
+    return per_feature_ks_filter(Fo[fold_a], Fo[fold_b], Ft)[:3]
+
+
+from gpu_matrix_v2_core import rk  # noqa: E402
+
+LEVER_GENERATORS = {
+    "P3_L3.1": gen_L3_1_bimasked,
+    "P3_L3.2": gen_L3_2_contrastive,
+    "P3_L3.3": gen_L3_3_dec_int_llr,
+    "P3_L3.4": gen_L3_4_bottleneck_xgb,
+    "P3_L3.5": gen_L3_5_logsumexp,
+    "P4_L4.1": gen_L4_1_rolling,
+    "P4_L4.2": gen_L4_2_bulsah,
+    "P4_L4.3": gen_L4_3_v2_stepgrid,
+    "P4_L4.4": gen_L4_4_benford,
+    "P4_L4.5": gen_L4_5_keypair_te,
+    "P1_L1.3": gen_L1_3_ot,
+    "P1_L1.4": gen_L1_4_beta_prior,
+    "P5_L5.1": gen_L5_1_cond_resid,
+    "P6_L6.2": gen_L6_2_stealth_feats,
+    "P7_L7.4": gen_L7_4_blind,
+    "P2_L2.3": gen_L2_3_svd,
+}
+
+
+def _context_blocks(ctx: Ctx, a, b):
+65:def L(v):
+72:def U(v):
+77:def unitize(v):
+82:def qlock(raw, ref):
+89:def frozen_lofo_orth(v_oof, v_test, Bo, Bt, folds, ridge_alpha=RIDGE_ALPHA):
+103:def forensic_gates(orth_o, orth_t, Bt, live_resid, bn=None):
+123:def score_fixed(u, zbase, y, folds, w_grid=(0.008, 0.01, 0.015, 0.02, 0.025, 0.03)):
+161:def score_at_w(u, zbase, y, folds, w):
+190:def replace_vs(u_new, u_old, zb, y, folds, w_new, w_old=W_R2):
+205:def scrub(x):
+219:def exact_logfreq(tr_vals, te_vals):
+227:def main():
+381:    def joint_q1000(col):
+441:    def build_X45(split="train"):
+506:    def add(name, a, b):
+601:    def fit_lgb_bag(Xtr, Xte, g_list, h_list, seeds=(42, 2026, 7), n_est=45):
+652:    def eval_signal(name, vo, vt, Bo, Bt, bn, bases, mode="add", u_ref=None):
+759:    def passes_elite(per):
+765:    def beats_slot5(rep):
+total 5632
+-rwx------  1 moranzavdi  staff   2.6M Jul 16 19:17 credit_card_fraud_2026.csv
+data
+logs
+p2_p4_stepgrid_runner.sh
+p2_spline.py
+p2_xgb_inner.py
+pair_rate.sh
+preds
+run_isol.py
+sealed_b.sh
+
+codex
+**Test a CPU tabular MLP as the fourth stream.** Step-grid and pair-rate XGB added less than **0.4e-5** each. The next experiment changes the learner: a small neural net with train-fitted numeric quantiles and categorical one-hot inputs. It uses the same three inner splits and must reproduce the **0.9449195163** control before adjudication. Advance only on historical Fold-0 at **≥+8e-5 and ≥4/5 positive**. Sealed B remains a transport result for the frozen three-stream recipe.
+
+```bash
+OPENBLAS_NUM_THREADS=2 OMP_NUM_THREADS=2 VECLIB_MAXIMUM_THREADS=2 .venv/bin/python -u - <<'PY'
+from pathlib import Path
+
+source_path = Path("/tmp/s6e11_isol/p2_xgb_inner.py")
+runner, boundary, _ = source_path.read_text().partition("\ncontrol, _ = stack(2)")
+assert boundary, "Round 10 runner boundary changed"
+assert 'device="cpu"' in runner, "Check the existing XGB device before running"
+
+def replace_once(text, old, new):
+    assert text.count(old) == 1, f"Round 10 runner changed near {old!r}"
+    return text.replace(old, new, 1)
+
+runner = replace_once(runner, '"/tmp/s6e11_isol/data/train.csv"', '"data/train.csv"')
+runner = replace_once(runner, "(len(train), 3)", "(len(train), 4)")
+runner = replace_once(runner, "from xgboost import XGBClassifier", """from xgboost import XGBClassifier
+from sklearn.neural_network import MLPClassifier
+from sklearn.preprocessing import QuantileTransformer
+from threadpoolctl import threadpool_limits
+""")
+runner = replace_once(runner, "    scores = np.column_stack(margins)", """    neural_features = ColumnTransformer([
+        ("numeric", QuantileTransformer(
+            n_quantiles=512, output_distribution="normal", subsample=100000, random_state=42,
+        ), numeric),
+        ("categorical", OneHotEncoder(handle_unknown="ignore", sparse_output=False), categories),
+    ])
+    neural_fit = neural_features.fit_transform(fit_frame).astype(np.float32)
+    neural_score = neural_features.transform(score_frame).astype(np.float32)
+    neural = MLPClassifier(
+        hidden_layer_sizes=(64, 32), activation="relu", solver="adam",
+        alpha=0.001, batch_size=2048, learning_rate_init=0.001,
+        random_state=42, shuffle=True,
+    )
+    with threadpool_limits(limits=2, user_api="blas"):
+        for epoch in range(24):
+            neural.partial_fit(neural_fit, fit_labels, classes=np.array([0, 1]))
+        probability = neural.predict_proba(neural_score)[:, 1].astype(float)
+    margins.append(logit(np.clip(probability, 1e-8, 1 - 1e-8)))
+
+    scores = np.column_stack(margins)""")
+
+evaluation = """
+control, _ = stack(3)
+candidate, coefficients = stack(4)
+with np.load(pred / "p2_xgb_inner_oof_f0_dev.npz", allow_pickle=False) as saved:
+    np.testing.assert_array_equal(saved["row_indices"], valid)
+    np.testing.assert_array_equal(saved["ids"], ids[valid])
+    np.testing.assert_allclose(control, saved["candidate"], rtol=1e-8, atol=1e-8)
+
+observed = labels[valid]
+base_auc = roc_auc_score(observed, control)
+assert abs(base_auc - 0.9449195163309662) < 1e-12
+candidate_auc = roc_auc_score(observed, candidate)
+delta = candidate_auc - base_auc
+subfold_deltas = [
+    (roc_auc_score(observed[held], candidate[held])
+     - roc_auc_score(observed[held], control[held])) * 1e5
+    for _, held in StratifiedKFold(5, shuffle=True, random_state=7).split(control, observed)
+]
+positive = sum(change > 0 for change in subfold_deltas)
+verdict = "DEV_ADVANCE" if delta >= 8e-5 and positive >= 4 else "NO-GO"
+mlp_scores = np.mean([design[:, 3] for design in outer_designs], axis=0)
+result = {
+    "scope": "historical_F0_DEV_ONLY",
+    "stream": "quantile_onehot_cpu_mlp",
+    "base_auc": base_auc, "candidate_auc": candidate_auc,
+    "mlp_solo_auc": roc_auc_score(observed, mlp_scores),
+    "delta_e5": delta * 1e5, "positive_subfolds": positive,
+    "subfold_deltas_e5": subfold_deltas, "meta_coefficients": coefficients,
+    "verdict": verdict, "NO_SUBMIT": True, "NO_GPU": True,
+}
+payload = json.dumps(result, indent=2)
+(logs / "P2_CPU_MLP_INNER_OOF_F0_DEV.json").write_text(payload + "\\n")
+np.savez(pred / "p2_cpu_mlp_inner_oof_f0_dev.npz",
+         ids=ids[valid], row_indices=valid, control=control, candidate=candidate,
+         outer_stream_margins=np.stack(outer_scores))
+with Path("logs/v47/CODEX_DS_REVIEW_NEXT.md").open("a") as review:
+    review.write(
+        "\\n## P2 isolated CPU MLP\\n\\n"
+        f"Historical Fold-0. Matched control {base_auc:.16f}, candidate {candidate_auc:.16f}, "
+        f"MLP solo {result['mlp_solo_auc']:.16f}, Δe-5 {delta * 1e5:+.8f}, "
+        f"{positive}/5 positive, {verdict}. Subfold Δe-5 {subfold_deltas}.\\n"
+    )
+print(payload)
+"""
+exec(compile(runner + "\n" + evaluation, str(source_path), "exec"), {"__name__": "__main__"})
+PY
+```
+tokens used
+196,160
+**Test a CPU tabular MLP as the fourth stream.** Step-grid and pair-rate XGB added less than **0.4e-5** each. The next experiment changes the learner: a small neural net with train-fitted numeric quantiles and categorical one-hot inputs. It uses the same three inner splits and must reproduce the **0.9449195163** control before adjudication. Advance only on historical Fold-0 at **≥+8e-5 and ≥4/5 positive**. Sealed B remains a transport result for the frozen three-stream recipe.
+
+```bash
+OPENBLAS_NUM_THREADS=2 OMP_NUM_THREADS=2 VECLIB_MAXIMUM_THREADS=2 .venv/bin/python -u - <<'PY'
+from pathlib import Path
+
+source_path = Path("/tmp/s6e11_isol/p2_xgb_inner.py")
+runner, boundary, _ = source_path.read_text().partition("\ncontrol, _ = stack(2)")
+assert boundary, "Round 10 runner boundary changed"
+assert 'device="cpu"' in runner, "Check the existing XGB device before running"
+
+def replace_once(text, old, new):
+    assert text.count(old) == 1, f"Round 10 runner changed near {old!r}"
+    return text.replace(old, new, 1)
+
+runner = replace_once(runner, '"/tmp/s6e11_isol/data/train.csv"', '"data/train.csv"')
+runner = replace_once(runner, "(len(train), 3)", "(len(train), 4)")
+runner = replace_once(runner, "from xgboost import XGBClassifier", """from xgboost import XGBClassifier
+from sklearn.neural_network import MLPClassifier
+from sklearn.preprocessing import QuantileTransformer
+from threadpoolctl import threadpool_limits
+""")
+runner = replace_once(runner, "    scores = np.column_stack(margins)", """    neural_features = ColumnTransformer([
+        ("numeric", QuantileTransformer(
+            n_quantiles=512, output_distribution="normal", subsample=100000, random_state=42,
+        ), numeric),
+        ("categorical", OneHotEncoder(handle_unknown="ignore", sparse_output=False), categories),
+    ])
+    neural_fit = neural_features.fit_transform(fit_frame).astype(np.float32)
+    neural_score = neural_features.transform(score_frame).astype(np.float32)
+    neural = MLPClassifier(
+        hidden_layer_sizes=(64, 32), activation="relu", solver="adam",
+        alpha=0.001, batch_size=2048, learning_rate_init=0.001,
+        random_state=42, shuffle=True,
+    )
+    with threadpool_limits(limits=2, user_api="blas"):
+        for epoch in range(24):
+            neural.partial_fit(neural_fit, fit_labels, classes=np.array([0, 1]))
+        probability = neural.predict_proba(neural_score)[:, 1].astype(float)
+    margins.append(logit(np.clip(probability, 1e-8, 1 - 1e-8)))
+
+    scores = np.column_stack(margins)""")
+
+evaluation = """
+control, _ = stack(3)
+candidate, coefficients = stack(4)
+with np.load(pred / "p2_xgb_inner_oof_f0_dev.npz", allow_pickle=False) as saved:
+    np.testing.assert_array_equal(saved["row_indices"], valid)
+    np.testing.assert_array_equal(saved["ids"], ids[valid])
+    np.testing.assert_allclose(control, saved["candidate"], rtol=1e-8, atol=1e-8)
+
+observed = labels[valid]
+base_auc = roc_auc_score(observed, control)
+assert abs(base_auc - 0.9449195163309662) < 1e-12
+candidate_auc = roc_auc_score(observed, candidate)
+delta = candidate_auc - base_auc
+subfold_deltas = [
+    (roc_auc_score(observed[held], candidate[held])
+     - roc_auc_score(observed[held], control[held])) * 1e5
+    for _, held in StratifiedKFold(5, shuffle=True, random_state=7).split(control, observed)
+]
+positive = sum(change > 0 for change in subfold_deltas)
+verdict = "DEV_ADVANCE" if delta >= 8e-5 and positive >= 4 else "NO-GO"
+mlp_scores = np.mean([design[:, 3] for design in outer_designs], axis=0)
+result = {
+    "scope": "historical_F0_DEV_ONLY",
+    "stream": "quantile_onehot_cpu_mlp",
+    "base_auc": base_auc, "candidate_auc": candidate_auc,
+    "mlp_solo_auc": roc_auc_score(observed, mlp_scores),
+    "delta_e5": delta * 1e5, "positive_subfolds": positive,
+    "subfold_deltas_e5": subfold_deltas, "meta_coefficients": coefficients,
+    "verdict": verdict, "NO_SUBMIT": True, "NO_GPU": True,
+}
+payload = json.dumps(result, indent=2)
+(logs / "P2_CPU_MLP_INNER_OOF_F0_DEV.json").write_text(payload + "\\n")
+np.savez(pred / "p2_cpu_mlp_inner_oof_f0_dev.npz",
+         ids=ids[valid], row_indices=valid, control=control, candidate=candidate,
+         outer_stream_margins=np.stack(outer_scores))
+with Path("logs/v47/CODEX_DS_REVIEW_NEXT.md").open("a") as review:
+    review.write(
+        "\\n## P2 isolated CPU MLP\\n\\n"
+        f"Historical Fold-0. Matched control {base_auc:.16f}, candidate {candidate_auc:.16f}, "
+        f"MLP solo {result['mlp_solo_auc']:.16f}, Δe-5 {delta * 1e5:+.8f}, "
+        f"{positive}/5 positive, {verdict}. Subfold Δe-5 {subfold_deltas}.\\n"
+    )
+print(payload)
+"""
+exec(compile(runner + "\n" + evaluation, str(source_path), "exec"), {"__name__": "__main__"})
+PY
+```

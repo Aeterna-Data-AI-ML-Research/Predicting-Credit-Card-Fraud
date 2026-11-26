@@ -1,0 +1,193 @@
+OpenAI Codex v0.172.0
+--------
+workdir: /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+model: gpt-6.2-sol
+provider: openai
+approval: never
+sandbox: read-only
+reasoning effort: none
+reasoning summaries: none
+session id: 01a2180a-0cec-7810-bcbf-4a725485c87f
+--------
+user
+# Cursor → Codex Round14
+
+CPU MLP 4th stream vs matched 3-stream control (historical F0):
+- base 0.9449195163309662 → cand 0.9449708343713743
+- MLP solo 0.9411922362945062
+- Δe-5 +5.1318 · pos 4/5 · NO-GO (missed +8e-5 gate; near miss)
+- Artifact: P2_CPU_MLP_INNER_OOF_F0_DEV.json
+- Meta coef on MLP only ~0.15 (small weight)
+
+Do NOT retune MLP epochs to chase the gate on same F0 without a new hypothesis.
+Highest-EV next measurable step toward public >0.95726 under NO_SUBMIT/NO_GPU?
+ONE bash command after short verdict. No signed-CB. No public arrays.
+codex
+**Test whether the hist-XGB stream is underfitting higher-order interactions.** The MLP gained **+5.13e-5** and missed the dev gate. Hist-XGB has the strongest evidence of transfer, so the next run tests one fixed capacity change: **depth 6 and 800 trees versus depth 4 and 400 trees**. It replaces the XGB stream in the matched three-stream stack, refits both heads on the same inner OOF rows, and scores historical Fold-0 only. The advance gate remains **≥+8e-5 and ≥4/5 positive**.
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python -u - <<'PY'
+from pathlib import Path
+
+source_path = Path("/tmp/s6e11_isol/p2_xgb_inner.py")
+runner, boundary, _ = source_path.read_text().partition("\ncontrol, _ = stack(2)")
+assert boundary, "Round 10 runner boundary changed"
+assert 'device="cpu"' in runner, "Confirm the control XGB is CPU-only"
+
+def replace_once(text, old, new):
+    assert text.count(old) == 1, f"Round 10 runner changed near {old!r}"
+    return text.replace(old, new, 1)
+
+runner = replace_once(runner, '"/tmp/s6e11_isol/data/train.csv"', '"data/train.csv"')
+runner = replace_once(runner, "(len(train), 3)", "(len(train), 4)")
+runner = replace_once(
+    runner, "from xgboost import XGBClassifier",
+    "from xgboost import XGBClassifier\nfrom sklearn.base import clone",
+)
+runner = replace_once(runner, "    scores = np.column_stack(margins)", """    deeper = clone(xgb).set_params(max_depth=6, n_estimators=800, device="cpu")
+    deeper.fit(tree_fit, fit_labels)
+    margins.append(deeper.predict(tree_score, output_margin=True))
+
+    scores = np.column_stack(margins)""")
+
+evaluation = """
+control, _ = stack(3)
+with np.load(pred / "p2_xgb_inner_oof_f0_dev.npz", allow_pickle=False) as saved:
+    np.testing.assert_array_equal(saved["row_indices"], valid)
+    np.testing.assert_array_equal(saved["ids"], ids[valid])
+    np.testing.assert_allclose(control, saved["candidate"], rtol=1e-8, atol=1e-8)
+
+selected = [0, 1, 3]
+scaler = StandardScaler().fit(inner_design[:, selected])
+head = LogisticRegression(C=0.03, max_iter=2000).fit(
+    scaler.transform(inner_design[:, selected]), labels[train],
+)
+candidate = np.mean([
+    head.decision_function(scaler.transform(design[:, selected]))
+    for design in outer_designs
+], axis=0)
+observed = labels[valid]
+base_auc = roc_auc_score(observed, control)
+assert abs(base_auc - 0.9449195163309662) < 1e-12
+candidate_auc = roc_auc_score(observed, candidate)
+delta = candidate_auc - base_auc
+subfold_deltas = [
+    (roc_auc_score(observed[held], candidate[held])
+     - roc_auc_score(observed[held], control[held])) * 1e5
+    for _, held in StratifiedKFold(5, shuffle=True, random_state=7).split(control, observed)
+]
+positive = sum(change > 0 for change in subfold_deltas)
+verdict = "DEV_ADVANCE" if delta >= 8e-5 and positive >= 4 else "NO-GO"
+result = {
+    "scope": "historical_F0_DEV_ONLY",
+    "experiment": "replace_hist_xgb_depth4_400_with_depth6_800",
+    "base_auc": base_auc, "candidate_auc": candidate_auc,
+    "control_xgb_solo_auc": roc_auc_score(observed, np.mean([part[:, 2] for part in outer_designs], axis=0)),
+    "deeper_xgb_solo_auc": roc_auc_score(observed, np.mean([part[:, 3] for part in outer_designs], axis=0)),
+    "delta_e5": delta * 1e5, "positive_subfolds": positive,
+    "subfold_deltas_e5": subfold_deltas, "meta_coefficients": head.coef_.ravel().tolist(),
+    "verdict": verdict, "NO_SUBMIT": True, "NO_GPU": True,
+}
+payload = json.dumps(result, indent=2)
+(logs / "P2_XGB_CAPACITY_F0_DEV.json").write_text(payload + "\\n")
+np.savez(
+    pred / "p2_xgb_capacity_f0_dev.npz", ids=ids[valid], row_indices=valid,
+    control=control, candidate=candidate, outer_stream_margins=np.stack(outer_scores),
+)
+with Path("logs/v47/CODEX_DS_REVIEW_NEXT.md").open("a") as review:
+    review.write(
+        "\\n## P2 hist-XGB capacity replacement\\n\\n"
+        f"Historical Fold-0. Matched control {base_auc:.16f}, candidate {candidate_auc:.16f}, "
+        f"Δe-5 {delta * 1e5:+.8f}, {positive}/5 positive, {verdict}. "
+        f"Subfold Δe-5 {subfold_deltas}.\\n"
+    )
+print(payload)
+"""
+exec(compile(runner + "\n" + evaluation, str(source_path), "exec"), {"__name__": "__main__"})
+PY
+```
+tokens used
+199,407
+**Test whether the hist-XGB stream is underfitting higher-order interactions.** The MLP gained **+5.13e-5** and missed the dev gate. Hist-XGB has the strongest evidence of transfer, so the next run tests one fixed capacity change: **depth 6 and 800 trees versus depth 4 and 400 trees**. It replaces the XGB stream in the matched three-stream stack, refits both heads on the same inner OOF rows, and scores historical Fold-0 only. The advance gate remains **≥+8e-5 and ≥4/5 positive**.
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python -u - <<'PY'
+from pathlib import Path
+
+source_path = Path("/tmp/s6e11_isol/p2_xgb_inner.py")
+runner, boundary, _ = source_path.read_text().partition("\ncontrol, _ = stack(2)")
+assert boundary, "Round 10 runner boundary changed"
+assert 'device="cpu"' in runner, "Confirm the control XGB is CPU-only"
+
+def replace_once(text, old, new):
+    assert text.count(old) == 1, f"Round 10 runner changed near {old!r}"
+    return text.replace(old, new, 1)
+
+runner = replace_once(runner, '"/tmp/s6e11_isol/data/train.csv"', '"data/train.csv"')
+runner = replace_once(runner, "(len(train), 3)", "(len(train), 4)")
+runner = replace_once(
+    runner, "from xgboost import XGBClassifier",
+    "from xgboost import XGBClassifier\nfrom sklearn.base import clone",
+)
+runner = replace_once(runner, "    scores = np.column_stack(margins)", """    deeper = clone(xgb).set_params(max_depth=6, n_estimators=800, device="cpu")
+    deeper.fit(tree_fit, fit_labels)
+    margins.append(deeper.predict(tree_score, output_margin=True))
+
+    scores = np.column_stack(margins)""")
+
+evaluation = """
+control, _ = stack(3)
+with np.load(pred / "p2_xgb_inner_oof_f0_dev.npz", allow_pickle=False) as saved:
+    np.testing.assert_array_equal(saved["row_indices"], valid)
+    np.testing.assert_array_equal(saved["ids"], ids[valid])
+    np.testing.assert_allclose(control, saved["candidate"], rtol=1e-8, atol=1e-8)
+
+selected = [0, 1, 3]
+scaler = StandardScaler().fit(inner_design[:, selected])
+head = LogisticRegression(C=0.03, max_iter=2000).fit(
+    scaler.transform(inner_design[:, selected]), labels[train],
+)
+candidate = np.mean([
+    head.decision_function(scaler.transform(design[:, selected]))
+    for design in outer_designs
+], axis=0)
+observed = labels[valid]
+base_auc = roc_auc_score(observed, control)
+assert abs(base_auc - 0.9449195163309662) < 1e-12
+candidate_auc = roc_auc_score(observed, candidate)
+delta = candidate_auc - base_auc
+subfold_deltas = [
+    (roc_auc_score(observed[held], candidate[held])
+     - roc_auc_score(observed[held], control[held])) * 1e5
+    for _, held in StratifiedKFold(5, shuffle=True, random_state=7).split(control, observed)
+]
+positive = sum(change > 0 for change in subfold_deltas)
+verdict = "DEV_ADVANCE" if delta >= 8e-5 and positive >= 4 else "NO-GO"
+result = {
+    "scope": "historical_F0_DEV_ONLY",
+    "experiment": "replace_hist_xgb_depth4_400_with_depth6_800",
+    "base_auc": base_auc, "candidate_auc": candidate_auc,
+    "control_xgb_solo_auc": roc_auc_score(observed, np.mean([part[:, 2] for part in outer_designs], axis=0)),
+    "deeper_xgb_solo_auc": roc_auc_score(observed, np.mean([part[:, 3] for part in outer_designs], axis=0)),
+    "delta_e5": delta * 1e5, "positive_subfolds": positive,
+    "subfold_deltas_e5": subfold_deltas, "meta_coefficients": head.coef_.ravel().tolist(),
+    "verdict": verdict, "NO_SUBMIT": True, "NO_GPU": True,
+}
+payload = json.dumps(result, indent=2)
+(logs / "P2_XGB_CAPACITY_F0_DEV.json").write_text(payload + "\\n")
+np.savez(
+    pred / "p2_xgb_capacity_f0_dev.npz", ids=ids[valid], row_indices=valid,
+    control=control, candidate=candidate, outer_stream_margins=np.stack(outer_scores),
+)
+with Path("logs/v47/CODEX_DS_REVIEW_NEXT.md").open("a") as review:
+    review.write(
+        "\\n## P2 hist-XGB capacity replacement\\n\\n"
+        f"Historical Fold-0. Matched control {base_auc:.16f}, candidate {candidate_auc:.16f}, "
+        f"Δe-5 {delta * 1e5:+.8f}, {positive}/5 positive, {verdict}. "
+        f"Subfold Δe-5 {subfold_deltas}.\\n"
+    )
+print(payload)
+"""
+exec(compile(runner + "\n" + evaluation, str(source_path), "exec"), {"__name__": "__main__"})
+PY
+```

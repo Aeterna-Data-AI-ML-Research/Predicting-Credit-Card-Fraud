@@ -1,0 +1,594 @@
+OpenAI Codex v0.172.0
+--------
+workdir: /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+model: gpt-6.2-sol
+provider: openai
+approval: never
+sandbox: read-only
+reasoning effort: none
+reasoning summaries: none
+session id: 01a2180a-0cec-7810-bcbf-4a725485c87f
+--------
+user
+# Cursor → Codex Round26
+
+Champion-native character n-gram as 15th Deotte stream — RESULT:
+- control reproduced z0 exactly
+- per-fold Δe-5: see CHAMP_CHAR_NGRAM_15STREAM_DIAGNOSTIC.json
+- folds1–4 weighted Δe-5 and pos below; verdict NO-GO
+- lexical coefficients tiny (~0.01)
+- NO_SUBMIT/NO_GPU/$0. Milestone=LOCAL_GATE_PASS. Signed-CB retired. B2037 frozen.
+
+Recent champion-compat NO-GOs: pairwise head (+4.54e-5 folds1-4), char15 stream (this), isolated→z0 blends (all negative). Submission HOLD both.
+
+Highest-EV next measurable champion-compatible experiment toward public >0.95726?
+Prefer hard-negative / complementary-error / rank-sensitive / decimal-token-as-stream — not more failed blend weights. ONE command after short verdict. No submit. No B2037 retune. No public arrays.
+
+Exact: weighted_delta_e5_folds1_4=-2.6442116690283957, pos=1/4, loo=[-0.4342804358866322, -4.017068138787809, -2.951201225901793, -3.1742968755373484], per_fold_deltas=[1.896, -9.274, 1.474, -1.723, -1.054]
+codex
+I’ll check whether the champion and decimal runners can share the same outer splits.
+exec
+/bin/bash -lc "ls scripts/v47_sovereign | rg 'champ|decimal'
+ls /tmp/s6e11_isol | rg 'champ|decimal'
+rg -n 'def decimal_rates|rate_parts|decimal_model|raw_strings|evaluation =' /tmp/s6e11_isol/decimal_token.sh
+rg -n 'lexical_matrix|test_matrix|inner_scores|report =' scripts/v47_sovereign/*champ*" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ exited 1 in 0ms:
+champ_pairwise_head_diagnostic.py
+isolated_champion_f0_diagnostic.py
+sealed_b_decimal_char_ngram_2033.py
+sealed_b_decimal_token_2031.py
+champ_char15.sh
+decimal_token.sh
+sealed_b_decimal.sh
+24:raw_strings = pd.read_csv(
+28:np.testing.assert_array_equal(raw_strings.pop("id").to_numpy(), ids)
+31:    parts = raw_strings[column].str.partition(".")
+34:del raw_strings
+39:def decimal_rates(reference, query):
+66:runner = replace_once(runner, "    scores = np.column_stack(margins)", """    rate_parts = []
+69:        rate_parts.append(decimal_rates(fit_rows[encoder_fit], fit_rows[encoder_held]))
+70:    training_rates = pd.concat(rate_parts).reindex(tree_fit.index)
+75:    decimal_model = clone(xgb).set_params(device="cpu")
+76:    decimal_model.fit(tree_fit.join(training_rates), fit_labels)
+77:    margins.append(decimal_model.predict(tree_score.join(inference_rates), output_margin=True))
+81:evaluation = """
+
+exec
+/bin/bash -lc "sed -n '1,145p' /tmp/s6e11_isol/champ_char15.sh
+sed -n '19,80p' /tmp/s6e11_isol/decimal_token.sh
+sed -n '48,76p' /tmp/s6e11_isol/p2_xgb_inner.py" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 0ms:
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python -u - <<'PY'
+import hashlib
+import json
+import sys
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+from scipy.special import logit
+from scipy.sparse import hstack
+from sklearn.feature_extraction.text import HashingVectorizer
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import roc_auc_score
+from sklearn.model_selection import StratifiedKFold
+
+sys.path.insert(0, str(Path("scripts/v47_sovereign").resolve()))
+from champ_pairwise_head_diagnostic import load_step1
+
+step1 = load_step1()
+pred = Path("preds/v47_sovereign")
+logs = Path("logs/v47/codex_loop")
+report = logs / "CHAMP_CHAR_NGRAM_15STREAM_DIAGNOSTIC.json"
+assert not report.exists(), "Diagnostic already exists"
+train = pd.read_csv(step1.DATA / "train.csv", low_memory=False)
+labels = train["is_fraud"].to_numpy(int)
+folds = np.load(pred / "folds_skf42.npy")
+for fold, (_, held) in enumerate(StratifiedKFold(5, shuffle=True, random_state=42).split(labels, labels)):
+    np.testing.assert_array_equal(held, np.flatnonzero(folds == fold))
+
+streams = step1.assemble_streams(train, labels, folds)
+names = sorted(streams)
+assert len(names) == 14
+legacy = np.column_stack([step1.to_logit_cal(streams[name][0]) for name in names])
+legacy_test = np.column_stack([step1.to_logit_cal(streams[name][1]) for name in names])
+del streams
+
+fields = [
+    "amount_usd", "hours_since_last_txn", "distance_from_home_km",
+    "account_balance_usd", "velocity_score", "merchant_risk_score",
+]
+read_options = {"usecols": ["id", *fields], "dtype": {field: "string" for field in fields}}
+raw = pd.read_csv("/tmp/s6e11_isol/data/train.csv", **read_options)
+raw_test = pd.read_csv(step1.DATA / "test.csv", **read_options)
+np.testing.assert_array_equal(raw["id"].to_numpy(), train["id"].to_numpy())
+assert len(raw_test) == legacy_test.shape[0] and raw_test["id"].is_unique
+hasher = HashingVectorizer(
+    analyzer="char", ngram_range=(2, 4), n_features=2**14,
+    alternate_sign=False, binary=True, norm=None, lowercase=False, dtype=np.float64,
+)
+
+def lexical_matrix(frame, rows=None):
+    selected = frame if rows is None else frame.iloc[rows]
+    return hstack([
+        hasher.transform("^" + selected[field].fillna("<missing>") + "$")
+        for field in fields
+    ], format="csr")
+
+def rank_reference(reference, scores):
+    ordered = np.sort(reference)
+    lo = np.searchsorted(ordered, scores, side="left")
+    hi = np.searchsorted(ordered, scores, side="right")
+    eps = 0.5 / len(ordered)
+    return logit(np.clip((lo + hi) / (2 * len(ordered)), eps, 1 - eps))
+
+test_matrix = lexical_matrix(raw_test)
+control = np.empty(len(labels))
+candidate = np.empty(len(labels))
+candidate_test = np.zeros(len(raw_test))
+rows = []
+for fold in range(5):
+    fit = np.flatnonzero(folds != fold)
+    held = np.flatnonzero(folds == fold)
+    mean = legacy[fit].mean(axis=0)
+    sd = legacy[fit].std(axis=0) + 1e-8
+    design = (legacy[fit] - mean) / sd
+    held_design = (legacy[held] - mean) / sd
+    test_design = (legacy_test - mean) / sd
+    baseline = LogisticRegression(C=0.03, solver="lbfgs", max_iter=2000).fit(design, labels[fit])
+    control[held] = baseline.predict_proba(held_design)[:, 1]
+
+    inner_scores = np.full(len(fit), np.nan)
+    outer_margins, test_margins = [], []
+    held_matrix = lexical_matrix(raw, held)
+    inner = StratifiedKFold(3, shuffle=True, random_state=2026)
+    for inner_train, inner_held in inner.split(fit, labels[fit]):
+        model = LogisticRegression(C=0.1, solver="liblinear", max_iter=200, random_state=42)
+        model.fit(lexical_matrix(raw, fit[inner_train]), labels[fit[inner_train]])
+        assert model.n_iter_.max() < model.max_iter
+        inner_scores[inner_held] = model.decision_function(lexical_matrix(raw, fit[inner_held]))
+        outer_margins.append(model.decision_function(held_matrix))
+        test_margins.append(model.decision_function(test_matrix))
+    del held_matrix
+    assert np.isfinite(inner_scores).all()
+    ranked_inner = rank_reference(inner_scores, inner_scores)
+    center, scale = ranked_inner.mean(), ranked_inner.std() + 1e-8
+    augmented = LogisticRegression(C=0.03, solver="lbfgs", max_iter=2000).fit(
+        np.column_stack([design, (ranked_inner - center) / scale]), labels[fit],
+    )
+    assert augmented.n_iter_.max() < augmented.max_iter
+
+    def score_augmented(base_design, margins):
+        return np.mean([
+            augmented.predict_proba(np.column_stack([
+                base_design, (rank_reference(inner_scores, margin) - center) / scale,
+            ]))[:, 1]
+            for margin in margins
+        ], axis=0)
+
+    candidate[held] = score_augmented(held_design, outer_margins)
+    candidate_test += score_augmented(test_design, test_margins) / 5
+    base_auc = roc_auc_score(labels[held], control[held])
+    cand_auc = roc_auc_score(labels[held], candidate[held])
+    row = {
+        "fold": fold, "n": len(held), "base_auc": base_auc, "candidate_auc": cand_auc,
+        "delta_e5": (cand_auc - base_auc) * 1e5,
+        "lexical_coefficient": float(augmented.coef_[0, -1]),
+    }
+    rows.append(row)
+    print(json.dumps(row), flush=True)
+
+np.testing.assert_array_equal(control, np.load(pred / "z_sovereign_v0_oof.npy").ravel())
+assert np.isfinite(candidate).all() and np.isfinite(candidate_test).all()
+evaluation = rows[1:]
+weights = np.array([item["n"] for item in evaluation])
+deltas = np.array([item["delta_e5"] for item in evaluation])
+weighted = float(np.average(deltas, weights=weights))
+loo = [
+    float(np.average(np.delete(deltas, index), weights=np.delete(weights, index)))
+    for index in range(4)
+]
+wins = int(np.count_nonzero(deltas > 0))
+passed = weighted >= 8 and wins >= 3 and min(loo) > 0
+result = {
+    "scope": "historical_champion_matched_diagnostic",
+    "per_fold": rows, "weighted_delta_e5_folds1_4": weighted,
+    "positive_folds_1_4": wins, "loo_delta_e5": loo,
+    "control_reproduced_exactly": True,
+    "verdict": "DEV_ADVANCE_CHAMP_LEXICAL" if passed else "NO-GO",
+    "NO_SUBMIT": True, "SUBMIT_ARMED": False, "NO_GPU": True,
+}
+np.savez(pred / "champ_char_ngram_15stream_diagnostic.npz",
+         control_oof=control, candidate_oof=candidate, candidate_test=candidate_test,
+         test_ids=raw_test["id"].to_numpy(), folds=folds)
+if passed:
+    review_csv = Path("artifacts/submission_review/CAND3_z0_char_ngram.csv")
+decimal_groups = [
+    ["amount_usd", "hours_since_last_txn", "distance_from_home_km", "account_balance_usd"],
+    ["velocity_score", "merchant_risk_score"],
+]
+decimal_fields = [column for group in decimal_groups for column in group]
+raw_strings = pd.read_csv(
+    "/tmp/s6e11_isol/data/train.csv", usecols=["id", *decimal_fields],
+    dtype={column: "string" for column in decimal_fields},
+)
+np.testing.assert_array_equal(raw_strings.pop("id").to_numpy(), ids)
+suffix, joint = {}, {}
+for column in decimal_fields:
+    parts = raw_strings[column].str.partition(".")
+    suffix[column] = parts[2].where(parts[1].eq("."), "<integer>").fillna("<missing>")
+    joint[column] = parts[0].fillna("<missing>").str[:2].str.cat(suffix[column], sep="|")
+del raw_strings
+
+def rate_table(keys, target):
+    return pd.DataFrame({"key": keys.to_numpy(), "label": target}).groupby("key")["label"].agg(["sum", "size"])
+
+def decimal_rates(reference, query):
+    target = labels[reference]
+    prior = target.mean()
+    features = {}
+    for group in decimal_groups:
+        field_tables = {column: rate_table(suffix[column].iloc[reference], target) for column in group}
+        pooled = pd.concat(field_tables.values()).groupby(level=0).sum()
+        pool_rate = (pooled["sum"] + 50 * prior) / (pooled["size"] + 50)
+        for column in group:
+            table = field_tables[column]
+            local_prior = pool_rate.reindex(table.index).fillna(prior)
+            local_rate = (table["sum"] + 2000 * local_prior) / (table["size"] + 2000)
+            query_suffix = suffix[column].iloc[query]
+            coarse = query_suffix.map(local_rate).fillna(query_suffix.map(pool_rate)).fillna(prior)
+            detail = pd.DataFrame({
+                "key": joint[column].iloc[reference].to_numpy(),
+                "suffix": suffix[column].iloc[reference].to_numpy(),
+                "label": target,
+            }).groupby("key").agg(total=("label", "sum"), count=("label", "size"), suffix=("suffix", "first"))
+            detail_prior = detail["suffix"].map(local_rate).fillna(prior)
+            detail_rate = (detail["total"] + 200 * detail_prior) / (detail["count"] + 200)
+            features[f"dec_rate__{column}"] = coarse.to_numpy(dtype=float)
+            features[f"dec_joint_rate__{column}"] = (
+                joint[column].iloc[query].map(detail_rate).fillna(coarse).to_numpy(dtype=float)
+            )
+    return pd.DataFrame(features, index=query)
+""")
+runner = replace_once(runner, "    scores = np.column_stack(margins)", """    rate_parts = []
+    encoder_cv = StratifiedKFold(3, shuffle=True, random_state=2030)
+    for encoder_fit, encoder_held in encoder_cv.split(fit_frame, fit_labels):
+        rate_parts.append(decimal_rates(fit_rows[encoder_fit], fit_rows[encoder_held]))
+    training_rates = pd.concat(rate_parts).reindex(tree_fit.index)
+    inference_rates = decimal_rates(fit_rows, score_frame.index.to_numpy())
+    assert np.isfinite(training_rates.to_numpy()).all()
+    assert np.isfinite(inference_rates.to_numpy()).all()
+
+    decimal_model = clone(xgb).set_params(device="cpu")
+    decimal_model.fit(tree_fit.join(training_rates), fit_labels)
+    margins.append(decimal_model.predict(tree_score.join(inference_rates), output_margin=True))
+
+    scores = np.column_stack(margins)""")
+
+            ("categorical", OneHotEncoder(handle_unknown="ignore"), categories),
+        ]),
+        LogisticRegression(C=0.1, max_iter=1000),
+    ).fit(fit_frame, fit_labels)
+    margins = [linear.decision_function(score_frame)]
+
+    tree_fit, tree_score = fit_frame.copy(), score_frame.copy()
+    for column in categories:
+        tree_fit[column] = tree_fit[column].astype("category")
+        tree_score[column] = pd.Categorical(
+            tree_score[column], categories=tree_fit[column].cat.categories,
+        )
+    lgbm = LGBMClassifier(
+        n_estimators=450, learning_rate=0.045, num_leaves=31,
+        min_child_samples=120, reg_lambda=5, n_jobs=4, verbosity=-1, random_state=42,
+    ).fit(tree_fit, fit_labels)
+    margins.append(lgbm.predict(tree_score, raw_score=True))
+
+    for column in categories:
+        freq = tree_fit[column].value_counts(dropna=False)
+        tree_fit[f"{column}_freq"] = tree_fit[column].map(freq).astype(float)
+        tree_score[f"{column}_freq"] = tree_score[column].astype(object).map(freq).fillna(0).astype(float)
+    xgb = XGBClassifier(
+        n_estimators=400, learning_rate=0.05, max_depth=4, subsample=0.8,
+        colsample_bytree=0.8, reg_lambda=5, tree_method="hist",
+        enable_categorical=True, device="cpu", n_jobs=4, random_state=42, eval_metric="auc",
+    ).fit(tree_fit, fit_labels)
+    margins.append(xgb.predict(tree_score, output_margin=True))
+
+
+exec
+/bin/bash -lc "tail -32 /tmp/s6e11_isol/champ_char15.sh
+sed -n '32,68p' /tmp/s6e11_isol/decimal_token.sh" in /Volumes/pics/kaggle/cc/Predicting-Credit-Card-Fraud
+ succeeded in 0ms:
+    for index in range(4)
+]
+wins = int(np.count_nonzero(deltas > 0))
+passed = weighted >= 8 and wins >= 3 and min(loo) > 0
+result = {
+    "scope": "historical_champion_matched_diagnostic",
+    "per_fold": rows, "weighted_delta_e5_folds1_4": weighted,
+    "positive_folds_1_4": wins, "loo_delta_e5": loo,
+    "control_reproduced_exactly": True,
+    "verdict": "DEV_ADVANCE_CHAMP_LEXICAL" if passed else "NO-GO",
+    "NO_SUBMIT": True, "SUBMIT_ARMED": False, "NO_GPU": True,
+}
+np.savez(pred / "champ_char_ngram_15stream_diagnostic.npz",
+         control_oof=control, candidate_oof=candidate, candidate_test=candidate_test,
+         test_ids=raw_test["id"].to_numpy(), folds=folds)
+if passed:
+    review_csv = Path("artifacts/submission_review/CAND3_z0_char_ngram.csv")
+    with review_csv.open("x") as handle:
+        pd.DataFrame({"id": raw_test["id"], "is_fraud": candidate_test}).to_csv(handle, index=False)
+    result["review_csv"] = str(review_csv)
+    result["review_csv_sha256"] = hashlib.sha256(review_csv.read_bytes()).hexdigest()
+payload = json.dumps(result, indent=2)
+report.write_text(payload + "\n")
+with Path("logs/v47/CODEX_DS_REVIEW_NEXT.md").open("a") as handle:
+    handle.write(
+        "\n## Champion-native character n-gram stream\n\n"
+        f"{result['verdict']}. Historical folds 1–4 weighted Δe-5 {weighted:+.8f}, "
+        f"{wins}/4 positive, LOO {loo}. Saved control reproduced exactly. "
+        "Legacy champion provenance caveat applies. NO_SUBMIT.\n"
+    )
+print(payload)
+PY
+    suffix[column] = parts[2].where(parts[1].eq("."), "<integer>").fillna("<missing>")
+    joint[column] = parts[0].fillna("<missing>").str[:2].str.cat(suffix[column], sep="|")
+del raw_strings
+
+def rate_table(keys, target):
+    return pd.DataFrame({"key": keys.to_numpy(), "label": target}).groupby("key")["label"].agg(["sum", "size"])
+
+def decimal_rates(reference, query):
+    target = labels[reference]
+    prior = target.mean()
+    features = {}
+    for group in decimal_groups:
+        field_tables = {column: rate_table(suffix[column].iloc[reference], target) for column in group}
+        pooled = pd.concat(field_tables.values()).groupby(level=0).sum()
+        pool_rate = (pooled["sum"] + 50 * prior) / (pooled["size"] + 50)
+        for column in group:
+            table = field_tables[column]
+            local_prior = pool_rate.reindex(table.index).fillna(prior)
+            local_rate = (table["sum"] + 2000 * local_prior) / (table["size"] + 2000)
+            query_suffix = suffix[column].iloc[query]
+            coarse = query_suffix.map(local_rate).fillna(query_suffix.map(pool_rate)).fillna(prior)
+            detail = pd.DataFrame({
+                "key": joint[column].iloc[reference].to_numpy(),
+                "suffix": suffix[column].iloc[reference].to_numpy(),
+                "label": target,
+            }).groupby("key").agg(total=("label", "sum"), count=("label", "size"), suffix=("suffix", "first"))
+            detail_prior = detail["suffix"].map(local_rate).fillna(prior)
+            detail_rate = (detail["total"] + 200 * detail_prior) / (detail["count"] + 200)
+            features[f"dec_rate__{column}"] = coarse.to_numpy(dtype=float)
+            features[f"dec_joint_rate__{column}"] = (
+                joint[column].iloc[query].map(detail_rate).fillna(coarse).to_numpy(dtype=float)
+            )
+    return pd.DataFrame(features, index=query)
+""")
+runner = replace_once(runner, "    scores = np.column_stack(margins)", """    rate_parts = []
+    encoder_cv = StratifiedKFold(3, shuffle=True, random_state=2030)
+    for encoder_fit, encoder_held in encoder_cv.split(fit_frame, fit_labels):
+
+codex
+**Test the decimal-token hist-XGB stream directly inside Deotte.** The lexical stream lost **2.64e-5** on champion folds 1–4. Decimal-token XGB is the stronger untested input, with **+124.39e-5 and 4/4 wins** in its isolated transport test. Add only that stream. Cross-fit its rate tables and XGB scores inside each champion outer fold, reproduce `z0` exactly, and require **≥+8e-5, ≥3/4 wins, and positive leave-one-fold-out means**. A pass creates one local review CSV. The result inherits the champion’s existing provenance caveat.
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python -u - <<'PY'
+from pathlib import Path
+
+scratch = Path("/tmp/s6e11_isol")
+champ_path = scratch / "champ_char15.sh"
+decimal_path = scratch / "decimal_token.sh"
+lines = champ_path.read_text().splitlines(keepends=True)
+assert lines[0].rstrip().endswith("<<'PY'") and lines[-1].strip() == "PY"
+runner = "".join(lines[1:-1])
+decimal_source = decimal_path.read_text()
+group_start = decimal_source.index("decimal_groups = [")
+group_end = decimal_source.index("raw_strings = pd.read_csv(", group_start)
+rate_start = decimal_source.index("def rate_table(")
+rate_end = decimal_source.index('\n""")', rate_start)
+
+def replace_block(text, start, end, replacement):
+    left = text.index(start)
+    right = text.index(end, left)
+    return text[:left] + replacement.rstrip() + "\n\n" + text[right:]
+
+runner = replace_block(runner, "fields = [", "def rank_reference(", """
+from xgboost import XGBClassifier
+
+""" + decimal_source[group_start:group_end] + """
+read_options = {
+    "usecols": ["id", *decimal_fields],
+    "dtype": {field: "string" for field in decimal_fields},
+}
+raw = pd.read_csv("/tmp/s6e11_isol/data/train.csv", **read_options)
+test = pd.read_csv(step1.DATA / "test.csv", low_memory=False)
+raw_test = pd.read_csv(step1.DATA / "test.csv", **read_options)
+np.testing.assert_array_equal(raw["id"].to_numpy(), train["id"].to_numpy())
+np.testing.assert_array_equal(raw_test["id"].to_numpy(), test["id"].to_numpy())
+assert len(raw_test) == legacy_test.shape[0] and raw_test["id"].is_unique
+
+raw_strings = pd.concat([raw, raw_test], ignore_index=True)
+suffix, joint = {}, {}
+for column in decimal_fields:
+    parts = raw_strings[column].str.partition(".")
+    suffix[column] = parts[2].where(parts[1].eq("."), "<integer>").fillna("<missing>")
+    joint[column] = parts[0].fillna("<missing>").str[:2].str.cat(suffix[column], sep="|")
+del raw_strings, raw
+
+features = train.drop(columns=["id", "is_fraud"])
+assert set(features) == set(test.columns) - {"id"}
+features = pd.concat([features, test[features.columns]], ignore_index=True)
+categoricals = features.select_dtypes(include=["object", "str", "category"]).columns.tolist()
+test_rows = np.arange(len(labels), len(features))
+
+""" + decimal_source[rate_start:rate_end])
+
+assert runner.count("test_matrix = lexical_matrix(raw_test)\n") == 1
+runner = runner.replace("test_matrix = lexical_matrix(raw_test)\n", "", 1)
+runner = replace_block(runner, "    held_matrix = lexical_matrix(raw, held)", "    assert np.isfinite(inner_scores).all()", """
+    inner = StratifiedKFold(3, shuffle=True, random_state=2026)
+    for inner_train, inner_held in inner.split(fit, labels[fit]):
+        fit_rows = fit[inner_train]
+        meta_rows = fit[inner_held]
+        query_rows = np.concatenate([meta_rows, held, test_rows])
+        fit_labels = labels[fit_rows]
+
+        tree_fit = features.iloc[fit_rows].copy()
+        tree_score = features.iloc[query_rows].copy()
+        for column in categoricals:
+            tree_fit[column] = tree_fit[column].astype("category")
+            tree_score[column] = pd.Categorical(
+                tree_score[column], categories=tree_fit[column].cat.categories,
+            )
+            freq = tree_fit[column].value_counts(dropna=False)
+            tree_fit[f"{column}_freq"] = tree_fit[column].map(freq).astype(float)
+            tree_score[f"{column}_freq"] = tree_score[column].astype(object).map(freq).fillna(0).astype(float)
+
+        encoder_cv = StratifiedKFold(3, shuffle=True, random_state=2030)
+        rate_parts = [
+            decimal_rates(fit_rows[ref], fit_rows[encoder_held])
+            for ref, encoder_held in encoder_cv.split(tree_fit, fit_labels)
+        ]
+        fit_rates = pd.concat(rate_parts).reindex(tree_fit.index)
+        query_rates = decimal_rates(fit_rows, query_rows)
+        assert np.isfinite(fit_rates.to_numpy()).all() and np.isfinite(query_rates.to_numpy()).all()
+
+        model = XGBClassifier(
+            n_estimators=400, learning_rate=0.05, max_depth=4, subsample=0.8,
+            colsample_bytree=0.8, reg_lambda=5, tree_method="hist",
+            enable_categorical=True, device="cpu", n_jobs=4, random_state=42,
+            eval_metric="auc",
+        ).fit(tree_fit.join(fit_rates), fit_labels)
+        margins = model.predict(tree_score.join(query_rates), output_margin=True)
+        meta_end = len(meta_rows)
+        held_end = meta_end + len(held)
+        inner_scores[inner_held] = margins[:meta_end]
+        outer_margins.append(margins[meta_end:held_end])
+        test_margins.append(margins[held_end:])
+""")
+for old, new in {
+    "CHAMP_CHAR_NGRAM_15STREAM_DIAGNOSTIC.json": "CHAMP_DECIMAL_TOKEN_15STREAM_DIAGNOSTIC.json",
+    "champ_char_ngram_15stream_diagnostic.npz": "champ_decimal_token_15stream_diagnostic.npz",
+    "CAND3_z0_char_ngram.csv": "CAND3_z0_decimal_token.csv",
+    "lexical_coefficient": "decimal_token_coefficient",
+    "DEV_ADVANCE_CHAMP_LEXICAL": "DEV_ADVANCE_CHAMP_DECIMAL",
+    "Champion-native character n-gram stream": "Champion-native decimal-token hist-XGB stream",
+}.items():
+    assert runner.count(old) == 1, old
+    runner = runner.replace(old, new, 1)
+exec(compile(runner, str(champ_path), "exec"), {"__name__": "__main__"})
+PY
+```
+tokens used
+269,324
+**Test the decimal-token hist-XGB stream directly inside Deotte.** The lexical stream lost **2.64e-5** on champion folds 1–4. Decimal-token XGB is the stronger untested input, with **+124.39e-5 and 4/4 wins** in its isolated transport test. Add only that stream. Cross-fit its rate tables and XGB scores inside each champion outer fold, reproduce `z0` exactly, and require **≥+8e-5, ≥3/4 wins, and positive leave-one-fold-out means**. A pass creates one local review CSV. The result inherits the champion’s existing provenance caveat.
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 .venv/bin/python -u - <<'PY'
+from pathlib import Path
+
+scratch = Path("/tmp/s6e11_isol")
+champ_path = scratch / "champ_char15.sh"
+decimal_path = scratch / "decimal_token.sh"
+lines = champ_path.read_text().splitlines(keepends=True)
+assert lines[0].rstrip().endswith("<<'PY'") and lines[-1].strip() == "PY"
+runner = "".join(lines[1:-1])
+decimal_source = decimal_path.read_text()
+group_start = decimal_source.index("decimal_groups = [")
+group_end = decimal_source.index("raw_strings = pd.read_csv(", group_start)
+rate_start = decimal_source.index("def rate_table(")
+rate_end = decimal_source.index('\n""")', rate_start)
+
+def replace_block(text, start, end, replacement):
+    left = text.index(start)
+    right = text.index(end, left)
+    return text[:left] + replacement.rstrip() + "\n\n" + text[right:]
+
+runner = replace_block(runner, "fields = [", "def rank_reference(", """
+from xgboost import XGBClassifier
+
+""" + decimal_source[group_start:group_end] + """
+read_options = {
+    "usecols": ["id", *decimal_fields],
+    "dtype": {field: "string" for field in decimal_fields},
+}
+raw = pd.read_csv("/tmp/s6e11_isol/data/train.csv", **read_options)
+test = pd.read_csv(step1.DATA / "test.csv", low_memory=False)
+raw_test = pd.read_csv(step1.DATA / "test.csv", **read_options)
+np.testing.assert_array_equal(raw["id"].to_numpy(), train["id"].to_numpy())
+np.testing.assert_array_equal(raw_test["id"].to_numpy(), test["id"].to_numpy())
+assert len(raw_test) == legacy_test.shape[0] and raw_test["id"].is_unique
+
+raw_strings = pd.concat([raw, raw_test], ignore_index=True)
+suffix, joint = {}, {}
+for column in decimal_fields:
+    parts = raw_strings[column].str.partition(".")
+    suffix[column] = parts[2].where(parts[1].eq("."), "<integer>").fillna("<missing>")
+    joint[column] = parts[0].fillna("<missing>").str[:2].str.cat(suffix[column], sep="|")
+del raw_strings, raw
+
+features = train.drop(columns=["id", "is_fraud"])
+assert set(features) == set(test.columns) - {"id"}
+features = pd.concat([features, test[features.columns]], ignore_index=True)
+categoricals = features.select_dtypes(include=["object", "str", "category"]).columns.tolist()
+test_rows = np.arange(len(labels), len(features))
+
+""" + decimal_source[rate_start:rate_end])
+
+assert runner.count("test_matrix = lexical_matrix(raw_test)\n") == 1
+runner = runner.replace("test_matrix = lexical_matrix(raw_test)\n", "", 1)
+runner = replace_block(runner, "    held_matrix = lexical_matrix(raw, held)", "    assert np.isfinite(inner_scores).all()", """
+    inner = StratifiedKFold(3, shuffle=True, random_state=2026)
+    for inner_train, inner_held in inner.split(fit, labels[fit]):
+        fit_rows = fit[inner_train]
+        meta_rows = fit[inner_held]
+        query_rows = np.concatenate([meta_rows, held, test_rows])
+        fit_labels = labels[fit_rows]
+
+        tree_fit = features.iloc[fit_rows].copy()
+        tree_score = features.iloc[query_rows].copy()
+        for column in categoricals:
+            tree_fit[column] = tree_fit[column].astype("category")
+            tree_score[column] = pd.Categorical(
+                tree_score[column], categories=tree_fit[column].cat.categories,
+            )
+            freq = tree_fit[column].value_counts(dropna=False)
+            tree_fit[f"{column}_freq"] = tree_fit[column].map(freq).astype(float)
+            tree_score[f"{column}_freq"] = tree_score[column].astype(object).map(freq).fillna(0).astype(float)
+
+        encoder_cv = StratifiedKFold(3, shuffle=True, random_state=2030)
+        rate_parts = [
+            decimal_rates(fit_rows[ref], fit_rows[encoder_held])
+            for ref, encoder_held in encoder_cv.split(tree_fit, fit_labels)
+        ]
+        fit_rates = pd.concat(rate_parts).reindex(tree_fit.index)
+        query_rates = decimal_rates(fit_rows, query_rows)
+        assert np.isfinite(fit_rates.to_numpy()).all() and np.isfinite(query_rates.to_numpy()).all()
+
+        model = XGBClassifier(
+            n_estimators=400, learning_rate=0.05, max_depth=4, subsample=0.8,
+            colsample_bytree=0.8, reg_lambda=5, tree_method="hist",
+            enable_categorical=True, device="cpu", n_jobs=4, random_state=42,
+            eval_metric="auc",
+        ).fit(tree_fit.join(fit_rates), fit_labels)
+        margins = model.predict(tree_score.join(query_rates), output_margin=True)
+        meta_end = len(meta_rows)
+        held_end = meta_end + len(held)
+        inner_scores[inner_held] = margins[:meta_end]
+        outer_margins.append(margins[meta_end:held_end])
+        test_margins.append(margins[held_end:])
+""")
+for old, new in {
+    "CHAMP_CHAR_NGRAM_15STREAM_DIAGNOSTIC.json": "CHAMP_DECIMAL_TOKEN_15STREAM_DIAGNOSTIC.json",
+    "champ_char_ngram_15stream_diagnostic.npz": "champ_decimal_token_15stream_diagnostic.npz",
+    "CAND3_z0_char_ngram.csv": "CAND3_z0_decimal_token.csv",
+    "lexical_coefficient": "decimal_token_coefficient",
+    "DEV_ADVANCE_CHAMP_LEXICAL": "DEV_ADVANCE_CHAMP_DECIMAL",
+    "Champion-native character n-gram stream": "Champion-native decimal-token hist-XGB stream",
+}.items():
+    assert runner.count(old) == 1, old
+    runner = runner.replace(old, new, 1)
+exec(compile(runner, str(champ_path), "exec"), {"__name__": "__main__"})
+PY
+```

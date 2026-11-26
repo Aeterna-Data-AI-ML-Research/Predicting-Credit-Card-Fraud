@@ -1,0 +1,27 @@
+{
+  "scope": "historical_F0_DEV_ONLY",
+  "experiment": "magnitude_conditioned_decimal_likelihood_hist_xgb",
+  "base_auc": 0.9468323528460475,
+  "candidate_auc": 0.9468408296948083,
+  "stream_solo_auc": 0.9463624519305245,
+  "delta_e5": 0.8476848760818889,
+  "positive_subfolds": 2,
+  "subfold_deltas_e5": [
+    -1.0167248916337357,
+    -4.625710193972843,
+    13.992402724205544,
+    -6.766753957798688,
+    3.1578185136327264
+  ],
+  "meta_coefficients": [
+    0.47014558004146323,
+    0.4496148002464669,
+    0.4286734904728891,
+    0.49001552230574624,
+    0.18267990818708918,
+    0.48102848342531945
+  ],
+  "verdict": "NO-GO",
+  "NO_SUBMIT": true,
+  "NO_GPU": true
+}

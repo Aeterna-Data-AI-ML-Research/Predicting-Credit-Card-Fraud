@@ -1,0 +1,29 @@
+keeping tmp train
+Inner fit 1/3
+Inner fit 2/3
+Inner fit 3/3
+{
+  "scope": "historical_F0_DEV_ONLY",
+  "experiment": "cross_fitted_pooled_decimal_token_hist_xgb",
+  "base_auc": 0.9449195163309662,
+  "candidate_auc": 0.9461443510359124,
+  "decimal_solo_auc": 0.9463649791318605,
+  "delta_e5": 122.4834704946276,
+  "positive_subfolds": 5,
+  "subfold_deltas_e5": [
+    80.86455454876517,
+    155.54338590190176,
+    178.5334141921502,
+    78.75101588810108,
+    115.21370847906721
+  ],
+  "meta_coefficients": [
+    0.3285070014887189,
+    0.46017886970202365,
+    0.42321721445123045,
+    1.2083582398271286
+  ],
+  "verdict": "DEV_ADVANCE",
+  "NO_SUBMIT": true,
+  "NO_GPU": true
+}
